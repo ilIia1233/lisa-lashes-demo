@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lisa Lashes – Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #000;
+      font-weight: 500;
+    }
+
+    /* HERO */
+    .hero {
+      padding: 80px 32px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    /* COOPER LASHES SECTION */
+    .cooper {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 0 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .cooper img {
+      width: 100%;
+      border: 1px solid #eee;
+    }
+
+    .cooper button {
+      margin-top: 20px;
+      padding: 14px 22px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* BOOKING MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal {
+      background: #fff;
+      width: 90%;
+      max-width: 420px;
+      padding: 24px;
+      border-radius: 8px;
+    }
+
+    .modal h2 {
+      margin-top: 0;
+    }
+
+    .modal input, .modal select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    .modal button {
+      width: 100%;
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    .close {
+      text-align: right;
+      cursor: pointer;
+      font-size: 14px;
+      color: #777;
+    }
+
+    /* CHAT HELPER */
+    .chat-helper {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #000;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 30px;
+      font-size: 14px;
+      z-index: 50;
+    }
+
+    /* MOBILE – COOPER LASHES */
+    @media (max-width: 768px) {
+      .cooper {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        padding: 16px;
+      }
+
+      .hero {
+        padding: 60px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <strong>Lisa Lashes</strong>
+  <div>
+    <a href="#">Account</a>
+    <a href="basket.html">Basket</a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Luxury Lashes & Beauty</h1>
+  <p>Presentation website – static demo</p>
+</section>
+
+<!-- COOPER LASHES -->
+<section class="cooper">
+  <div>
+    <h2>Cooper Lashes</h2>
+    <p>
+      Professional lash service with premium materials.
+      This section now has desktop + mobile layouts.
+    </p>
+    <button onclick="openBooking()">Book now</button>
+  </div>
+
+  <div>
+    <img src="https://via.placeholder.com/500x500" alt="Cooper Lashes">
+  </div>
+</section>
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal">
+    <div class="close" onclick="closeBooking()">✕ Close</div>
+    <h2>Book an appointment</h2>
+
+    <select>
+      <option>Cooper Lashes</option>
+    </select>
+
+    <input type="date">
+    <select>
+      <option>10:00</option>
+      <option>12:00</option>
+      <option>14:00</option>
+      <option>16:00</option>
+    </select>
+
+    <button>Confirm booking</button>
+  </div>
+</div>
+
+<div class="chat-helper">Have any questions?</div>
+
+<script>
+  function openBooking() {
+    document.getElementById('bookingModal').style.display = 'flex';
+  }
+
+  function closeBooking() {
+    document.getElementById('bookingModal').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
