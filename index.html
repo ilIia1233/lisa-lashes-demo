@@ -1,22 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Lisa’s Lashes</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #222;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      border-bottom: 1px solid #eee;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 40px;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .icons {
+      display: flex;
+      gap: 16px;
+      font-size: 18px;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      padding: 12px 0;
+      background: #2b2b2b;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    nav a {
+      color: #fff;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      padding: 60px 80px;
+      align-items: center;
+    }
+
+    .hero-services h2 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 16px;
+    }
+
+    .hero-services ul {
+      list-style: disc;
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    .badge {
+      display: inline-block;
+      border: 1px solid #caa46a;
+      padding: 10px 16px;
+      border-radius: 50%;
+      font-size: 12px;
+      color: #caa46a;
+    }
+
+    /* ===== SECTION ===== */
+    section {
+      padding: 60px 80px;
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    p {
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .center {
+      max-width: 900px;
+      margin: auto;
+      text-align: center;
+    }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 40px;
+    }
+
+    .testimonial {
+      font-size: 14px;
+    }
+
+    /* ===== PRODUCTS ===== */
+    .products {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .product {
+      border: 1px solid #eee;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .price {
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    /* ===== BOOKING ===== */
+    .booking {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 60px;
+      align-items: flex-start;
+    }
+
+    .booking-box {
+      border: 1px solid #eee;
+      padding: 30px;
+    }
+
+    .booking-box select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    .contact-info {
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: #111;
+      color: #fff;
+      padding: 50px 80px;
+      font-size: 14px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+    }
+
+    .footer-title {
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+  </style>
 </head>
+
 <body>
 
-  <div id="header"></div>
-  <div id="promo"></div>
-  <div id="welcome"></div>
-  <div id="testimonials"></div>
-  <div id="products"></div>
-  <div id="booking"></div>
-  <div id="footer"></div>
+<!-- HEADER -->
+<header>
+  <div class="top-bar">
+    <div class="logo">Lisa’s Lashes</div>
+    <div class="icons">
+      🔍 🛒 👤
+    </div>
+  </div>
 
-  <script src="loadSections.js"></script>
-  <script src="slider.js"></script>
+  <nav>
+    <a href="#">Catalogue</a>
+    <a href="#">About us</a>
+    <a href="#">For Lash Stylists</a>
+    <a href="#">Shop</a>
+    <a href="#">Become a partner</a>
+    <a href="#">Courses</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <img src="https://via.placeholder.com/700x450" alt="Lashes">
+  </div>
+
+  <div class="hero-services">
+    <h2>Our Services</h2>
+    <ul>
+      <li>Lash extensions</li>
+      <li>Lash lift</li>
+      <li>Gel Nails</li>
+      <li>BIAB Nails</li>
+    </ul>
+    <span class="badge">50% OFF<br>NEW CUSTOMERS</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section>
+  <h3>Welcome to Lisa’s Lashes</h3>
+  <div class="center">
+    <p>
+      Lisa’s Lashes is a true reflection of her personal style and provides luxurious,
+      celebrity treatment in a very comfortable approach. Our salons deliver premium
+      beauty services across lashes, nails, and more.
+    </p>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <h3>What our clients say</h3>
+  <div class="testimonials">
+    <div class="testimonial">“Love the Cooper lashes. Will buy again.” – Marie</div>
+    <div class="testimonial">“Great value and fast delivery.” – April</div>
+    <div class="testimonial">“Excellent quality, trusted brand.” – Katie</div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section>
+  <h3>Products</h3>
+  <div class="products">
+    <div class="product">
+      <img src="https://via.placeholder.com/200" alt="">
+      <div>Stevie Lashes</div>
+      <div class="price">€7.50</div>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/200" alt="">
+      <div>Cooper Lashes</div>
+      <div class="price">€7.50</div>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/200" alt="">
+      <div>Lashes for thin eyes</div>
+      <div class="price">€4.00</div>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/200" alt="">
+      <div>Stevie Lashes</div>
+      <div class="price">€7.50</div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section>
+  <h3>Book our Services</h3>
+
+  <div class="booking">
+    <div class="booking-box">
+      <select>
+        <option>Select Category</option>
+      </select>
+      <select>
+        <option>Select Service</option>
+      </select>
+      <select>
+        <option>Employee</option>
+      </select>
+    </div>
+
+    <div class="contact-info">
+      <strong>Contact</strong><br>
+      T: 087 930 3993<br>
+      info@lisalashes.com<br><br>
+
+      <strong>Opening Hours</strong><br>
+      Mon–Fri: 8am–8pm<br>
+      Sat: 9am–6pm<br>
+      Sun: 9am–4pm<br><br>
+
+      <strong>Location</strong><br>
+      Dublin 15 area
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-title">Lisa’s Lashes</div>
+      Dublin 15<br>
+      info@lisalashes.ie
+    </div>
+
+    <div>
+      <div class="footer-title">Links</div>
+      Catalogue<br>
+      About us<br>
+      Shop
+    </div>
+
+    <div>
+      <div class="footer-title">Support</div>
+      FAQs<br>
+      Terms of Use<br>
+      Privacy Policy
+    </div>
+
+    <div>
+      <div class="footer-title">Newsletter</div>
+      Get 15% off your first order
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>
