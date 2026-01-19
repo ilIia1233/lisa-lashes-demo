@@ -1,20 +1,30 @@
-// Dynamically load HTML partials into the main document
-const sections = [
-  { id: 'header-section', file: 'sections/header.html' },
-  { id: 'promo-section', file: 'sections/promo.html' },
-  { id: 'welcome-section', file: 'sections/welcome.html' },
-  { id: 'testimonials-section', file: 'sections/testimonials.html' },
-  { id: 'trustpilot-section', file: 'sections/trustpilot.html' },
-  { id: 'products-section', file: 'sections/products.html' },
-  { id: 'booking-section', file: 'sections/booking.html' },
-  { id: 'footer-section', file: 'sections/footer.html' }
-];
+document.addEventListener("DOMContentLoaded", () => {
+  const sections = {
+    header: "sections/header.html",
+    promo: "sections/promo.html",
+    welcome: "sections/welcome.html",
+    testimonials: "sections/testimonials.html",
+    products: "sections/products.html",
+    booking: "sections/booking.html",
+    footer: "sections/footer.html"
+  };
 
-sections.forEach(({ id, file }) => {
-  const container = document.getElementById(id);
-  if (container) {
+  Object.entries(sections).forEach(([id, file]) => {
+    const container = document.getElementById(id);
+    if (!container) return;
+
     fetch(file)
-      .then(res => res.text())
-      .then(html => { container.innerHTML = html; });
-  }
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load ${file}`);
+        }
+        return response.text();
+      })
+      .then(html => {
+        container.innerHTML = html;
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  });
 });
