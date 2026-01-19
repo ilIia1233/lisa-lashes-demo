@@ -7,6 +7,20 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
+<script>
+(function () {
+  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+
+  if (isNotPhone) {
+    if (!window.location.pathname.includes("index.html")) {
+      window.location.replace("index.html");
+    }
+  }
+})();
+</script>
+
+
+
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
