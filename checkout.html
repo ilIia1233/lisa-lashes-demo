@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Checkout – Lisa’s Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="checkout.css">
+</head>
+
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">Lisa’s Lashes</div>
+    <div class="header-icons">🔍 🛒 👤</div>
+  </div>
+  <nav>
+    <span>Catalogue</span>
+    <span>About us</span>
+    <span>For Lash Stylists</span>
+    <span>Shop</span>
+    <span>Become a partner</span>
+    <span>Courses</span>
+  </nav>
+</header>
+
+<div class="checkout-wrapper">
+
+  <!-- LEFT -->
+  <div>
+    <div class="panel">
+      <div class="panel-title">Your details</div>
+
+      <div class="field">
+        <label>First name <span>Required</span></label>
+        <input type="text">
+      </div>
+
+      <div class="field">
+        <label>Last name <span>Required</span></label>
+        <input type="text">
+      </div>
+
+      <div class="field">
+        <label>Email address <span>Required</span></label>
+        <input type="email">
+      </div>
+
+      <div class="field">
+        <label>Phone number <span>Required</span></label>
+        <input type="tel">
+      </div>
+
+      <button class="confirm-btn">Confirm details</button>
+    </div>
+
+    <div class="panel collapsed">Delivery</div>
+    <div class="panel collapsed">Payment & Gift Cards</div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="summary">
+    <h4>Order Summary <span style="color:#888;">(3 items)</span></h4>
+
+    <div class="summary-item">
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+    <div class="summary-item">
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+    <div class="summary-item">
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+
+    <div class="promo">
+      <input type="text" placeholder="Promo code">
+      <button class="apply-btn">Apply</button>
+    </div>
+
+    <div class="totals">
+      <div class="total-row">
+        <span>Subtotal</span>
+        <span>35.65€</span>
+      </div>
+      <div class="total-row savings">
+        <span>Savings</span>
+        <span>-1.76€</span>
+      </div>
+      <div class="total-row final">
+        <span>Total (3 items)</span>
+        <span>34.89€</span>
+      </div>
+    </div>
+
+    <div class="help">
+      Need help? <button>Contact us!</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Inter, sans-serif;
+  background: #fff;
+  color: #222;
+}
+
+/* ================= HEADER ================= */
+header {
+  border-bottom: 1px solid #ddd;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 40px;
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+}
+
+.header-icons {
+  display: flex;
+  gap: 18px;
+  font-size: 18px;
+}
+
+nav {
+  background: #2b2b2b;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+/* ================= BOOKING ================= */
+.booking-wrapper {
+  max-width: 1200px;
+  margin: 50px auto;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 1fr;
+  gap: 60px;
+}
+
+/* LEFT */
+.booking-left label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.select-box {
+  background: #e5e5e5;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 22px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* CENTER */
+.calendar-box {
+  background: #dedede;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.date-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.date-input input {
+  border: none;
+  border-bottom: 2px solid #caa46a;
+  padding: 6px;
+  background: transparent;
+  font-size: 14px;
+  text-align: center;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  font-size: 13px;
+}
+
+.calendar-grid div {
+  padding: 6px 0;
+}
+
+.active-day {
+  background: #caa46a;
+  color: #fff;
+  border-radius: 50%;
+}
+
+/* RIGHT */
+.booking-right {
+  font-size: 14px;
+}
+
+.info-block {
+  margin-bottom: 30px;
+}
+
+.info-title {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+/* ================= FOOTER ================= */
+footer {
+  background: #111;
+  color: #fff;
+  padding: 40px;
+  margin-top: 60px;
+  font-size: 14px;
+}
+
+.footer-grid {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1.5fr;
+  gap: 40px;
+}
+
+.footer-links span {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.newsletter input {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+}
+
+.newsletter button {
+  width: 100%;
+  padding: 8px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+}
+
