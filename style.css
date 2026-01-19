@@ -43,7 +43,7 @@ background:linear-gradient(90deg,#A17E50,#AE9769);font-weight: 400;
 .search input{padding:12px 14px 12px 14px;padding-right:38px;border-radius:20px;border:1px solid #000;width:155px;height:20px;color:#333;font-size:14px}
 .search input::placeholder{color:#999;font-size:14px}
 .search-icon{position:absolute;right:5px;cursor:pointer;pointer-events:none}
-.icon{font-size:15px;cursor:pointer}
+.icon{font-size:35px;cursor:pointer}
 .nav{background:#1f1f1f;color:#fff;display:flex;justify-content:center;padding:18px}
 .nav a{color:#fff;text-decoration:none;margin:0 12px;font-size:20px}
 .nav span{color:#777;font-size:20px}
