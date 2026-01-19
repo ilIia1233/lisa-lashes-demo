@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Book Our Services – Lisa’s Lashes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Inter, sans-serif;
+  background: #fff;
+  color: #222;
+}
+
+/* ================= HEADER ================= */
+header {
+  border-bottom: 1px solid #ddd;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 40px;
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+}
+
+.header-icons {
+  display: flex;
+  gap: 18px;
+  font-size: 18px;
+}
+
+nav {
+  background: #2b2b2b;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+/* ================= BOOKING ================= */
+.booking-wrapper {
+  max-width: 1200px;
+  margin: 50px auto;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 1fr;
+  gap: 60px;
+}
+
+/* LEFT */
+.booking-left label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.select-box {
+  background: #e5e5e5;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 22px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* CENTER */
+.calendar-box {
+  background: #dedede;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.date-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.date-input input {
+  border: none;
+  border-bottom: 2px solid #caa46a;
+  padding: 6px;
+  background: transparent;
+  font-size: 14px;
+  text-align: center;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  font-size: 13px;
+}
+
+.calendar-grid div {
+  padding: 6px 0;
+}
+
+.active-day {
+  background: #caa46a;
+  color: #fff;
+  border-radius: 50%;
+}
+
+/* RIGHT */
+.booking-right {
+  font-size: 14px;
+}
+
+.info-block {
+  margin-bottom: 30px;
+}
+
+.info-title {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+/* ================= FOOTER ================= */
+footer {
+  background: #111;
+  color: #fff;
+  padding: 40px;
+  margin-top: 60px;
+  font-size: 14px;
+}
+
+.footer-grid {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1.5fr;
+  gap: 40px;
+}
+
+.footer-links span {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.newsletter input {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+}
+
+.newsletter button {
+  width: 100%;
+  padding: 8px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">Lisa’s Lashes</div>
+    <div class="header-icons">🔍 🛒 👤</div>
+  </div>
+  <nav>
+    <span>Catalogue</span>
+    <span>About us</span>
+    <span>For Lashes Stylists</span>
+    <span>Shop</span>
+    <span>Become a partner</span>
+    <span>Courses</span>
+  </nav>
+</header>
+
+<!-- BOOKING -->
+<div class="booking-wrapper">
+
+  <!-- LEFT -->
+  <div class="booking-left">
+    <label>Category</label>
+    <div class="select-box">Select Category ⌄</div>
+
+    <label>Service</label>
+    <div class="select-box">Select Service ⌄</div>
+
+    <label>Employee</label>
+    <div class="select-box">Any ⌄</div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="calendar-box">
+    <div class="date-input">
+      <span>Date</span>
+      <input value="08/17/2025">
+      📅
+    </div>
+
+    <div class="calendar-header">
+      <span>‹ Aug</span>
+      <span>2025</span>
+      <span>›</span>
+    </div>
+
+    <div class="calendar-grid">
+      <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+      <div>26</div><div>27</div><div>28</div><div>29</div><div>30</div><div>31</div><div>1</div>
+      <div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div>
+      <div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div>
+      <div>16</div><div class="active-day">17</div><div>18</div><div>19</div><div>20</div><div>21</div><div>22</div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:13px;">
+      <span>Cancel</span>
+      <span>OK</span>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="booking-right">
+    <div class="info-block">
+      <div class="icon">📞</div>
+      <div class="info-title">Contact</div>
+      T: 087 970 3993<br>
+      info@LisaLashes.com
+    </div>
+
+    <div class="info-block">
+      <div class="icon">🕒</div>
+      <div class="info-title">Opening Hours</div>
+      Mon – Fri: 8 am – 8 pm<br>
+      Sat: 9 am – 6 pm<br>
+      Sun: 9 am – 4 pm
+    </div>
+
+    <div class="info-block">
+      <div class="icon">📍</div>
+      <div class="info-title">Our Location</div>
+      Dublin 15 area
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>MAP</div>
+
+    <div class="footer-links">
+      <span>Catalogue</span>
+      <span>About us</span>
+      <span>For Lashes Stylists</span>
+      <span>Shop</span>
+      <span>Become a partner</span>
+      <span>Courses</span>
+    </div>
+
+    <div>
+      FAQs<br>
+      Terms of Use<br>
+      Privacy Policy
+    </div>
+
+    <div class="newsletter">
+      Subscribe to our newsletter and get 15% discount
+      <input placeholder="What's your email?">
+      <button>Subscribe</button><br><br>
+      Lisa’s Lashes, Dublin 15<br>
+      Tel: 087 1234567<br>
+      info@LisasLashes.ie
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
