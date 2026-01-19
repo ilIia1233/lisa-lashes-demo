@@ -45,8 +45,8 @@ background:linear-gradient(90deg,#A17E50,#AE9769);font-weight: 400;
 .search-icon{position:absolute;right:5px;cursor:pointer;pointer-events:none}
 .icon{font-size:15px;cursor:pointer}
 .nav{background:#1f1f1f;color:#fff;display:flex;justify-content:center;padding:18px}
-.nav a{color:#fff;text-decoration:none;margin:0 12px;font-size:20px}
-.nav span{color:#777;font-size:20px}
+.nav a{color:#fff;text-decoration:none;margin:0 12px;font-size:35px}
+.nav span{color:#777;font-size:35px}
 .promo{width:100%;height:auto;display:block;margin:0;padding-bottom:0;position:relative}
 .promo::after{content:'';display:block;width:1000px;height:2px;background:#000;margin:0 auto;margin-top:-2px}
 .welcome{max-width:1100px;margin:60px auto;padding:60px 40px;text-align:center;position:relative}
