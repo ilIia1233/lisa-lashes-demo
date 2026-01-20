@@ -53,15 +53,17 @@ body{margin:0;font-family:'Allerta'}
   align-items:center
 }
 
-.search input{
-  padding:12px 14px 12px 14px;
+.header .search input {
+  padding:12px 14px;
   padding-right:38px;
   border-radius:20px;
   border:1px solid #000;
-  width:155px;height:20px;
+  width:155px;
+  height:20px;
   color:#333;
-  font-size:14px
+  font-size:14px;
 }
+
 .search input::placeholder{color:#999;font-size:14px}
 
 .search-icon{
@@ -237,6 +239,7 @@ body{margin:0;font-family:'Allerta'}
 
 
 .socials img{width:24px;height:24px}
+
 
 
 
