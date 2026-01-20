@@ -1,0 +1,222 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Inter, sans-serif;
+  background: #fff;
+  color: #222;
+}
+
+/* ================= HEADER ================= */
+
+.header{width:100%}
+
+.top{display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:16px 40px 6px
+}
+
+.left{
+  display:flex;
+  align-items:center;
+  gap:20px
+}
+
+.logo{height:125px}
+
+.socials img{
+  height:28px;
+  margin-right:10px
+}
+
+.brand{
+  font-family:'Allura',cursive;font-size:96px;
+
+  background:linear-gradient(90deg,#A17E50,#AE9769);
+  font-weight: 400;
+  -webkit-background-clip:text;
+  color:transparent;margin:0
+}
+
+.right{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  justify-content:flex-end
+}
+
+.search{
+  position:relative;
+  display:flex;
+  align-items:center
+}
+
+.search input{
+  padding:12px 14px 12px 14px;
+  padding-right:38px;
+  border-radius:20px;
+  border:1px solid #000;
+  width:155px;height:20px;
+  color:#333;
+  font-size:14px
+}
+.search input::placeholder{color:#999;font-size:14px}
+
+.search-icon{
+  position:absolute;
+  right:5px;
+  cursor:pointer;
+  pointer-events:none
+}
+
+.icon{font-size:15px;cursor:pointer}
+
+.nav{
+  background:#1f1f1f;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  padding:18px
+}
+
+.nav a{
+  color:#fff;
+  text-decoration:none;
+  margin:0 12px;
+  font-size:20px
+}
+
+.nav span{color:#777;font-size:20px}
+
+
+/* ================= BOOKING ================= */
+.booking-wrapper {
+  max-width: 1200px;
+  margin: 50px auto;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 1fr;
+  gap: 60px;
+}
+
+/* LEFT */
+.booking-left label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.select-box {
+  background: #e5e5e5;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 22px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* CENTER */
+.calendar-box {
+  background: #dedede;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.date-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.date-input input {
+  border: none;
+  border-bottom: 2px solid #caa46a;
+  padding: 6px;
+  background: transparent;
+  font-size: 14px;
+  text-align: center;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  font-size: 13px;
+}
+
+.calendar-grid div {
+  padding: 6px 0;
+}
+
+.active-day {
+  background: #caa46a;
+  color: #fff;
+  border-radius: 50%;
+}
+
+/* RIGHT */
+.booking-right {
+  font-size: 14px;
+}
+
+.info-block {
+  margin-bottom: 30px;
+}
+
+.info-title {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+/* ================= FOOTER ================= */
+footer {
+  background: #111;
+  color: #fff;
+  padding: 40px;
+  margin-top: 60px;
+  font-size: 14px;
+}
+
+.footer-grid {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1.5fr;
+  gap: 40px;
+}
+
+.footer-links span {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.newsletter input {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+}
+
+.newsletter button {
+  width: 100%;
+  padding: 8px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+}
+
