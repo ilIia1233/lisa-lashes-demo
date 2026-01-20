@@ -8,6 +8,17 @@
 <link rel="stylesheet" href="booking-mobile.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
+<script>
+(function () {
+  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+
+  if (isNotPhone) {
+    if (!window.location.pathname.includes("booking.html")) {
+      window.location.replace("booking.html");
+    }
+  }
+})();
+</script>
 </head>
 
 <body>
@@ -77,3 +88,4 @@
 
 </body>
 </html>
+
