@@ -70,7 +70,6 @@ body {
 .icon{font-size:15px;cursor:pointer}
 
 .nav{
-  font-family: "Allura";
   background:#1f1f1f;
   color:#fff;
   display:flex;
@@ -79,6 +78,7 @@ body {
 }
 
 .nav a{
+  font-family: 'Allura', cursive;
   color:#fff;
   text-decoration:none;
   margin:0 12px;
