@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!leftBtn || !rightBtn || !slider) return;
 
   let isAnimating = false;
-  const animationDuration = 300; // must match CSS
+  const animationDuration = 400; // must match CSS
 
   function moveRight() {
     if (isAnimating) return;
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const cards = slider.querySelectorAll(".product-slider-card");
     if (cards.length <= 1) return;
 
-    const cardWidth = cards[0].offsetWidth + 40;
+    const cardWidth = cards[0].offsetWidth + 60;
     const firstCard = cards[0];
 
     // Fade out first card
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const cards = slider.querySelectorAll(".product-slider-card");
     if (cards.length <= 1) return;
 
-    const cardWidth = cards[0].offsetWidth + 40;
+    const cardWidth = cards[0].offsetWidth + 60;
     const lastCard = cards[cards.length - 1];
 
     // Prepare last card
@@ -76,3 +76,4 @@ document.addEventListener("DOMContentLoaded", function () {
   rightBtn.addEventListener("click", moveRight);
   leftBtn.addEventListener("click", moveLeft);
 });
+
