@@ -592,6 +592,21 @@ z-index:999
     min-width: 0;
   }
 }
+footer {
+  background: #111;
+  color: #fff;
+  padding: 50px 40px;
+  margin-top: 100px;
+  font-size: 14px;
+}
+
+.footer-grid {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1.6fr;
+  gap: 40px;
+}
 .footer{background:#1b1b1b;color:#fff;padding:40px}
 .footer-grid{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:40px}
 
