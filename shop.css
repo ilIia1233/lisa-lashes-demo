@@ -70,6 +70,7 @@ body {
 .icon{font-size:15px;cursor:pointer}
 
 .nav{
+  font-family: "Allura";
   background:#1f1f1f;
   color:#fff;
   display:flex;
