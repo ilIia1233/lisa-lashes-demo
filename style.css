@@ -44,7 +44,17 @@
   font-family: 'Inconsolata Patched';
   src: local('Inconsolata Patched'), url('https://rawgit.com/ryanoasis/nerd-fonts/master/patched-fonts/Inconsolata/Inconsolata%20for%20Powerline%20Plus%20Nerd%20File%20Types%20Mono%20Plus%20Font%20Awesome%20Plus%20Octicons%20Plus%20Pomicons.otf') format('opentype');
 }
-body{margin:0;font-family:'Allerta'}
+body {
+  margin: 0;
+  font-family: 'Allerta';
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
 .header{width:100%}
 
 .top{display:grid;
@@ -591,21 +601,6 @@ z-index:999
     max-width: 100%;
     min-width: 0;
   }
-}
-footer {
-  background: #111;
-  color: #fff;
-  padding: 50px 40px;
-  margin-top: 100px;
-  font-size: 14px;
-}
-
-.footer-grid {
-  max-width: 1200px;
-  margin: auto;
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr 1.6fr;
-  gap: 40px;
 }
 .footer{background:#1b1b1b;color:#fff;padding:40px}
 .footer-grid{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:40px}
