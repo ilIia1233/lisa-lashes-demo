@@ -7,6 +7,19 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="checkout.css">
+
+<script>
+(function () {
+  const isPhone = window.matchMedia("(max-width: 600px)").matches;
+
+  if (isPhone) {
+    // защита от бесконечного редиректа
+    if (!window.location.pathname.includes("checkout-mobile.html")) {
+      window.location.replace("checkout-mobile.html");
+    }
+  }
+})();
+</script>
 </head>
 
 <body>
