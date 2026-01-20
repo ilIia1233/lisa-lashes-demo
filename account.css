@@ -118,3 +118,19 @@ nav {
   font-size: 13px;
   cursor: not-allowed;
 }
+
+footer {
+  background: #111;
+  color: #fff;
+  padding: 50px 40px;
+  margin-top: 100px;
+  font-size: 14px;
+}
+
+.footer-grid {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1.6fr;
+  gap: 40px;
+}
