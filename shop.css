@@ -111,6 +111,7 @@ h1 {
   font-size: 14px;
   border-radius: 40px;
   padding-right: 90px;
+  margin-right: 10px;
   border: 1px solid #ccc;}
 
 .controls select {  appearance: none;
