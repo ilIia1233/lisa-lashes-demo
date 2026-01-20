@@ -7,36 +7,111 @@ body {
 }
 
 /* ================= HEADER ================= */
-header {
-  border-bottom: 1px solid #ddd;
+.header {
+  width: 100%;
+  background: #fff;
 }
 
-.header-top {
+.header * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.header .top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 16px 40px 6px;
+}
+
+.header .left {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px 40px;
+  gap: 20px;
 }
 
-.logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
+.header .logo {
+  height: 80px;
 }
 
-.header-icons {
+.header .socials img {
+  height: 26px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.header .brand {
+  font-family: 'Allura', cursive;
+  font-size: 64px;
+  font-weight: 400;
+  background: linear-gradient(90deg, #A17E50, #AE9769);
+  -webkit-background-clip: text;
+  color: transparent;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.header .right {
   display: flex;
-  gap: 18px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.header .search {
+  position: relative;
+}
+
+.header .search input {
+  padding: 10px 36px 10px 14px;
+  border-radius: 20px;
+  border: 1px solid #000;
+  font-size: 14px;
+  width: 160px;
+}
+
+.header .search input::placeholder {
+  color: #999;
+}
+
+.header .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.header .icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.header .icon svg path {
+  stroke: #000;
+  transition: stroke 0.2s ease;
+}
+
+.header .icon:hover svg path {
+  stroke: #A17E50;
+}
+
+.header .nav {
+  background: #1f1f1f;
+  display: flex;
+  justify-content: center;
+  padding: 18px;
+  gap: 12px;
+}
+
+.header .nav a {
+  color: #fff;
+  text-decoration: none;
   font-size: 18px;
 }
 
-nav {
-  background: #2b2b2b;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  gap: 28px;
-  padding: 10px 0;
-  font-size: 14px;
+.header .nav span {
+  color: #777;
 }
 
 /* ================= PAGE ================= */
@@ -176,4 +251,5 @@ footer {
   grid-template-columns: 1.2fr 1fr 1fr 1.6fr;
   gap: 40px;
 }
+
 
