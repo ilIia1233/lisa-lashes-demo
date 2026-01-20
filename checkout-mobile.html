@@ -6,6 +6,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="checkout-mobile.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<script>
+(function () {
+  const isNotPhone = window.matchMedia("(min-width: 601px)").matches;
+
+  if (isNotPhone) {
+    if (!window.location.pathname.includes("checkout.html")) {
+      window.location.replace("checkout.html");
+    }
+  }
+})();
+</script>
 </head>
 
 <body>
@@ -92,3 +104,4 @@
 
 </body>
 </html>
+
