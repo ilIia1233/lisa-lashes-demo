@@ -1,18 +1,15 @@
+body {
+  font-family: Inter, sans-serif;
+  background: #fff;
+  color: #222;
+}
 
+/* ================= HEADER ================= */
 @font-face {
   font-family: 'Inconsolata Patched';
   src: local('Inconsolata Patched'), url('https://rawgit.com/ryanoasis/nerd-fonts/master/patched-fonts/Inconsolata/Inconsolata%20for%20Powerline%20Plus%20Nerd%20File%20Types%20Mono%20Plus%20Font%20Awesome%20Plus%20Octicons%20Plus%20Pomicons.otf') format('opentype');
 }
-body{
-  margin:0;
-  font-family:'DM Sans', sans-serif;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-main {
-  flex: 1;
-}
+body{margin:0;font-family:'Allerta'}
 .header{width:100%}
 
 .top{display:grid;
