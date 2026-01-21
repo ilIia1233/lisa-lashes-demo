@@ -80,7 +80,17 @@ body{margin:0;font-family:'Allerta'}
   color:#fff;
   text-decoration:none;
   margin:0 12px;
-  font-size:20px
+  font-size:20px;
+  transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+
+.nav a:hover {
+  transform: scale(1.1);
+  text-shadow: 0 0 10px #ffffff;
+}
+.icon:hover svg path {
+  stroke: #A17E50;
+  transition: stroke 0.3s ease;
 }
 
 .nav span{color:#777;font-size:20px}
@@ -188,6 +198,7 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
 
 
 
