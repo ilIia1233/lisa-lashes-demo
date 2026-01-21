@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const cardWidth = cards[0].offsetWidth + 30;
     const firstCard = cards[0];
+    const lastCard = cards[cards.length - 1];
 
     // Fade out first card
     firstCard.classList.add("fade-out");
@@ -37,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Force fade-in
       requestAnimationFrame(() => {
-        firstCard.classList.remove("fade-in");
+        lastCard.classList.remove("fade-in");
       });
 
       isAnimating = false;
@@ -45,34 +46,37 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function moveLeft() {
-    if (isAnimating) return;
-    isAnimating = true;
+  if (isAnimating) return;
+  isAnimating = true;
 
-    const cards = slider.querySelectorAll(".product-slider-card");
-    if (cards.length <= 1) return;
+  const cards = slider.querySelectorAll(".product-slider-card");
+  if (cards.length <= 1) return;
 
-    const cardWidth = cards[0].offsetWidth + 30;
-    const lastCard = cards[cards.length - 1];
+  const cardWidth = cards[0].offsetWidth + 30;
+  const lastCard = cards[cards.length - 1];
 
-    // Prepare last card
-    lastCard.classList.add("fade-in");
-    slider.insertBefore(lastCard, cards[0]);
+  // Fade out last card
+  lastCard.classList.add("fade-out");
+
+  slider.style.transition = "transform 0.4s ease";
+  slider.style.transform = `translateX(${cardWidth}px)`;
+
+  setTimeout(() => {
     slider.style.transition = "none";
-    slider.style.transform = `translateX(-${cardWidth}px)`;
+    slider.style.transform = "translateX(0)";
+
+    lastCard.classList.remove("fade-out");
+    lastCard.classList.add("fade-in");
+
+    slider.insertBefore(lastCard, cards[0]);
 
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        slider.style.transition = "transform 0.4s ease";
-        slider.style.transform = "translateX(0)";
-        lastCard.classList.remove("fade-in");
-      });
+      lastCard.classList.remove("fade-in");
     });
 
-    setTimeout(() => {
-      isAnimating = false;
-    }, animationDuration);
-  }
-
+    isAnimating = false;
+  }, animationDuration);
+}
   rightBtn.addEventListener("click", moveRight);
   leftBtn.addEventListener("click", moveLeft);
 });
