@@ -114,6 +114,7 @@ body {
   font-family: 'Inter', sans-serif;
   background: #fff;
   color: #222;
+  margin: 0;
 }
 
 /* PAGE */
@@ -186,4 +187,5 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
 
