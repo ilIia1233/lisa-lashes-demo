@@ -155,33 +155,48 @@ body{margin:0;font-family:'Allerta'}
 
 .course-info ul {
   list-style: none;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .course-info li {
-  font-size: 14px;
-  margin-bottom: 6px;
+  font-size: 15px;
+  margin-bottom: 8px;
+  color: #333;
 }
 
 .course-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: auto; 
 }
 
 .price {
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: bold;
+  color: #A17E50;
+  font-family: 'Playfair Display', serif;
 }
 
 .book-btn {
-  padding: 12px 28px;
-  background: #000;
+  padding: 14px 32px;
+  background: #1f1f1f;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.book-btn:hover {
+  background-color: #333;
+}
+
+.course-info {
+  display: flex;
+  flex-direction: column;
 }
 
 /* ================= WHY US ================= */
