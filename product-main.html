@@ -4,22 +4,12 @@
 <meta charset="UTF-8" />
 <title>Cooper Lashes – Lisa’s Lashes</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Allerta&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="product-main.css">
 </head>
 
-<body>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Lisa’s Lashes – Footer</title>
-<link rel="stylesheet" href="header.css">
-<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
-</head>
 <body>
 
 <header class="header">
@@ -69,107 +59,112 @@
     <a href="course.html">Courses</a>
   </nav>
 </header>
-</body>
-</html>
 
+<main>
 <!-- PRODUCT -->
-<div class="product-wrapper">
+  <section class="product-detail">
 
   <!-- LEFT -->
-  <div class="product-left">
+  <div class="pd-left">
     <h1>Cooper Lashes</h1>
-    <div class="price">€7.50</div>
-    <div class="tax">Tax included.</div>
+    <div class="price">€7.50 <span>Tax included.</span></div>
 
-    <button class="btn cart-btn">🛒 ADD TO CART</button>
-    <button class="btn buy-btn">BUY NOW</button>
+    <button class="btn-outline">🛒 ADD TO CART</button>
+    <button class="btn-dark">BUY NOW</button>
 
-    <div class="payment-note">More payment options</div>
+    <div class="thumbnails">
+      <img src="assets/images/Main Image.png" style="width: 31%;">
+      <img src="assets/images/picture 1 for product.png" style="width: 31%;">
+      <img src="assets/images/picture 2 for product.png"  style="width: 31%;">
+    </div>
 
     <div class="rating">
-      <span class="stars">★★★★★</span>
-      <span>Based on 456 reviews</span>
+      ★★★★★ <span>Based on <b>456 reviews</b></span>
     </div>
   </div>
 
   <!-- CENTER -->
-  <div class="product-image">
-    <img src="https://via.placeholder.com/420x420" alt="">
+  <div class="pd-center">
+    <img src="assets/images/main product image.png" alt="Cooper Lashes" style="height: 80%;width: 100%"/>    
   </div>
 
   <!-- RIGHT -->
-  <div class="product-right">
-    <h3>Cooper</h3>
+  <div class="pd-right">
+    <h2>Cooper</h2>
     <p>
       Elevate your evening look with our Premium 3D Mink Strip Lashes.
-      Hand-crafted with ethically sourced fibers.
+      Hand-crafted with high-quality fibers, these lashes feature a
+      multi-layered design for enhanced depth and volume.
     </p>
 
-    <h3>Application</h3>
-    <ul>
+    <h4>Application</h4>
+    <ol>
       <li>Peel lashes from tray with tweezers</li>
-      <li>Trim to fit your eye shape</li>
-      <li>Apply thin lash glue and wait 30 seconds</li>
-      <li>Press gently onto lash line</li>
-    </ul>
+      <li>Trim from the outer corner to fit eye shape</li>
+      <li>Apply thin layer of lash glue and wait 30 seconds</li>
+      <li>Apply gently to the lash line</li>
+    </ol>
 
     <div class="qty-cart">
       <div class="qty">
         <button>-</button>
-        <input value="1">
+        <span>1</span>
         <button>+</button>
       </div>
-      <button class="btn cart-btn">ADD TO CART</button>
+      <button class="btn-outline">ADD TO CART</button>
     </div>
+
+    <p class="note">* Lash glue not included.</p>
   </div>
 
-</div>
+</section>
 
 <!-- RECOMMENDED -->
-<div class="section">
+<div class="section recommended">
   <h2>You Might Also Like</h2>
   <div class="cards">
     <div class="card">
-      <img src="https://via.placeholder.com/180">
+      <img src="assets/images/small preview product image.png">
       <div class="card-title">Stevie Lashes</div>
-      <div class="card-price">$7.5</div>
+      <div class="card-price">€7.5</div>
     </div>
     <div class="card">
-      <img src="https://via.placeholder.com/180">
+      <img src="assets/images/just product 2.png">
       <div class="card-title">Nails</div>
-      <div class="card-price">$5</div>
+      <div class="card-price">€5</div>
     </div>
     <div class="card">
-      <img src="https://via.placeholder.com/180">
+      <img src="assets/images/just product image 3.png">
       <div class="card-title">Lashes for thin eyes</div>
-      <div class="card-price">$4</div>
+      <div class="card-price">€4</div>
     </div>
     <div class="card">
-      <img src="https://via.placeholder.com/180">
+      <img src="assets/images/just product 4.png">
       <div class="card-title">Stevie Lashes</div>
-      <div class="card-price">$7.5</div>
+      <div class="card-price">€7.5</div>
     </div>
   </div>
 </div>
 
 <!-- REVIEWS -->
-<div class="section reviews">
+<div id="reviews" class="section reviews">
   <h2>Reviews</h2>
   <div class="review-grid">
     <div class="review">
-      <div class="review-name">Marie ★★★★★</div>
+      <div class="review-name">Jessica M. ★★★★★</div>
       Lorem ipsum dolor sit amet consectetur adipisicing elit.
     </div>
     <div class="review">
-      <div class="review-name">April ★★★★☆</div>
+      <div class="review-name">Sarah L. ★★☆☆☆</div>
       Lorem ipsum dolor sit amet consectetur adipisicing elit.
     </div>
     <div class="review">
-      <div class="review-name">Katie ★★★★★</div>
+      <div class="review-name">Emily R. ★★★★★</div>
       Lorem ipsum dolor sit amet consectetur adipisicing elit.
     </div>
   </div>
 </div>
+</main>
 
 <footer class="footer">
   <div class="footer-grid">
