@@ -1,0 +1,9 @@
+[submodule "lib/brewtils"]
+	path = lib/brewtils
+	url = git@github.com:coding-cpp/brewtils
+[submodule "lib/logger"]
+	path = lib/logger
+	url = git@github.com:coding-cpp/logger
+[submodule "lib/json"]
+	path = lib/json
+	url = git@github.com:coding-cpp/json
