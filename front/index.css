@@ -539,95 +539,363 @@ z-index:999
   display: block;
 }
 /* Book our Services section styling */
+@import url('https://fonts.googleapis.com/css2?family=Allerta&family=Allura&family=DM+Sans:wght@400;600&display=swap');
+.calendar {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Allerta', sans-serif;
+  background: #fff;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+/* Book Section Styles (from your website) */
 .book-section {
-  max-width: 1100px;
-  margin: 60px auto 0 auto;
-  padding: 0 24px 60px 24px;
+  max-width: 100%;
+  margin: 60px 0 0 0;
+  padding: 0;
   font-family: 'DM Sans', Arial, sans-serif;
 }
+
 .book-title {
-  font-size: 40px;
+  font-size: 48px;
   font-weight: 400;
   text-align: center;
   margin-bottom: 40px;
+  font-family: 'DM Sans', sans-serif;
 }
+
 .book-content {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
-  gap: 60px;
+  align-items: flex-start;
+  gap: 30px;
 }
+
+/* Left Column - Form */
 .book-form {
-  min-width: 260px;
-  max-width: 320px;
+  margin-right: 40px;
+  min-width: 280px;
+  max-width: 300px;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
+  font-size: 20px;
+  padding-top: 0;
+  flex-shrink: 0;
+  justify-content: center;
+}
+
+.book-form label {
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: 8px;
   font-size: 20px;
 }
-.book-form label {
-  font-weight: 600;
-  margin-bottom: 6px;
-}
+
 .book-form select {
-  padding: 12px 18px;
+  padding: 14px 20px;
   font-size: 18px;
-  border-radius: 4px;
-  border: none;
-  background: #d6d6d6;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  width: 100%;
+}
+
+.book-form select:hover {
+  border-color: #A17E50;
+  box-shadow: 0 2px 12px rgba(161,126,80,0.15);
+}
+
+.book-form select:focus {
+  outline: none;
+  border-color: #A17E50;
+  box-shadow: 0 0 0 3px rgba(161,126,80,0.1);
+}
+
+.time-slots {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
   margin-bottom: 12px;
 }
+
+.time-slot {
+  padding: 10px 8px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.time-slot:hover {
+  border-color: #A17E50;
+  background: #f7f5fa;
+  box-shadow: 0 2px 12px rgba(161,126,80,0.15);
+}
+
+.time-slot.selected {
+  background: linear-gradient(90deg, #A17E50, #AE9769);
+  color: #fff;
+  border-color: #A17E50;
+}
+
+.book-now-btn {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.book-now-btn:hover {
+  background: #1a1a1a;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.book-now-btn {
+  padding: 14px 20px;
+  font-size: 18px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(90deg, #A17E50, #AE9769);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(161,126,80,0.3);
+  margin-top: 10px;
+}
+
+.book-now-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(161,126,80,0.4);
+}
+
+/* Center Column - Calendar */
 .book-calendar {
-  min-width: 320px;
-  max-width: 380px;
+  min-width: 700px;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 18px;
   font-size: 18px;
+  padding-top: 0;
+  flex-shrink: 0;
 }
-.book-calendar label {
-  font-weight: 600;
-  margin-bottom: 6px;
-  align-self: flex-start;
+
+/* Calendar Styles */
+.calendar-container {
+  width: 100%;
+  background: #fff;
+  border-radius: 20px;
+  padding: 25px 25px 25px 25px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
 }
-.book-calendar input[type="date"] {
-  padding: 10px 16px;
-  font-size: 18px;
-  border-radius: 4px;
-  border: 1px solid #A17E50;
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.calendar-header .left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calendar-header h2 {
+  font-family: 'Allura', cursive;
+  font-size: 45px;
+  background: linear-gradient(90deg, #A17E50, #AE9769);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.icon img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.calendar-header .right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendar-header button {
+  background: #fff;
+  border: 1px solid #ccc;
+  color: #222;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendar-header button:hover {
   background: #f7f5fa;
-  margin-bottom: 12px;
+  border-color: #A17E50;
 }
+
+.today-btn {
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+  font-weight: 600;
+  padding: 8px 18px;
+}
+
+.today-btn:hover {
+  background: #1a1a1a;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #666;
+}
+
+.weekdays span {
+  text-align: center;
+  padding: 10px;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.day {
+  height: 60px;
+  background: #f7f5fa;
+  border-radius: 14px;
+  padding: 10px;
+  font-weight: 600;
+  position: relative;
+  color: #999;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.day:hover {
+  background: #fff;
+  border-color: #A17E50;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(161,126,80,0.15);
+}
+
+.day.current {
+  color: #222;
+  background: #fff;
+}
+
+.day.current:hover {
+  background: #fafafa;
+}
+
+.day.today {
+  border: 4px solid #A17E50;
+  background: #fff;
+  color: #222;
+  box-shadow: 0 4px 16px rgba(161,126,80,0.25);
+}
+
+.day.today:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(161,126,80,0.3);
+}
+
+.day.selected {
+  background: linear-gradient(90deg, #A17E50, #AE9769);
+  color: #fff;
+  border: 1px solid #A17E50;
+}
+
+.day.selected:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(161,126,80,0.3);
+}
+
+/* Right Column - Info */
 .book-info {
-  min-width: 260px;
-  max-width: 320px;
+  min-width: 240px;
+  max-width: 280px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 50px;
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: space-between;
+  padding-top: 0;
+  flex-shrink: 0;
+  height: 100%;
 }
+
 .book-info-block {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 8px;
+  width: 100%;
 }
+
 .book-info-icon {
   margin-bottom: 8px;
 }
+
 .book-info-title {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 600;
   margin-bottom: 4px;
 }
+
 .book-info-text {
-  font-size: 18px;
+  font-size: 16px;
   color: #222;
   line-height: 1.5;
 }
+
 @media (max-width: 900px) {
   .book-content {
     flex-direction: column;
@@ -639,6 +907,10 @@ z-index:999
     min-width: 0;
   }
 }
+
+
+
+/*Footer styling*/
 .footer{background:#1b1b1b;color:#fff;padding:40px}
 .footer-grid{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:40px}
 
