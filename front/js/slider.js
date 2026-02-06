@@ -1,83 +1,56 @@
-
-// Product slider with animated carousel + fade in/out
 document.addEventListener("DOMContentLoaded", function () {
-  const leftBtn = document.querySelector(".slider-arrow.left");
+  console.log("DOM loaded, starting slider initialization...");
+  
+  const sliderWrapper = document.querySelector(".product-slider-wrapper");
+  const sliderList = document.querySelector(".product-slider-list");
+  const slides = document.querySelectorAll(".product-slider-card");
   const rightBtn = document.querySelector(".slider-arrow.right");
-  const slider = document.querySelector(".product-slider-list");
-
-  if (!leftBtn || !rightBtn || !slider) return;
-
-  let isAnimating = false;
-  const animationDuration = 400; // must match CSS
-
-  function moveRight() {
-    if (isAnimating) return;
-    isAnimating = true;
-
-    const cards = slider.querySelectorAll(".product-slider-card");
-    if (cards.length <= 1) return;
-
-    const cardWidth = cards[0].offsetWidth + 30;
-    const firstCard = cards[0];
-    const lastCard = cards[cards.length - 1];
-
-    // Fade out first card
-    firstCard.classList.add("fade-out");
-
-    slider.style.transition = "transform 0.4s ease";
-    slider.style.transform = `translateX(-${cardWidth}px)`;
-
-    setTimeout(() => {
-      slider.style.transition = "none";
-      slider.style.transform = "translateX(0)";
-
-      firstCard.classList.remove("fade-out");
-      firstCard.classList.add("fade-in");
-
-      slider.appendChild(firstCard);
-
-      // Force fade-in
-      requestAnimationFrame(() => {
-        lastCard.classList.remove("fade-in");
-      });
-
-      isAnimating = false;
-    }, animationDuration);
+  const leftBtn = document.querySelector(".slider-arrow.left");
+  
+  console.log("Slider wrapper:", sliderWrapper);
+  console.log("Slider list:", sliderList);
+  console.log("Slides found:", slides.length);
+  console.log("Right button:", rightBtn);
+  console.log("Left button:", leftBtn);
+  
+  if (!sliderList || !slides.length || !rightBtn || !leftBtn) {
+    console.error("Missing elements!");
+    return;
   }
-
-  function moveLeft() {
-  if (isAnimating) return;
-  isAnimating = true;
-
-  const cards = slider.querySelectorAll(".product-slider-card");
-  if (cards.length <= 1) return;
-
-  const cardWidth = cards[0].offsetWidth + 30;
-  const lastCard = cards[cards.length - 1];
-
-  // Fade out last card
-  lastCard.classList.add("fade-out");
-
-  slider.style.transition = "transform 0.4s ease";
-  slider.style.transform = `translateX(${cardWidth}px)`;
-
-  setTimeout(() => {
-    slider.style.transition = "none";
-    slider.style.transform = "translateX(0)";
-
-    lastCard.classList.remove("fade-out");
-    lastCard.classList.add("fade-in");
-
-    slider.insertBefore(lastCard, cards[0]);
-
-    requestAnimationFrame(() => {
-      lastCard.classList.remove("fade-in");
-    });
-
-    isAnimating = false;
-  }, animationDuration);
-}
-  rightBtn.addEventListener("click", moveRight);
-  leftBtn.addEventListener("click", moveLeft);
+  
+  let currentSlide = 0;
+  const numberOfSlides = slides.length;
+  
+  console.log("Total slides:", numberOfSlides);
+  
+  // Test button clicks
+  rightBtn.addEventListener("click", () => {
+    console.log("Right button clicked! Current slide:", currentSlide);
+    currentSlide++;
+    if (currentSlide >= numberOfSlides) {
+      currentSlide = 0;
+    }
+    console.log("New slide:", currentSlide);
+    
+    const slideWidth = slides[0].offsetWidth + 30;
+    const offset = currentSlide * slideWidth;
+    console.log("Slide width:", slideWidth, "Offset:", offset);
+    
+    sliderList.style.transform = `translateX(-${offset}px)`;
+  });
+  
+  leftBtn.addEventListener("click", () => {
+    console.log("Left button clicked! Current slide:", currentSlide);
+    currentSlide--;
+    if (currentSlide < 0) {
+      currentSlide = numberOfSlides - 1;
+    }
+    console.log("New slide:", currentSlide);
+    
+    const slideWidth = slides[0].offsetWidth + 30;
+    const offset = currentSlide * slideWidth;
+    console.log("Slide width:", slideWidth, "Offset:", offset);
+    
+    sliderList.style.transform = `translateX(-${offset}px)`;
+  });
 });
-
