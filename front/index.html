@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>Lisa’s Lashes</title>
 <link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="index.css"><link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+<link rel="stylesheet" href="css/product-slider.css"><link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/logo/logo.png" type="image/png">
 <script>
@@ -56,33 +58,98 @@
 <section class="reviews-section">
   <h2>Reviews</h2>
   <div class="reviews-grid">
-    <div class="review-item">
-      <img src="assets/images/review1.jpg" alt="Review 1">
-      <div class="review-overlay">
-        <p>"I am absolutely in love with my new lashes! They look so natural."</p>
-        <span>~ Sarah K.</span>
+    <div class="reviews-grid-inner">
+      <!-- First set -->
+      <div class="review-item">
+        <img src="assets/images/review1.jpg" alt="Review 1">
+        <div class="review-overlay">
+          <p>"I am absolutely in love with my new lashes! They look so natural."</p>
+          <span>~ Sarah K.</span>
+        </div>
       </div>
-    </div>
-    <div class="review-item">
-      <img src="assets/images/review2.jpg" alt="Review 2">
-      <div class="review-overlay">
-        <p>"Lisa is a true artist. My lashes have never looked better. Highly recommend!"</p>
-        <span>~ Jessica P.</span>
+      <div class="review-item">
+        <img src="assets/images/review2.jpg" alt="Review 2">
+        <div class="review-overlay">
+          <p>"Lisa is a true artist. My lashes have never looked better. Highly recommend!"</p>
+          <span>~ Jessica P.</span>
+        </div>
       </div>
-    </div>
-    <div class="review-item">
-      <img src="assets/images/review3.jpg" alt="Review 3">
-      <div class="review-overlay">
-        <p>"A wonderful and relaxing experience with beautiful results. I'll be back!"</p>
-        <span>~ Emily R.</span>
+      <div class="review-item">
+        <img src="assets/images/review3.jpg" alt="Review 3">
+        <div class="review-overlay">
+          <p>"A wonderful and relaxing experience with beautiful results. I'll be back!"</p>
+          <span>~ Emily R.</span>
+        </div>
+      </div>
+      <!-- Second set - duplicate for seamless loop -->
+      <div class="review-item">
+        <img src="assets/images/review1.jpg" alt="Review 1">
+        <div class="review-overlay">
+          <p>"I am absolutely in love with my new lashes! They look so natural."</p>
+          <span>~ Sarah K.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review2.jpg" alt="Review 2">
+        <div class="review-overlay">
+          <p>"Lisa is a true artist. My lashes have never looked better. Highly recommend!"</p>
+          <span>~ Jessica P.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review3.jpg" alt="Review 3">
+        <div class="review-overlay">
+          <p>"A wonderful and relaxing experience with beautiful results. I'll be back!"</p>
+          <span>~ Emily R.</span>
+        </div>
+      </div>
+      <!-- Third set - extra duplicates for smoother loop -->
+      <div class="review-item">
+        <img src="assets/images/review1.jpg" alt="Review 1">
+        <div class="review-overlay">
+          <p>"I am absolutely in love with my new lashes! They look so natural."</p>
+          <span>~ Sarah K.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review2.jpg" alt="Review 2">
+        <div class="review-overlay">
+          <p>"Lisa is a true artist. My lashes have never looked better. Highly recommend!"</p>
+          <span>~ Jessica P.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review3.jpg" alt="Review 3">
+        <div class="review-overlay">
+          <p>"A wonderful and relaxing experience with beautiful results. I'll be back!"</p>
+          <span>~ Emily R.</span>
+        </div>
+      </div>
+      <!-- Fourth set - ensure no gaps -->
+      <div class="review-item">
+        <img src="assets/images/review1.jpg" alt="Review 1">
+        <div class="review-overlay">
+          <p>"I am absolutely in love with my new lashes! They look so natural."</p>
+          <span>~ Sarah K.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review2.jpg" alt="Review 2">
+        <div class="review-overlay">
+          <p>"Lisa is a true artist. My lashes have never looked better. Highly recommend!"</p>
+          <span>~ Jessica P.</span>
+        </div>
+      </div>
+      <div class="review-item">
+        <img src="assets/images/review3.jpg" alt="Review 3">
+        <div class="review-overlay">
+          <p>"A wonderful and relaxing experience with beautiful results. I'll be back!"</p>
+          <span>~ Emily R.</span>
+        </div>
       </div>
     </div>
   </div>
   <div class="reviews-footer">
-    <div class="review-nav-arrows">
-      <button class="arrow-btn left-arrow">&larr;</button>
-      <button class="arrow-btn right-arrow">&rarr;</button>
-    </div>
     <div class="review-actions">
       <a href="#" class="trustpilot-link">Powered by Trustpilot</a>
       <a href="#" class="leave-review-btn">Leave a review</a>
@@ -95,35 +162,201 @@
  <!-- Horizontal Product Slider Section -->
 <section class="product-slider-section">
   <div class="products-preview-title">Products</div>
-  <div class="product-slider-wrapper">
-    <button class="slider-arrow left" aria-label="Previous products">&#8249;</button>
-    <div class="product-slider-list">
-      <div class="product-slider-card">
-        <img src="assets/images/just product 2.png" alt="Product 2">
-        <div class="product-slider-name">Product 2</div>
-        <div class="product-slider-price">€7.50</div>
-        <button class="product-slider-plus">+</button>
+  <div class="product-slider">
+    <!-- Slider Navigation -->
+    <div class="product-slider__nav slider-nav">
+      <div tabindex="0" class="slider-nav__item slider-nav__item_prev">
+        <svg width="16" height="28" viewBox="0 0 16 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 26L2 14L14 2" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
       </div>
-      <div class="product-slider-card">
-        <img src="assets/images/just product image 3.png" alt="Product 3">
-        <div class="product-slider-name">Product 3</div>
-        <div class="product-slider-price">€7.50</div>
-        <button class="product-slider-plus">+</button>
-      </div>
-      <div class="product-slider-card">
-        <img src="assets/images/just product 4.png" alt="Product 4">
-        <div class="product-slider-name">Product 4</div>
-        <div class="product-slider-price">€7.50</div>
-        <button class="product-slider-plus">+</button>
-      </div>
-      <div class="product-slider-card">
-        <img src="assets/images/small preview product image.png" alt="Small Preview Product">
-        <a href="product-main.html" style="text-decoration:none"><div class="product-slider-name"> Cooper Lashes (Openable)</div></a>
-        <div class="product-slider-price">€4</div>
-        <button class="product-slider-plus">+</button>
+      <div tabindex="0" class="slider-nav__item slider-nav__item_next">
+        <svg width="16" height="28" viewBox="0 0 16 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 26L14 14L2 2" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
       </div>
     </div>
-    <button class="slider-arrow right" aria-label="Next products">&#8250;</button>
+
+    <!-- Slider Content -->
+    <div class="product-slider__slider swiper">
+      <div class="product-slider__wrapper swiper-wrapper">
+        <!-- Product 1 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_1.jpg" alt="Product 2" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€7.50</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Product 2</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_2.jpg" alt="Product 3" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€7.50</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Product 3</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_3.jpg" alt="Product 4" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€7.50</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Product 4</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_4.jpg" alt="Cooper Lashes" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€4</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Cooper Lashes (Openable)</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 5 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_5.jpg" alt="Premium Lashes" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€9.00</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Premium Lashes</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 6 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_6.jpg" alt="Magnetic Lashes" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€12.00</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Magnetic Lashes</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 7 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_7.jpg" alt="Volume Lashes" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€8.50</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Volume Lashes</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 8 -->
+        <div class="product-slider__slide swiper-slide">
+          <div class="product-slider__item product-slider-item">
+            <div class="product-slider-item__image">
+              <img src="assets/images/lash_product_8.jpg" alt="Natural Lashes" />
+            </div>
+            <div class="product-slider-item__content">
+              <div class="product-slider-item__header">
+                <div class="product-slider-item__header-inner">
+                  <div class="product-slider-item__price">€6.00</div>
+                </div>
+              </div>
+              <div class="product-slider-item__info">
+                <h2 class="product-slider-item__title">Natural Lashes</h2>
+              </div>
+              <div class="product-slider-item__footer">
+                <a class="product-slider-item__btn" href="product-main.html">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 <div class="section-divider"></div>
@@ -261,6 +494,8 @@
   <div class="chatbot-badge">AI</div>
 </div>
 <!-- End of Chatbot -->
+
+
 <!-- Footer section -->
   <div id="footer-new"><
     <script>
@@ -273,5 +508,6 @@
 <!-- End of footer section -->
 
 <script src="js/slider.js"></script>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 </body>
 </html>
