@@ -1,5 +1,4 @@
 // booking_routes.h
-#pragma once
 #include "../services/booking_service.h"
 #include "expresso/enums/status_code.h"
 #include "json/object.h"
@@ -13,4 +12,10 @@
 class Router;
 class BookingRepository;
 
-void registerBookingRoutes(Router &router, BookingRepository &bookingService);
+using namespace expresso::core;
+using namespace expresso::enums;
+using namespace expresso::messages;
+using namespace expresso::middleware;
+
+void GetBookingRoutes(Request &req, Response &res);
+void PostBookingRoutes(Request &req, Response &res);
