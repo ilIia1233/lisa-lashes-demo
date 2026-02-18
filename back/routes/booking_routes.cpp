@@ -1,11 +1,6 @@
 // booking_routes.cpp
 #include "booking_routes.h"
-#include "../services/booking_service.h"
-#include <cstdio>
-#include <expresso/core/router.h>
-#include <expresso/messages/request.h>
-#include <expresso/messages/response.h>
-#include <functional>
+#include "json/parse.h"
 
 // Personally, I don't encourange using namespaces, but, I left it here just so
 // that the code could be more readable ¯\_(ツ)_/¯
@@ -14,57 +9,72 @@ using namespace expresso::enums;
 using namespace expresso::messages;
 using namespace expresso::middleware;
 
-void registerBookingRoutes(expresso::core::Router &router,
-                           BookingRepository &bookingService) {
+void GetBookingRoutes(Request &req, Response &res) {
   // ============================
   // GET /api/availability
   // ============================
-  router.get("/api/availability", [&](Request &req, Response &res) {
-    // Read query param
-    std::string date = req.query("date"); // YYYY-MM-DD
 
-    if (date.empty()) {
-      res.status(400);
-      res.json(R"({"error":"date parameter is required"})");
-      return;
-    }
+  std::string date = req.queries["date"];
+  std::string start_time = req.queries["start_time"];
+  std::string end_time = req.queries["end_time"];
 
-    try {
-      // Call business logic
-      std::string json = bookingService.getAvailability(
-          /*resource_id=*/1, date);
+  json::object response;
+  json::object slots;
 
-      // Send response
-      res.status(200);
-      res.json(json);
+  response["date"] = date;
+  response["slots"].resize(1);
 
-    } catch (const std::exception &e) {
-      res.status(500);
-      res.json(std::string(R"({"error":")") + e.what() + R"("})");
-    }
-  });
+  response["slots"][0]["start"] = start_time;
+  response["slots"][0]["end"] = end_time;
+  response["slots"][0]["free"] = true;
 
+  response["slots"][1]["start"] = start_time;
+  response["slots"][1]["end"] = end_time;
+  response["slots"][1]["free"] = true;
+
+  response["slots"][2]["start"] = start_time;
+  response["slots"][2]["end"] = end_time;
+  response["slots"][2]["free"] = true;
+
+  res.status(STATUS_CODE::OK).json(response).end();
+}
+
+void PostBookingRoutes(Request &req, Response &res) {
   // ============================
   // POST /api/bookings
   // ============================
-  router.post("/api/bookings", [&](Request &req, Response &res) {
-    try {
-      // Parse JSON body
-      auto body = req.json(); // adapt to YOUR JSON parser
+  try {
+    // Parse JSON body
+    json::object body = req.body;
 
-      std::string userId = body["user_id"];
-      std::string start = body["start"];
-      std::string end = body["end"];
-
-      bookingService.createBooking(
-          /*resource_id=*/1, userId, start, end);
-
-      res.status(201);
-      res.json(R"({"success":true})");
-
-    } catch (const std::exception &e) {
-      res.status(400);
-      res.json(std::string(R"({"error":")") + e.what() + R"("})");
+    // Validate required fields
+    if (body.find("date") == body.end() || body.find("start") == body.end() ||
+        body.find("end") == body.end() ||
+        body.find("customer_name") == body.end()) {
+      return res.status(STATUS_CODE::BAD_REQUEST).json(body).end();
     }
-  });
+
+    std::string date = body["date"];
+    std::string start = body["start"];
+    std::string end = body["end"];
+    std::string name = body["customer_name"];
+
+    // Check availability
+    if (!bookingService.isAvailable(date, start, end)) {
+      return res.status(STATUS_CODE::CONFLICT).json(body).end();
+    }
+
+    // Create booking
+    bookingService.createBooking(date, start, end, name);
+
+    json::object data;
+    data["message"] = "Booking created";
+
+    return res.status(STATUS_CODE::CREATED).json(data).end();
+  } catch (const std::exception &e) {
+    json::object data;
+    data["message"] = "Booking wasns't created: INTERNAL_SERVER_ERROR";
+
+    return res.status(STATUS_CODE::INTERNAL_SERVER_ERROR).json(data).end();
+  }
 }
