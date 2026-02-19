@@ -1,5 +1,8 @@
 // booking_routes.cpp
 #include "booking_routes.h"
+#include "expresso/messages/request.h"
+#include "expresso/messages/response.h"
+#include <string>
 
 // Personally, I don't encourange using namespaces, but, I left it here just so
 // that the code could be more readable ¯\_(ツ)_/¯
@@ -38,7 +41,8 @@ void GetBookingRoutes(Request &req, Response &res) {
   res.status(STATUS_CODE::OK).json(response).end();
 }
 
-void PostBookingRoutes(Request &req, Response &res) {
+void PostBookingRoutes(BookingRepository bookingService, Request &req,
+                       Response &res) {
   // ============================
   // POST /api/bookings
   // ============================
@@ -52,19 +56,20 @@ void PostBookingRoutes(Request &req, Response &res) {
         body.find("customer_name") == body.end()) {
       return res.status(STATUS_CODE::BAD_REQUEST).json(body).end();
     }
-
+    int id = body["resource_id"];
     std::string date = body["date"];
     std::string start = body["start"];
     std::string end = body["end"];
-    std::string name = body["customer_name"];
+    std::string customer_id = body["customer_id"];
+    std::string status = body["status"];
 
     // Check availability
-    if (!bookingService.isAvailable(date, start, end)) {
+    if (!bookingService.isFree(id, date, start, end)) {
       return res.status(STATUS_CODE::CONFLICT).json(body).end();
     }
 
     // Create booking
-    bookingService.createBooking(date, start, end, name);
+    bookingService.addBooking(id, customer_id, start, end, status);
 
     json::object data;
     data["message"] = "Booking created";

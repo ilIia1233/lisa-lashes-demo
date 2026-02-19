@@ -1,4 +1,5 @@
 // Include necessary header sendFiles
+#include "db/pgconnection.h"
 #include "expresso/enums/status_code.h"
 #include "routes/booking_routes.h"
 #include "services/booking_service.h"
@@ -25,6 +26,9 @@ int main(int argc, char **argv) {
   app.use(std::move(cors));
 
   expresso::core::Router router;
+
+  PgConnection db("booking_db");
+  BookingRepository bookingService("booking_db");
 
   router.get("/", GetBookingRoutes);
   app.use("/api", &router);

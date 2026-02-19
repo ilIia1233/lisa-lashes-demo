@@ -6,21 +6,38 @@
 #include <expresso/middleware/static_serve.h>
 #include <regex>
 #include <stdexcept>
+#include <string>
 
 BookingRepository::BookingRepository(const std::string &conninfo)
     : db(conninfo) {}
 
-bool BookingRepository::isValidDateTime(const std::string &iso) {
-  // Basic ISO 8601 with timezone: 2026-02-10T10:00:00+00
-  static const std::regex pattern(
-      R"(^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|Z)$)");
+bool BookingRepository::isValidDateTime(const std::string &date,
+                                        const std::string &start,
+                                        const std::string &end) {
 
-  return std::regex_match(iso, pattern);
+  std::regex dateRegex(R"(^\d{4}-\d{2}-\d{2}$)");
+
+  if (!std::regex_match(date, dateRegex)) {
+    return 0;
+  }
+  const char *paramValues[1] = {date.c_str()};
+
+  auto res = db.exec_params("SELECT "
+                            "($1 || ' ' || $2)::timestamp < "
+                            "($1 || ' ' || $3)::timestamp",
+                            {date, start, end});
+
+  if (res.GetEl(0, 0) != "t") {
+    return 0;
+  }
+
+  return 1;
 }
 
-bool BookingRepository::isFree(int resource_id, const std::string &start,
+bool BookingRepository::isFree(int resource_id, const std::string date,
+                               const std::string &start,
                                const std::string &end) {
-  if (!isValidDateTime(start) || !isValidDateTime(end)) {
+  if (!isValidDateTime(date, start, end)) {
     throw std::invalid_argument("Invalid datetime format");
   }
 
@@ -35,10 +52,11 @@ bool BookingRepository::isFree(int resource_id, const std::string &start,
 }
 
 void BookingRepository::addBooking(int resource_id, const std::string &user_id,
+                                   const std::string &date,
                                    const std::string &start,
                                    const std::string &end,
                                    const std::string &status) {
-  if (!isValidDateTime(start) || !isValidDateTime(end)) {
+  if (!isValidDateTime(date, start, end)) {
     throw std::invalid_argument("Invalid datetime format");
   }
 
