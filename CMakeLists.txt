@@ -17,14 +17,18 @@ option(USE_INSTALL_RESOURCE_PATH "Set resource path to install location" OFF)
 set(BUILD_SHARED_LIBS OFF)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE BACK "back/*.cpp")
 file(GLOB_RECURSE LIB_SOURCES "lib/**/src/*.cpp")
 
 add_executable(server
   back/start_server.cpp
 
   ${SOURCES}
+  ${BACK}
   ${LIB_SOURCES}
 )
+find_package(PostgreSQL REQUIRED)
+target_link_libraries(server PRIVATE PostgreSQL::PostgreSQL)
 
 target_include_directories(server
   PUBLIC

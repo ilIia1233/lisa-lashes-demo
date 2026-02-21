@@ -1,4 +1,7 @@
 #include "postgres.h"
+
+PgResult::~PgResult() { PQclear(res_); }
+
 int PgResult::GetRows() const { return PQntuples(res_); }
 
 int PgResult::GetCols() const { return PQnfields(res_); }

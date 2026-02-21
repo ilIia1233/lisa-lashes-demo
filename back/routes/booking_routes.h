@@ -12,10 +12,12 @@
 class Router;
 class BookingRepository;
 
-using namespace expresso::core;
-using namespace expresso::enums;
-using namespace expresso::messages;
-using namespace expresso::middleware;
+class Context {
+public:
+  static BookingRepository *bookingService;
+};
 
-void GetBookingRoutes(Request &req, Response &res);
-void PostBookingRoutes(Request &req, Response &res);
+void GetBookingRoutes(expresso::messages::Request &req,
+                      expresso::messages::Response &res);
+void PostBookingRoutes(expresso::messages::Request &req,
+                       expresso::messages::Response &res);

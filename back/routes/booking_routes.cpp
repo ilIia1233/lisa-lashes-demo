@@ -4,14 +4,8 @@
 #include "expresso/messages/response.h"
 #include <string>
 
-// Personally, I don't encourange using namespaces, but, I left it here just so
-// that the code could be more readable ¯\_(ツ)_/¯
-using namespace expresso::core;
-using namespace expresso::enums;
-using namespace expresso::messages;
-using namespace expresso::middleware;
-
-void GetBookingRoutes(Request &req, Response &res) {
+void GetBookingRoutes(expresso::messages::Request &req,
+                      expresso::messages::Response &res) {
   // ============================
   // GET /api/availability
   // ============================
@@ -38,11 +32,11 @@ void GetBookingRoutes(Request &req, Response &res) {
   response["slots"][2]["end"] = end_time;
   response["slots"][2]["free"] = true;
 
-  res.status(STATUS_CODE::OK).json(response).end();
+  res.status(expresso::enums::STATUS_CODE::OK).json(response).end();
 }
 
-void PostBookingRoutes(BookingRepository bookingService, Request &req,
-                       Response &res) {
+void PostBookingRoutes(expresso::messages::Request &req,
+                       expresso::messages::Response &res) {
   // ============================
   // POST /api/bookings
   // ============================
@@ -54,9 +48,11 @@ void PostBookingRoutes(BookingRepository bookingService, Request &req,
     if (body.find("date") == body.end() || body.find("start") == body.end() ||
         body.find("end") == body.end() ||
         body.find("customer_name") == body.end()) {
-      return res.status(STATUS_CODE::BAD_REQUEST).json(body).end();
+      return res.status(expresso::enums::STATUS_CODE::BAD_REQUEST)
+          .json(body)
+          .end();
     }
-    int id = body["resource_id"];
+    int resource_id = body["resource_id"];
     std::string date = body["date"];
     std::string start = body["start"];
     std::string end = body["end"];
@@ -64,21 +60,26 @@ void PostBookingRoutes(BookingRepository bookingService, Request &req,
     std::string status = body["status"];
 
     // Check availability
-    if (!bookingService.isFree(id, date, start, end)) {
-      return res.status(STATUS_CODE::CONFLICT).json(body).end();
+    if (!Context::bookingService->isFree(resource_id, date, start, end)) {
+      return res.status(expresso::enums::STATUS_CODE::CONFLICT)
+          .json(body)
+          .end();
     }
 
     // Create booking
-    bookingService.addBooking(id, customer_id, start, end, status);
+    Context::bookingService->addBooking(resource_id, customer_id, start, end,
+                                        status);
 
     json::object data;
     data["message"] = "Booking created";
 
-    return res.status(STATUS_CODE::CREATED).json(data).end();
+    return res.status(expresso::enums::STATUS_CODE::CREATED).json(data).end();
   } catch (const std::exception &e) {
     json::object data;
     data["message"] = "Booking wasns't created: INTERNAL_SERVER_ERROR";
 
-    return res.status(STATUS_CODE::INTERNAL_SERVER_ERROR).json(data).end();
+    return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
+        .json(data)
+        .end();
   }
 }
