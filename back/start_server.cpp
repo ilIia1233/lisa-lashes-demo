@@ -16,7 +16,7 @@ BookingRepository *Context::bookingService = nullptr;
 
 int main(int argc, char **argv) {
 
-  brewtils::env::init("../.env");
+  brewtils::env::init("../secrets/.env");
   int port = std::stoi(brewtils::env::get("PORT", "8000"));
 
   expresso::core::Server app = expresso::core::Server();
