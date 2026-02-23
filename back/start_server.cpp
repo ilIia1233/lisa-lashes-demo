@@ -30,12 +30,26 @@ int main(int argc, char **argv) {
   app.use(std::move(cors));
 
   expresso::core::Router router;
-  std::string conninfo = brewtils::env::get("CONNINFO", "0");
 
-  if (conninfo == "0") {
-    logger::error("Server couldn\'t connect to DB, Check env file");
-  }
+  std::string host = brewtils::env::get("DB_HOST", "0");
+  std::string dbport = brewtils::env::get("DB_PORT", "0");
+  std::string dbname = brewtils::env::get("DB_NAME", "0");
+  std::string user = brewtils::env::get("DB_USER", "0");
+  std::string password = brewtils::env::get("DB_PASSWORD", "0");
 
+  std::string conninfo = "host=" + host +
+                         " "
+                         "port=" +
+                         dbport +
+                         " "
+                         "dbname=" +
+                         dbname +
+                         " "
+                         "user=" +
+                         user +
+                         " "
+                         "password=" +
+                         password;
   PgConnection db(conninfo);
   BookingRepository bookingService(conninfo);
   Context::bookingService = &bookingService;
