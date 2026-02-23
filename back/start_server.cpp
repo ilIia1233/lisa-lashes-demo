@@ -50,8 +50,9 @@ int main(int argc, char **argv) {
                          " "
                          "password=" +
                          password;
-  PgConnection db(conninfo);
+
   BookingRepository bookingService(conninfo);
+
   Context::bookingService = &bookingService;
 
   router.get("/", GetBookingRoutes);
