@@ -54,7 +54,8 @@ bool BookingRepository::isFree(int resource_id, const std::string date,
   return res.GetRows() == 0;
 }
 
-void BookingRepository::addBooking(int resource_id, const std::string &user_id,
+void BookingRepository::addBooking(int resource_id,
+                                   const std::string &user_id,
                                    const std::string &date,
                                    const std::string &start,
                                    const std::string &end,
@@ -62,18 +63,29 @@ void BookingRepository::addBooking(int resource_id, const std::string &user_id,
   if (!isValidDateTime(date, start, end)) {
     throw std::invalid_argument("Invalid datetime format");
   }
-  std::string temp = " "; // included here temporarely until auth system is done
+
+  std::string temp = " "; 
 
   db.exec_params(
       "INSERT INTO bookings "
-      "(resource_id, customer_name, customer_phone, customer_email, date, "
-      "start_time, end_time) "
+      "(resource_id, customer_name, customer_phone, customer_email, "
+      "start_time, end_time, status) "
       "VALUES ("
-      "$0, $1, $2, $3,"
-      "(($4::date + $5::time) AT TIME ZONE 'Europe/Dublin'), "
-      "(($4::date + $6::time) AT TIME ZONE 'Europe/Dublin')"
+      "$1, $2, $3, $4, "
+      "(($5::date + $6::time) AT TIME ZONE 'Europe/Dublin'), "
+      "(($5::date + $7::time) AT TIME ZONE 'Europe/Dublin'), "
+      "$8"
       ")",
-      {std::to_string(resource_id), user_id, temp, temp, date, start, end});
+      {
+          std::to_string(resource_id),
+          user_id,
+          temp,
+          temp,
+          date,
+          start,
+          end,
+          status
+      });
 }
 
 std::vector<TimeSlot>
