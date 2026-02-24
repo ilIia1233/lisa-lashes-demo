@@ -56,8 +56,7 @@ int main(int argc, char **argv) {
   Context::bookingService = &bookingService;
 
   router.get("/", GetBookingRoutes);
-  app.use("/api", &router);
-  router.get("/", PostBookingRoutes);
+  router.post("/bookings", PostBookingRoutes);
   app.use("/api", &router);
 
   app.get("/download", [](expresso::messages::Request &req,

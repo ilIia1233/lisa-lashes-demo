@@ -59,11 +59,17 @@ void BookingRepository::addBooking(int resource_id, const std::string &user_id,
   if (!isValidDateTime(date, start, end)) {
     throw std::invalid_argument("Invalid datetime format");
   }
-
-  db.exec_params("INSERT INTO bookings "
-                 "(resource_id, user_id, start_time, end_time, status) "
-                 "VALUES ($1, $2, $3::timestamptz, $4::timestamptz, $5)",
-                 {std::to_string(resource_id), user_id, start, end, status});
+  std::string temp = " "; // included here temporarely until auth system is done
+  db.exec_params(
+      "INSERT INTO bookings "
+      "(resource_id, customer_name, customer_phone, customer_email, date, "
+      "start_time, end_time) "
+      "VALUES ("
+      "$0, $1, $2, $3,"
+      "(($4::date + $5::time) AT TIME ZONE 'Europe/Dublin'), "
+      "(($4::date + $6::time) AT TIME ZONE 'Europe/Dublin')"
+      ")",
+      {std::to_string(resource_id), user_id, temp, temp, date, start, end});
 }
 
 std::vector<TimeSlot>
