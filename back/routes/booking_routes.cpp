@@ -2,6 +2,7 @@
 #include "booking_routes.h"
 #include "expresso/messages/request.h"
 #include "expresso/messages/response.h"
+#include "logger/log.h"
 #include <string>
 
 void GetBookingRoutes(expresso::messages::Request &req,
@@ -74,9 +75,8 @@ void PostBookingRoutes(expresso::messages::Request &req,
 
     return res.status(expresso::enums::STATUS_CODE::CREATED).json(data).end();
   } catch (const std::exception &e) {
+    logger::error(e.what());
     json::object data;
-    data["message"] = e.what();
-
     return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
         .json(data)
         .end();

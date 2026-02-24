@@ -41,13 +41,16 @@ bool BookingRepository::isFree(int resource_id, const std::string date,
     throw std::invalid_argument("Invalid datetime format");
   }
 
-  auto res = db.exec_params("SELECT 1 FROM bookings "
-                            "WHERE resource_id = $1 "
-                            "AND status = 'confirmed' "
-                            "AND tstzrange(start_time, end_time) && "
-                            "tstzrange($2::timestamptz, $3::timestamptz)",
-                            {std::to_string(resource_id), start, end});
-
+  auto res =
+      db.exec_params("SELECT 1 FROM bookings "
+                     "WHERE resource_id = $1 "
+                     "AND status = 'confirmed' "
+                     "AND tstzrange(start_time, end_time) && "
+                     "tstzrange("
+                     "  (($2::date + $3::time) AT TIME ZONE 'Europe/Dublin'), "
+                     "  (($2::date + $4::time) AT TIME ZONE 'Europe/Dublin') "
+                     ")",
+                     {std::to_string(resource_id), date, start, end});
   return res.GetRows() == 0;
 }
 
@@ -60,6 +63,7 @@ void BookingRepository::addBooking(int resource_id, const std::string &user_id,
     throw std::invalid_argument("Invalid datetime format");
   }
   std::string temp = " "; // included here temporarely until auth system is done
+
   db.exec_params(
       "INSERT INTO bookings "
       "(resource_id, customer_name, customer_phone, customer_email, date, "
