@@ -7,29 +7,45 @@
 
 void GetBookingRoutes(expresso::messages::Request &req,
                       expresso::messages::Response &res) {
-  // ============================
-  // GET /api/availability
-  // ============================
+  try {
+    // ============================
+    // GET /api/availability
+    // ============================
 
-  std::string date = req.queries["date"];
-  std::string start_time = req.queries["start_time"];
-  std::string end_time = req.queries["end_time"];
-  std::string resource_id = req.queries["resource_id"];
-  std::string customer_name = req.queries["customer_name"];
-  std::string status = req.queries["status"];
+    std::string date = req.queries["date"];
+    std::string resourceIdStr = req.queries["resource_id"];
 
-  json::object response;
-  json::object slots;
+    if (date.empty() || resourceIdStr.empty()) {
+      return res.status(expresso::enums::STATUS_CODE::BAD_REQUEST).end();
+    }
 
-  response["date"] = date;
-  response["resource_id"] = resource_id;
+    int resource_id = std::stoi(resourceIdStr);
 
-  response["booking"]["start"] = start_time;
-  response["booking"]["end"] = end_time;
-  response["booking"]["customer_name"] = customer_name;
-  response["booking"]["status"] = status;
+    // Call service layer
+    auto slots =
+        Context::bookingService->getAvailableTimeSlots(resource_id, date);
 
-  res.status(expresso::enums::STATUS_CODE::OK).json(response).end();
+    json::object response;
+    response["date"] = date;
+
+    response["slots"].resize(0);
+
+    for (const auto &slot : slots) {
+      json::object s;
+      s["start"] = slot.start;
+      s["end"] = slot.end;
+      s["free"] = slot.isFree;
+
+      response["slots"].push_back(s);
+    }
+
+    return res.status(expresso::enums::STATUS_CODE::OK).json(response).end();
+
+  } catch (const std::exception &e) {
+    logger::error(e.what());
+    return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
+        .end();
+  }
 }
 
 void PostBookingRoutes(expresso::messages::Request &req,

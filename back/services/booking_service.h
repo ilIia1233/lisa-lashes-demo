@@ -9,6 +9,7 @@
 struct TimeSlot {
   std::string start;
   std::string end;
+  bool isFree;
 };
 
 class BookingRepository {
@@ -24,7 +25,9 @@ public:
                   const std::string &date, const std::string &start,
                   const std::string &end,
                   const std::string &status = "confirmed");
-
+  // Gets working hours from working hours table
+  std::pair<std::string, std::string> getWorkingHours(int resource_id,
+                                                      int weekday);
   // get all bookings for a day
   std::vector<TimeSlot> getBookingsForDay(int resource_id,
                                           const std::string &date // YYYY-MM-DD
@@ -33,6 +36,9 @@ public:
   // utility
   bool isValidDateTime(const std::string &date, const std::string &start,
                        const std::string &end);
+
+  std::vector<TimeSlot> getAvailableTimeSlots(int resource_id,
+                                              const std::string &date);
 
 private:
   PgConnection db;

@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 
   Context::bookingService = &bookingService;
 
-  router.get("/", GetBookingRoutes);
+  router.get("/availability", GetBookingRoutes);
   router.post("/bookings", PostBookingRoutes);
   app.use("/api", &router);
 
