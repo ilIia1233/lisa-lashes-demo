@@ -12,7 +12,7 @@
 class Router;
 class BookingRepository;
 
-class Context {
+class BookingContext {
 public:
   static BookingRepository *bookingService;
 };

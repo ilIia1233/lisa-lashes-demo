@@ -22,8 +22,8 @@ void GetBookingRoutes(expresso::messages::Request &req,
     int resource_id = std::stoi(resourceIdStr);
 
     // Call service layer
-    auto slots =
-        Context::bookingService->getAvailableTimeSlots(resource_id, date);
+    auto slots = BookingContext::bookingService->getAvailableTimeSlots(
+        resource_id, date);
 
     json::object response;
     response["date"] = date;
@@ -76,15 +76,16 @@ void PostBookingRoutes(expresso::messages::Request &req,
     std::string status = body["status"];
 
     // Check availability
-    if (!Context::bookingService->isFree(resource_id, date, start, end)) {
+    if (!BookingContext::bookingService->isFree(resource_id, date, start,
+                                                end)) {
       return res.status(expresso::enums::STATUS_CODE::CONFLICT)
           .json(body)
           .end();
     }
 
     // Create booking
-    Context::bookingService->addBooking(resource_id, customer_name, date, start,
-                                        end, status);
+    BookingContext::bookingService->addBooking(resource_id, customer_name, date,
+                                               start, end, status);
 
     json::object data;
     data["message"] = "Booking created";

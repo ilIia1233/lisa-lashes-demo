@@ -1,9 +1,9 @@
 // Include necessary header sendFiles
-#include "db/pgconnection.h"
 #include "expresso/enums/status_code.h"
-#include "logger/log.h"
+#include "routes/auth_routes.h"
 #include "routes/booking_routes.h"
 #include "services/booking_service.h"
+#include "services/user_repository.h"
 #include "json/object.h"
 #include <brewtils/env.h>
 #include <expresso/core/server.h>
@@ -12,7 +12,8 @@
 #include <expresso/middleware/cors.h>
 #include <expresso/middleware/static_serve.h>
 
-BookingRepository *Context::bookingService = nullptr;
+BookingRepository *BookingContext::bookingService = nullptr;
+UserRepository *UserContext::UserService = nullptr;
 
 int main(int argc, char **argv) {
 
@@ -52,11 +53,15 @@ int main(int argc, char **argv) {
                          password;
 
   BookingRepository bookingService(conninfo);
-
-  Context::bookingService = &bookingService;
+  UserRepository UserService(conninfo);
+  BookingContext::bookingService = &bookingService;
+  UserContext::UserService = &UserService;
 
   router.get("/availability", GetBookingRoutes);
   router.post("/bookings", PostBookingRoutes);
+  router.post("/auth/register", PostRegisterRoute);
+  router.post("/auth/login", PostLoginRoute);
+  router.del("/auth/user", DeleteUserRoute);
   app.use("/api", &router);
 
   app.get("/download", [](expresso::messages::Request &req,
@@ -65,6 +70,7 @@ int main(int argc, char **argv) {
     std::set<std::string> files = {"../front/"};
     res.sendFiles(files, "front.zip");
   });
+
   // Cookie Parser, applied across all routes
   std::unique_ptr<expresso::middleware::CookieParser> cookieParser =
       std::make_unique<expresso::middleware::CookieParser>();

@@ -157,7 +157,7 @@ BookingRepository::getAvailableTimeSlots(int resource_id,
 
       bool isFree = overlap.GetRows() == 0;
 
-      slots.push_back({lstart, lend, !isFree});
+      slots.push_back({lstart, lend, isFree});
     }
   } catch (std::exception &e) {
     logger::error(e.what());
