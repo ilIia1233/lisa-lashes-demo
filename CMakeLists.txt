@@ -29,6 +29,7 @@ add_executable(server
 )
 find_package(PostgreSQL REQUIRED)
 target_link_libraries(server PRIVATE PostgreSQL::PostgreSQL)
+target_link_libraries(your_target PRIVATE argon2)
 
 target_include_directories(server
   PUBLIC

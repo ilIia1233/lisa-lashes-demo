@@ -3,7 +3,6 @@ const monthYearEl = document.getElementById("monthYear");
 const prevBtn = document.getElementById("prev");
 const nextBtn = document.getElementById("next");
 const todayBtn = document.getElementById("todayBtn");
-
 let currentDate = new Date();
 const resource_id = 1;
 
@@ -49,12 +48,12 @@ async function loadAvailability(date, resourceId) {
 // Render Calendar
 // ----------------------------
 function renderCalendar() {
-  currentDate.setDate(1);
+  const displayDate = new Date(currentDate); // clone
 
-  const month = currentDate.getMonth();
-  const year = currentDate.getFullYear();
+  const month = displayDate.getMonth();
+  const year = displayDate.getFullYear();
 
-  const firstDayIndex = currentDate.getDay();
+  const firstDayIndex = displayDate.getDay();
   const lastDay = new Date(year, month + 1, 0).getDate();
   const prevLastDay = new Date(year, month, 0).getDate();
 
@@ -85,7 +84,6 @@ function renderCalendar() {
     `;
   }
 }
-
 // ----------------------------
 // Navigation Buttons
 // ----------------------------
