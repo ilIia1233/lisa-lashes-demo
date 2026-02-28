@@ -15,24 +15,29 @@ static constexpr uint32_t salt_len = 16;
 std::string hash_password(const std::string &password) {
 
   std::vector<uint8_t> salt(salt_len);
-  arc4random_buf(salt.data(), salt_len); // or secure RNG of your choice
+  arc4random_buf(salt.data(), salt_len);
 
-  std::vector<uint8_t> hash(hash_len);
+  size_t encoded_len =
+      argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, hash_len,
+                        Argon2_id);
+  std::string encoded(encoded_len, '\0');
 
-  int result = argon2id_hash_raw(t_cost, m_cost, parallelism, password.data(),
-                                 password.size(), salt.data(), salt_len,
-                                 hash.data(), hash_len);
+  int result =
+      argon2id_hash_encoded(t_cost, m_cost, parallelism, password.data(),
+                            password.size(), salt.data(), salt_len, hash_len,
+                            encoded.data(), encoded_len);
 
   if (result != ARGON2_OK) {
-    throw std::runtime_error("Argon2 hashing failed");
+    throw std::runtime_error(std::string("Argon2 hashing failed: ") +
+                             argon2_error_message(result));
   }
 
-  char encoded[128];
-  argon2id_hash_encoded(t_cost, m_cost, parallelism, password.data(),
-                        password.size(), salt.data(), salt_len, hash_len,
-                        encoded, sizeof(encoded));
+  // strip trailing null terminator that argon2 writes
+  if (!encoded.empty() && encoded.back() == '\0') {
+    encoded.pop_back();
+  }
 
-  return std::string(encoded);
+  return encoded;
 }
 
 bool verify_password(const std::string &password,

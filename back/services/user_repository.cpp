@@ -1,4 +1,6 @@
 #include "user_repository.h"
+#include "../crypt/password.h"
+#include <logger/log.h>
 
 UserRepository::UserRepository(const std::string &conninfo)
     : db(conninfo) {}
@@ -39,19 +41,21 @@ bool UserRepository::registerUser(const std::string &first,
                                    const std::string &password,
                                    const std::string &address) {
   try {
+    const std::string hash = crypto::hash_password(password);
     if (address.empty()) {
       db.exec_params(
           "INSERT INTO users (first_name, last_name, phone, password_hash) "
-          "VALUES ($1, $2, $3, encode(digest($4, 'sha3-224'), 'hex'))",
-          {first, last, phone, password});
+          "VALUES ($1, $2, $3, $4)",
+          {first, last, phone, hash});
     } else {
       db.exec_params(
           "INSERT INTO users (first_name, last_name, phone, address, password_hash) "
-          "VALUES ($1, $2, $3, $4, encode(digest($5, 'sha3-224'), 'hex'))",
-          {first, last, phone, address, password});
+          "VALUES ($1, $2, $3, $4, $5)",
+          {first, last, phone, address, hash});
     }
     return true;
-  } catch (...) {
+  } catch (const std::exception &e) {
+    logger::error(std::string("registerUser failed: ") + e.what());
     return false;
   }
 }
@@ -60,12 +64,15 @@ std::optional<std::string>
 UserRepository::loginUser(const std::string &identifier,
                           const std::string &password) {
   auto res = db.exec_params(
-      "SELECT id FROM users "
-      "WHERE (phone = $1 OR address = $1) "
-      "AND password_hash = encode(digest($2, 'sha3-224'), 'hex')",
-      {identifier, password});
+      "SELECT id, password_hash FROM users "
+      "WHERE phone = $1 OR address = $1",
+      {identifier});
 
   if (res.GetRows() == 0)
+    return std::nullopt;
+
+  const std::string stored_hash = res.GetEl(0, 1);
+  if (!crypto::verify_password(password, stored_hash))
     return std::nullopt;
 
   return res.GetEl(0, 0);

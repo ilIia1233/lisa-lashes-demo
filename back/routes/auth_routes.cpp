@@ -61,10 +61,7 @@ void DeleteUserRoute(expresso::messages::Request &req,
 
     int id = std::stoi(id_str);
 
-    std::string conninfo = brewtils::env::get("DATABASE_URL", "");
-    UserRepository userRepo(conninfo);
-
-    bool ok = userRepo.removeUser(id);
+    bool ok = UserContext::UserService->removeUser(id);
 
     if (!ok) {
       json::object err;
@@ -106,10 +103,7 @@ void PostLoginRoute(expresso::messages::Request &req,
     std::string identifier =
         hasPhone ? std::string(body["phone"]) : std::string(body["address"]);
 
-    std::string conninfo = brewtils::env::get("DATABASE_URL", "");
-    UserRepository userRepo(conninfo);
-
-    auto userId = userRepo.loginUser(identifier, body["password"]);
+    auto userId = UserContext::UserService->loginUser(identifier, body["password"]);
 
     if (!userId.has_value()) {
       json::object err;
