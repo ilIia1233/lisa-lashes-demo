@@ -48,12 +48,12 @@ async function loadAvailability(date, resourceId) {
 // Render Calendar
 // ----------------------------
 function renderCalendar() {
-  const displayDate = new Date(currentDate); // clone
+  const displayDate = new Date(currentDate);
 
   const month = displayDate.getMonth();
   const year = displayDate.getFullYear();
 
-  const firstDayIndex = displayDate.getDay();
+  const firstDayIndex = new Date(year, month, 1).getDay();
   const lastDay = new Date(year, month + 1, 0).getDate();
   const prevLastDay = new Date(year, month, 0).getDate();
 
@@ -131,4 +131,5 @@ daysEl.addEventListener("click", function (e) {
 // ----------------------------
 // Initial Render
 // ----------------------------
+
 renderCalendar();
