@@ -68,6 +68,7 @@ label {
 }
 
 input[type="email"],
+input[type="tel"],
 input[type="password"] {
   width: 100%;
   padding: 11px 14px;
@@ -82,6 +83,7 @@ input[type="password"] {
 }
 
 input[type="email"]:focus,
+input[type="tel"]:focus,
 input[type="password"]:focus {
   border-color: #c9a96e;
   background: #fff;
