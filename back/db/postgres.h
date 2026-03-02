@@ -15,6 +15,7 @@ public:
 
   int GetRows() const;
   int GetCols() const;
+  int GetAffectedRows() const;  // rows touched by INSERT/UPDATE/DELETE
   std::string GetEl(int row, int col) const;
   bool CheckStatus() const;
   std::string PrintError() const;

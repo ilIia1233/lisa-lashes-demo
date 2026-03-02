@@ -60,21 +60,26 @@ void expresso::middleware::Cors::allowCredentials(bool credentials) {
 bool expresso::middleware::Cors::use(expresso::messages::Request& req,
                                      expresso::messages::Response& res) {
   if (this->allowAllOrigins) {
+    std::string reqOrigin = req.headers["origin"];
+    res.set("access-control-allow-origin", reqOrigin.empty() ? "*" : reqOrigin);
+    res.set("access-control-allow-credentials", this->credentials ? "true" : "false");
+    res.set("access-control-allow-headers", this->allowedHeaders == "" ? "*" : this->allowedHeaders);
     return true;
   }
 
   std::string requestOrigin = req.headers["origin"];
   if (requestOrigin == "") {
-    res.set("access-control-allow-origin", "null");
-    res.status(expresso::enums::STATUS_CODE::FORBIDDEN)
-       .send(expresso::constants::cors::forbidden);
-    return false;
+    // No Origin header = direct browser navigation or same-origin request.
+    // CORS does not apply — let it through.
+    return true;
   }
 
   bool isOriginPresent = false;
   for (std::string origin : this->origins) {
-    if (std::regex_match(requestOrigin, std::regex(origin))) {
-      res.set("access-control-allow-origin", origin.substr(1, origin.size()));
+    bool exactMatch = (origin == "." + requestOrigin);
+    bool regexMatch = !exactMatch && std::regex_match(requestOrigin, std::regex(origin));
+    if (exactMatch || regexMatch) {
+      res.set("access-control-allow-origin", requestOrigin);
       isOriginPresent = true;
       break;
     }

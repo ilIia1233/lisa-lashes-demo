@@ -1,10 +1,18 @@
 #include "postgres.h"
 
-PgResult::~PgResult() { PQclear(res_); }
+PgResult::~PgResult() {
+  if (res_) PQclear(res_);
+}
 
 int PgResult::GetRows() const { return PQntuples(res_); }
 
 int PgResult::GetCols() const { return PQnfields(res_); }
+
+int PgResult::GetAffectedRows() const {
+  const char *tuples = PQcmdTuples(res_);
+  if (tuples == nullptr || tuples[0] == '\0') return 0;
+  return std::stoi(tuples);
+}
 
 std::string PgResult::GetEl(int row, int col) const {
   if (PQgetisnull(res_, row, col))

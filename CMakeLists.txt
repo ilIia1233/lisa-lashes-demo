@@ -28,12 +28,10 @@ add_executable(server
   ${LIB_SOURCES}
 )
 find_package(PostgreSQL REQUIRED)
-<<<<<<< HEAD
 target_link_libraries(server PRIVATE PostgreSQL::PostgreSQL)
 target_link_libraries(server PRIVATE argon2)
-=======
+
 target_link_libraries(server PRIVATE PostgreSQL::PostgreSQL argon2)
->>>>>>> aa1b772 (removed the sha3 due it's lack of security and implemented argon2 instead)
 
 target_include_directories(server
   PUBLIC

@@ -2,7 +2,9 @@
 #include "expresso/enums/status_code.h"
 #include "routes/auth_routes.h"
 #include "routes/booking_routes.h"
+#include "routes/cart_routes.h"
 #include "services/booking_service.h"
+#include "services/cart_service.h"
 #include "services/user_repository.h"
 #include "json/object.h"
 #include <brewtils/env.h>
@@ -56,12 +58,22 @@ int main(int argc, char **argv) {
   UserRepository UserService(conninfo);
   BookingContext::bookingService = &bookingService;
   UserContext::UserService = &UserService;
+  CartService cartService(conninfo);
+  CartContext::cartService = &cartService;
 
   router.get("/availability", GetBookingRoutes);
   router.post("/bookings", PostBookingRoutes);
   router.post("/auth/register", PostRegisterRoute);
   router.post("/auth/login", PostLoginRoute);
   router.del("/auth/user", DeleteUserRoute);
+
+  // Cart routes
+  router.get("/cart", GetCartRoute);
+  router.post("/cart/items", PostCartItemRoute);
+  router.put("/cart/items", PutCartItemRoute);
+  router.del("/cart/items", DeleteCartItemRoute);
+  router.post("/cart/checkout", PostCheckoutRoute);
+
   app.use("/api", &router);
 
   app.get("/download", [](expresso::messages::Request &req,
