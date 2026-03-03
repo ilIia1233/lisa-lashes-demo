@@ -3,6 +3,7 @@
 #include "routes/auth_routes.h"
 #include "routes/booking_routes.h"
 #include "routes/cart_routes.h"
+#include "routes/product_routes.h"
 #include "services/booking_service.h"
 #include "services/cart_service.h"
 #include "services/user_repository.h"
@@ -16,6 +17,7 @@
 
 BookingRepository *BookingContext::bookingService = nullptr;
 UserRepository *UserContext::UserService = nullptr;
+ProductRepository *ProductContext::ProductService = nullptr;
 
 int main(int argc, char **argv) {
 

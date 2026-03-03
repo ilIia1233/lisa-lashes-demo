@@ -14,7 +14,7 @@ struct TimeSlot {
 
 class BookingRepository {
 public:
-  explicit BookingRepository(const std::string &conninfo);
+  BookingRepository(const std::string &conninfo);
 
   // checks if slot is free (confirmed bookings only)
   bool isFree(int resource_id, const std::string date, const std::string &start,

@@ -7,8 +7,7 @@
 
 class CartService {
 public:
-  explicit CartService(const std::string &conninfo);
-
+  CartService(const std::string &conninfo);
   // Returns cart_id for this user; creates a new cart if one doesn't exist
   int getOrCreateCart(int userId);
 
@@ -33,7 +32,8 @@ public:
   // Transactional checkout:
   //   BEGIN → lock stock (FOR UPDATE) → validate quantities →
   //   INSERT order + order_items → decrement stock → clear cart → COMMIT
-  // Throws on empty cart, missing product, or insufficient stock (auto ROLLBACK).
+  // Throws on empty cart, missing product, or insufficient stock (auto
+  // ROLLBACK).
   json::object checkout(int userId);
 
 private:
