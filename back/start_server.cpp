@@ -31,7 +31,8 @@ int main(int argc, char **argv) {
       std::make_unique<expresso::middleware::Cors>();
   cors->allowOrigin("*");
   cors->allowCredentials(true);
-
+  cors->allowMethod("PUT");
+  cors->allowMethod("DELETE");
   app.use(std::move(cors));
 
   expresso::core::Router router;
@@ -63,19 +64,26 @@ int main(int argc, char **argv) {
   CartService cartService(conninfo);
   CartContext::cartService = &cartService;
 
-  router.get("/availability", GetBookingRoutes);
-  router.post("/bookings", PostBookingRoutes);
-  router.post("/auth/register", PostRegisterRoute);
-  router.post("/auth/login", PostLoginRoute);
-  router.del("/auth/user", DeleteUserRoute);
+  // Product routes
+  router.get("/products", GetProductsRoute);
+  router.post("/products", PostProductRoute);
+  router.put("/products", PutProductRoute);
+  router.del("/products", DeleteProductRoute);
 
-  // Cart routes
-  router.get("/cart", GetCartRoute);
-  router.post("/cart/items", PostCartItemRoute);
-  router.put("/cart/items", PutCartItemRoute);
-  router.del("/cart/items", DeleteCartItemRoute);
-  router.post("/cart/checkout", PostCheckoutRoute);
-
+  // CORS preflight (OPTIONS) handlers
+  auto optHandler = [](Request &req, Response &res) {
+    res.set("access-control-allow-methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.status(STATUS_CODE::NO_CONTEXT).end();
+  };
+  router.options("/products", optHandler);
+  router.options("/bookings", optHandler);
+  router.options("/availability", optHandler);
+  router.options("/cart", optHandler);
+  router.options("/cart/items", optHandler);
+  router.options("/cart/checkout", optHandler);
+  router.options("/auth/register", optHandler);
+  router.options("/auth/login", optHandler);
+  router.options("/auth/user", optHandler);
   app.use("/api", &router);
 
   app.get("/download", [](expresso::messages::Request &req,
