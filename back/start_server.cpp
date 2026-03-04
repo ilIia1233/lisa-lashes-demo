@@ -58,8 +58,8 @@ int main(int argc, char **argv) {
                          password;
 
   BookingRepository bookingService(conninfo);
-  UserRepository UserService(conninfo);
   BookingContext::bookingService = &bookingService;
+  UserRepository UserService(conninfo);
   UserContext::UserService = &UserService;
   CartService cartService(conninfo);
   CartContext::cartService = &cartService;
