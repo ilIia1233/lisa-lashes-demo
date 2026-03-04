@@ -65,15 +65,16 @@ int main(int argc, char **argv) {
   CartContext::cartService = &cartService;
 
   // Product routes
-  router.get("/products", GetProductsRoute);
-  router.post("/products", PostProductRoute);
-  router.put("/products", PutProductRoute);
-  router.del("/products", DeleteProductRoute);
+  router.get("/products", GetProductRoutes);
+  router.post("/products", PostProductRoutes);
+  router.put("/products", PutProductRoutes);
+  router.del("/products", DeleteProductRoutes);
 
   // CORS preflight (OPTIONS) handlers
-  auto optHandler = [](Request &req, Response &res) {
+  auto optHandler = [](expresso::messages::Request &req,
+                       expresso::messages::Response &res) {
     res.set("access-control-allow-methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.status(STATUS_CODE::NO_CONTEXT).end();
+    res.status(expresso::enums::STATUS_CODE::NO_CONTEXT).end();
   };
   router.options("/products", optHandler);
   router.options("/bookings", optHandler);
