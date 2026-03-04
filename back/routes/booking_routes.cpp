@@ -5,8 +5,8 @@
 #include "logger/log.h"
 #include <string>
 
-void GetBookingRoute(expresso::messages::Request &req,
-                     expresso::messages::Response &res) {
+void GetBookingRoutes(expresso::messages::Request &req,
+                      expresso::messages::Response &res) {
   try {
     // ============================
     // GET /api/availability

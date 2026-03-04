@@ -63,12 +63,18 @@ int main(int argc, char **argv) {
   UserContext::UserService = &UserService;
   CartService cartService(conninfo);
   CartContext::cartService = &cartService;
+  ProductRepository productService(conninfo);
+  ProductContext::ProductService = &productService;
 
   // Product routes
   router.get("/products", GetProductRoutes);
   router.post("/products", PostProductRoutes);
   router.put("/products", PutProductRoutes);
   router.del("/products", DeleteProductRoutes);
+
+  // Booking routes
+  router.get("/availability", GetBookingRoutes);
+  router.post("/bookings", PostBookingRoutes);
 
   // CORS preflight (OPTIONS) handlers
   auto optHandler = [](expresso::messages::Request &req,
