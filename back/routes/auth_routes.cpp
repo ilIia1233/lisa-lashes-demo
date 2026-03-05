@@ -1,5 +1,6 @@
 // auth_routes.cpp
 #include "auth_routes.h"
+#include <string>
 
 // POST /api/auth/register
 // Body: { "first_name", "last_name", "phone", "password" }
@@ -18,14 +19,18 @@ void PostRegisterRoute(expresso::messages::Request &req,
           .json(err)
           .end();
     }
+    User user;
 
+    user.first = std::string(body["first_name"]);
+    user.last = std::string(body["last_name"]);
+    user.phone = std::string(body["phone"]);
+    user.password = std::string(body["password"]);
     std::string address = (body.find("address") != body.end())
                               ? std::string(body["address"])
                               : "";
+    user.address = address;
 
-    bool ok = UserContext::UserService->registerUser(
-        body["first_name"], body["last_name"], body["phone"], body["password"],
-        address);
+    bool ok = UserContext::UserService->registerUser(user);
 
     if (!ok) {
       json::object err;
@@ -103,7 +108,8 @@ void PostLoginRoute(expresso::messages::Request &req,
     std::string identifier =
         hasPhone ? std::string(body["phone"]) : std::string(body["address"]);
 
-    auto userId = UserContext::UserService->loginUser(identifier, body["password"]);
+    auto userId =
+        UserContext::UserService->loginUser(identifier, body["password"]);
 
     if (!userId.has_value()) {
       json::object err;

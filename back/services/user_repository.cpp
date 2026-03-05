@@ -4,23 +4,6 @@
 
 UserRepository::UserRepository(const std::string &conninfo) : db(conninfo) {}
 
-bool UserRepository::addUser(const std::string &first, const std::string &last,
-                             const std::string &address,
-                             const std::string &phone,
-                             const std::string &password_hash) {
-
-  try {
-    db.exec_params("INSERT INTO users "
-                   "(first_name, last_name, address, phone, password_hash) "
-                   "VALUES ($1, $2, $3, $4, $5)",
-                   {first, last, address, phone, password_hash});
-
-    return true;
-  } catch (...) {
-    return false;
-  }
-}
-
 bool UserRepository::removeUser(int id) {
 
   try {
@@ -31,23 +14,19 @@ bool UserRepository::removeUser(int id) {
   }
 }
 
-bool UserRepository::registerUser(const std::string &first,
-                                  const std::string &last,
-                                  const std::string &phone,
-                                  const std::string &password,
-                                  const std::string &address) {
+bool UserRepository::registerUser(User user) {
   try {
-    const std::string hash = crypto::hash_password(password);
-    if (address.empty()) {
+    std::string hash = crypto::hash_password(user.password);
+    if (user.address.empty()) {
       db.exec_params(
           "INSERT INTO users (first_name, last_name, phone, password_hash) "
           "VALUES ($1, $2, $3, $4)",
-          {first, last, phone, hash});
+          {user.first, user.last, user.phone, hash});
     } else {
       db.exec_params("INSERT INTO users (first_name, last_name, phone, "
                      "address, password_hash) "
                      "VALUES ($1, $2, $3, $4, $5)",
-                     {first, last, phone, address, hash});
+                     {user.first, user.last, user.phone, user.address, hash});
     }
     return true;
   } catch (const std::exception &e) {
