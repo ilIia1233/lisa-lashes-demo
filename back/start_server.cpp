@@ -11,6 +11,7 @@
 #include "json/object.h"
 #include <brewtils/env.h>
 #include <expresso/core/server.h>
+#include <expresso/middleware/auth.h>
 #include <expresso/middleware/cacher.h>
 #include <expresso/middleware/cookie_parser.h>
 #include <expresso/middleware/cors.h>
@@ -18,6 +19,7 @@
 
 BookingRepository *BookingContext::bookingService = nullptr;
 UserRepository *UserContext::UserService = nullptr;
+SessionRepository *UserContext::SessionService = nullptr;
 ProductRepository *ProductContext::ProductService = nullptr;
 
 int main(int argc, char **argv) {
@@ -110,7 +112,9 @@ int main(int argc, char **argv) {
   std::unique_ptr<expresso::middleware::CookieParser> cookieParser =
       std::make_unique<expresso::middleware::CookieParser>();
   app.use(std::move(cookieParser));
-
+  std::unique_ptr<expresso::middleware::AuthMiddleware> authMiddleware =
+      std::make_unique<expresso::middleware::AuthMiddleware>();
+  app.use(std::move(authMiddleware));
   // Cache middleware, applied across all routes
   std::unique_ptr<expresso::middleware::Cacher> cacher =
       std::make_unique<expresso::middleware::Cacher>(3600, false);

@@ -11,7 +11,7 @@ namespace messages {
 class Request : public mochios::messages::Request {
 private:
 public:
-  Request(const std::string& path);
+  Request(const std::string &path);
   ~Request();
 
   bool xhr;
@@ -24,11 +24,12 @@ public:
   // tempPath used internally for referencing. DO NOT USE IT! Use `path`
   // instead.
   std::string tempPath;
-  std::vector<expresso::messages::Cookie*> cookies;
+  std::vector<expresso::messages::Cookie *> cookies;
 
-  expresso::messages::Response* res;
+  expresso::messages::Response *res;
 
   const void print() const override;
+  std::optional<int> userId;
 };
 
 } // namespace messages

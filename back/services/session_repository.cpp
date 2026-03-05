@@ -3,6 +3,7 @@
 #include "brewtils/uuid.h"
 #include <brewtils/base64.h>
 #include <optional>
+#include <string>
 
 std::string generateToken() { return brewtils::uuid::v4(); }
 
@@ -21,7 +22,7 @@ std::string SessionRepository::createSession(int user_id) {
   return token; // send raw token to cookie
 }
 
-std::optional<std::string>
+std::optional<int>
 SessionRepository::getUserIdFromToken(const std::string &token) {
   std::string hash = sha256(token);
 
@@ -33,7 +34,7 @@ SessionRepository::getUserIdFromToken(const std::string &token) {
   if (!result.CheckStatus()) {
     return std::nullopt;
   }
-  return result.GetEl(0, 0);
+  return std::stoi(result.GetEl(0, 0));
 }
 
 void SessionRepository::deleteSession(const std::string &token) {

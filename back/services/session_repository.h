@@ -13,7 +13,7 @@ public:
 
   std::string createSession(int user_id);
 
-  std::optional<std::string> getUserIdFromToken(const std::string &token);
+  std::optional<int> getUserIdFromToken(const std::string &token);
 
   void deleteSession(const std::string &token);
 };
