@@ -127,40 +127,39 @@ BookingRepository::getAvailableTimeSlots(int resource_id,
 
   int weekday = getWeekdayFromDate(date);
 
-  auto working = getWorkingHours(resource_id, weekday);
+  std::pair<std::string, std::string> working;
+  try {
+    working = getWorkingHours(resource_id, weekday);
+  } catch (const std::runtime_error &) {
+    // No working hours configured for this weekday — return empty
+    return {};
+  }
 
   std::vector<TimeSlot> slots;
 
   int startHour = std::stoi(working.first.substr(0, 2));
   int endHour = std::stoi(working.second.substr(0, 2));
-  try {
-    for (int hour = startHour; hour < endHour; ++hour) {
 
-      std::string lstart =
-          (hour < 10 ? "0" : "") + std::to_string(hour) + ":00";
+  for (int hour = startHour; hour < endHour; ++hour) {
 
-      std::string lend =
-          (hour + 1 < 10 ? "0" : "") + std::to_string(hour + 1) + ":00";
+    std::string lstart = (hour < 10 ? "0" : "") + std::to_string(hour) + ":00";
 
-      // Build full timestamp for overlap check
-      std::string fullStart = date + " " + lstart + " Europe/Dublin";
+    std::string lend =
+        (hour + 1 < 10 ? "0" : "") + std::to_string(hour + 1) + ":00";
 
-      std::string fullEnd = date + " " + lend + " Europe/Dublin";
+    auto overlap =
+        db.exec_params("SELECT 1 FROM bookings "
+                       "WHERE resource_id = $1::int "
+                       "AND status = 'confirmed' "
+                       "AND tstzrange(start_time, end_time) && "
+                       "tstzrange("
+                       "  ($2::date + $3::time) AT TIME ZONE 'Europe/Dublin',"
+                       "  ($2::date + $4::time) AT TIME ZONE 'Europe/Dublin'"
+                       ")",
+                       {std::to_string(resource_id), date, lstart, lend});
 
-      auto overlap =
-          db.exec_params("SELECT 1 FROM bookings "
-                         "WHERE resource_id = $1 "
-                         "AND status = 'confirmed' "
-                         "AND tstzrange(start_time, end_time) && "
-                         "tstzrange($2::timestamptz, $3::timestamptz)",
-                         {std::to_string(resource_id), fullStart, fullEnd});
-
-      bool isFree = overlap.GetRows() == 0;
-
-      slots.push_back({lstart, lend, isFree});
-    }
-  } catch (std::exception &e) {
-    logger::error(e.what());
+    bool isFree = overlap.GetRows() == 0;
+    slots.push_back({lstart, lend, isFree});
   }
   return slots;
 }

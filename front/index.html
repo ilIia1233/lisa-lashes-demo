@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Lisa’s Lashes</title>
-<link rel="stylesheet" href="index.css">
-<link rel="stylesheet" href="index.css"><link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+<link rel="stylesheet" href="index.css?v=3">
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
 <link rel="stylesheet" href="css/product-slider.css"><link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/logo/logo.png" type="image/png">
@@ -385,15 +385,8 @@
         <option>Katia</option>
       </select>
       <label>Available Times</label>
-      <div class="time-slots">
-        <button class="time-slot">09:00</button>
-        <button class="time-slot">10:00</button>
-        <button class="time-slot">11:00</button>
-        <button class="time-slot">12:00</button>
-        <button class="time-slot">13:00</button>
-        <button class="time-slot">14:00</button>
-        <button class="time-slot">15:00</button>
-        <button class="time-slot">16:00</button>
+      <div class="time-slots" id="timeSlots">
+        <p class="no-slots">Select a date to see available times.</p>
       </div>
       <button class="book-now-btn">Book Now</button>
     </div>
@@ -460,29 +453,7 @@
   </div>
 </section>
 
-<script src="js/calendar.js"></script>
-<script>
-  // Handle time slot selection
-  document.addEventListener('DOMContentLoaded', function() {
-    const timeSlots = document.querySelectorAll('.time-slot');
-    timeSlots.forEach(slot => {
-      slot.addEventListener('click', function() {
-        timeSlots.forEach(s => s.classList.remove('selected'));
-        this.classList.add('selected');
-      });
-    });
-
-    // Handle day selection using event delegation
-    const daysContainer = document.getElementById('days');
-    daysContainer.addEventListener('click', function(e) {
-      if (e.target.classList.contains('day') && e.target.classList.contains('current')) {
-        const allDays = daysContainer.querySelectorAll('.day.current');
-        allDays.forEach(d => d.classList.remove('selected'));
-        e.target.classList.add('selected');
-      }
-    });
-  });
-</script>
+<script src="js/calendar.js?v=5"></script>
 </div>
 </main>
 <div class="section-divider"></div>
