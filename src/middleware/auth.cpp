@@ -1,8 +1,8 @@
 #include <expresso/middleware/auth.h>
 #include <string>
 
-bool AuthMiddleware::use(expresso::messages::Request &req,
-                         expresso::messages::Response &res) {
+bool expresso::middleware::AuthMiddleware::use(
+    expresso::messages::Request &req, expresso::messages::Response &res) {
   std::string token;
 
   // find session cookie
