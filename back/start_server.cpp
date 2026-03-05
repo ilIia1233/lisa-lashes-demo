@@ -6,6 +6,7 @@
 #include "routes/product_routes.h"
 #include "services/booking_service.h"
 #include "services/cart_service.h"
+#include "services/session_repository.h"
 #include "services/user_repository.h"
 #include "json/object.h"
 #include <brewtils/env.h>
@@ -59,10 +60,15 @@ int main(int argc, char **argv) {
 
   BookingRepository bookingService(conninfo);
   BookingContext::bookingService = &bookingService;
+
   UserRepository UserService(conninfo);
+  SessionRepository SessionService(conninfo);
   UserContext::UserService = &UserService;
+  UserContext::SessionService = &SessionService;
+
   CartService cartService(conninfo);
   CartContext::cartService = &cartService;
+
   ProductRepository productService(conninfo);
   ProductContext::ProductService = &productService;
 

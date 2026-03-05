@@ -1,7 +1,18 @@
 // auth_routes.cpp
 #include "auth_routes.h"
+#include "expresso/messages/cookie.h"
 #include <string>
 
+static expresso::messages::Cookie *
+createSessionCookie(const std::string &token) {
+  std::string cookie = "session=" + token +
+                       "; Path=/"
+                       "; HttpOnly"
+                       "; SameSite=Strict"
+                       "; Secure";
+
+  return new expresso::messages::Cookie(cookie);
+}
 // POST /api/auth/register
 // Body: { "first_name", "last_name", "phone", "password" }
 void PostRegisterRoute(expresso::messages::Request &req,
@@ -30,14 +41,15 @@ void PostRegisterRoute(expresso::messages::Request &req,
                               : "";
     user.address = address;
 
-    bool ok = UserContext::UserService->registerUser(user);
+    auto userIdOpt = UserContext::UserService->registerUser(user);
 
-    if (!ok) {
+    if (!userIdOpt) {
       json::object err;
-      err["message"] = "Registration failed (phone may already be in use)";
+      err["message"] =
+          "Registration failed (phone or email may already be in use)";
       return res.status(expresso::enums::STATUS_CODE::CONFLICT).json(err).end();
     }
-
+    user.user_id = *userIdOpt;
     json::object data;
     data["message"] = "User registered successfully";
     return res.status(expresso::enums::STATUS_CODE::CREATED).json(data).end();
@@ -90,42 +102,51 @@ void DeleteUserRoute(expresso::messages::Request &req,
 void PostLoginRoute(expresso::messages::Request &req,
                     expresso::messages::Response &res) {
   try {
+
     json::object body = req.body;
 
-    bool hasPhone = body.find("phone") != body.end();
-    bool hasAddress = body.find("address") != body.end();
-    bool hasPassword = body.find("password") != body.end();
-
-    if ((!hasPhone && !hasAddress) || !hasPassword) {
+    if (body.find("identifier") == body.end() ||
+        body.find("password") == body.end()) {
       json::object err;
-      err["message"] =
-          "Missing credentials: provide phone or address (email), and password";
+      err["message"] = "Missing identifier or password";
+
       return res.status(expresso::enums::STATUS_CODE::BAD_REQUEST)
           .json(err)
           .end();
     }
 
-    std::string identifier =
-        hasPhone ? std::string(body["phone"]) : std::string(body["address"]);
+    std::string identifier = std::string(body["identifier"]);
+    std::string password = std::string(body["password"]);
 
-    auto userId =
-        UserContext::UserService->loginUser(identifier, body["password"]);
+    auto userIdOpt = UserContext::UserService->loginUser(identifier, password);
 
-    if (!userId.has_value()) {
+    if (!userIdOpt.has_value()) {
       json::object err;
       err["message"] = "Invalid credentials";
+
       return res.status(expresso::enums::STATUS_CODE::UNAUTHORIZED)
           .json(err)
           .end();
     }
 
+    int userId = userIdOpt.value();
+
+    // create session
+    std::string token = UserContext::SessionService->createSession(userId);
+
+    res.setCookie(createSessionCookie(token));
     json::object data;
+
     data["message"] = "Login successful";
-    data["user_id"] = userId.value();
+
     return res.status(expresso::enums::STATUS_CODE::OK).json(data).end();
+
   } catch (const std::exception &e) {
+    logger::error(e.what());
+
     json::object err;
-    err["message"] = std::string("Internal server error: ") + e.what();
+    err["message"] = "Internal server error";
+
     return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
         .json(err)
         .end();

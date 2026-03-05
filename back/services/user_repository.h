@@ -1,6 +1,11 @@
 #pragma once
 
 #include "../db/pgconnection.h"
+#include <expresso/core/server.h>
+#include <expresso/middleware/cacher.h>
+#include <expresso/middleware/cookie_parser.h>
+#include <expresso/middleware/cors.h>
+#include <expresso/middleware/static_serve.h>
 #include <optional>
 #include <string>
 
@@ -11,21 +16,20 @@ public:
   std::string address;
   std::string phone;
   std::string password;
-  std::string user_id;
+  int user_id;
 };
 
 class UserRepository {
 public:
   UserRepository(const std::string &conninfo);
 
-  bool registerUser(User user);
+  std::optional<int> registerUser(const User &user);
 
-  std::optional<std::string> loginUser(const std::string &identifier,
-                                       const std::string &password);
+  std::optional<int> loginUser(const std::string &identifier,
+                               const std::string &password);
 
   bool removeUser(int id);
 
 private:
   PgConnection db;
-  User user;
 };
