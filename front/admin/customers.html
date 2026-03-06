@@ -88,7 +88,7 @@
           <option>Sort by: Name</option>
           <option>Sort by: Total Bookings</option>
         </select>
-        <span style="margin-left:auto;font-size:12px;color:var(--text-muted);font-weight:500;">312 clients total</span>
+        <span id="customers-count" style="margin-left:auto;font-size:12px;color:var(--text-muted);font-weight:500;">Loading…</span>
       </div>
 
       <div class="card">
@@ -99,111 +99,290 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>Total Bookings</th>
-                <th>Last Visit</th>
+                <th>ID</th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div class="customer-cell">
-                    <div class="customer-avatar">SH</div>
-                    <span class="td-name">Sophia Harrington</span>
-                  </div>
-                </td>
-                <td style="color:var(--text-muted);">sophia.h@email.com</td>
-                <td style="color:var(--text-muted);">+44 7700 900142</td>
-                <td><strong>18</strong></td>
-                <td>18 Feb 2026</td>
-                <td><div class="actions"><button class="btn-icon" title="View">👁</button><button class="btn-icon" title="Edit">✎</button><button class="btn-icon delete" title="Delete">✕</button></div></td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="customer-cell">
-                    <div class="customer-avatar">IL</div>
-                    <span class="td-name">Isabelle Laurent</span>
-                  </div>
-                </td>
-                <td style="color:var(--text-muted);">isabelle.l@email.com</td>
-                <td style="color:var(--text-muted);">+44 7700 900278</td>
-                <td><strong>12</strong></td>
-                <td>18 Feb 2026</td>
-                <td><div class="actions"><button class="btn-icon" title="View">👁</button><button class="btn-icon" title="Edit">✎</button><button class="btn-icon delete" title="Delete">✕</button></div></td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="customer-cell">
-                    <div class="customer-avatar">AF</div>
-                    <span class="td-name">Amelia Fontaine</span>
-                  </div>
-                </td>
-                <td style="color:var(--text-muted);">amelia.f@email.com</td>
-                <td style="color:var(--text-muted);">+44 7700 900389</td>
-                <td><strong>7</strong></td>
-                <td>18 Feb 2026</td>
-                <td><div class="actions"><button class="btn-icon" title="View">👁</button><button class="btn-icon" title="Edit">✎</button><button class="btn-icon delete" title="Delete">✕</button></div></td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="customer-cell">
-                    <div class="customer-avatar">NC</div>
-                    <span class="td-name">Natalie Chen</span>
-                  </div>
-                </td>
-                <td style="color:var(--text-muted);">natalie.c@email.com</td>
-                <td style="color:var(--text-muted);">+44 7700 900451</td>
-                <td><strong>24</strong></td>
-                <td>15 Feb 2026</td>
-                <td><div class="actions"><button class="btn-icon" title="View">👁</button><button class="btn-icon" title="Edit">✎</button><button class="btn-icon delete" title="Delete">✕</button></div></td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="customer-cell">
-                    <div class="customer-avatar">VB</div>
-                    <span class="td-name">Victoria Blake</span>
-                  </div>
-                </td>
-                <td style="color:var(--text-muted);">victoria.b@email.com</td>
-                <td style="color:var(--text-muted);">+44 7700 900512</td>
-                <td><strong>3</strong></td>
-                <td>10 Feb 2026</td>
-                <td><div class="actions"><button class="btn-icon" title="View">👁</button><button class="btn-icon" title="Edit">✎</button><button class="btn-icon delete" title="Delete">✕</button></div></td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="customer-cell">
-                    <div class="customer-avatar">CD</div>
-                    <span class="td-name">Charlotte Dubois</span>
-                  </div>
-                </td>
-                <td style="color:var(--text-muted);">charlotte.d@email.com</td>
-                <td style="color:var(--text-muted);">+44 7700 900634</td>
-                <td><strong>9</strong></td>
-                <td>5 Feb 2026</td>
-                <td><div class="actions"><button class="btn-icon" title="View">👁</button><button class="btn-icon" title="Edit">✎</button><button class="btn-icon delete" title="Delete">✕</button></div></td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="customer-cell">
-                    <div class="customer-avatar">EM</div>
-                    <span class="td-name">Elena Marchetti</span>
-                  </div>
-                </td>
-                <td style="color:var(--text-muted);">elena.m@email.com</td>
-                <td style="color:var(--text-muted);">+44 7700 900710</td>
-                <td><strong>1</strong></td>
-                <td>2 Feb 2026</td>
-                <td><div class="actions"><button class="btn-icon" title="View">👁</button><button class="btn-icon" title="Edit">✎</button><button class="btn-icon delete" title="Delete">✕</button></div></td>
-              </tr>
+            <tbody id="customers-tbody">
+              <!-- dynamically populated -->
             </tbody>
           </table>
         </div>
       </div>
 
+</div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL: Edit Customer
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-customer" onclick="handleOverlayClick(event,'modal-customer')">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="cm-title">Edit Customer</div>
+        <div class="modal-subtitle" id="cm-sub">Update customer details</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-customer')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Read-only summary -->
+      <div style="margin-bottom:22px;">
+        <div class="detail-row">
+          <div class="detail-key">ID</div>
+          <div class="detail-val" id="cm-d-id">—</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-key">Full Name</div>
+          <div class="detail-val" id="cm-d-name">—</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-key">Phone</div>
+          <div class="detail-val" id="cm-d-phone">—</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-key">Email</div>
+          <div class="detail-val" id="cm-d-email">—</div>
+        </div>
+      </div>
+      <!-- Editable fields -->
+      <div style="border-top:1px solid var(--border);padding-top:18px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;">Edit Customer</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" class="form-input" id="cm-first-name">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" class="form-input" id="cm-last-name">
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" class="form-input" id="cm-phone">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="form-input" id="cm-email">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-customer')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveCustomerChanges()">Save Changes</button>
     </div>
   </div>
 </div>
+
+<script>
+  const API = 'http://localhost:8000/api';
+  let allCustomers    = [];
+  let editingCustomerId = null;
+
+  /* ════════════════════════════════════
+     Helpers
+  ════════════════════════════════════ */
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function initials(first, last) {
+    return ((first?.[0] || '') + (last?.[0] || '')).toUpperCase() || '?';
+  }
+
+  /* ════════════════════════════════════
+     Load customers from API
+  ════════════════════════════════════ */
+  async function loadCustomers() {
+    try {
+      const res  = await fetch(`${API}/users`, { credentials: 'include' });
+      const data = await res.json();
+      allCustomers = data.users || [];
+      renderTable(allCustomers);
+    } catch (e) {
+      console.error('Failed to load customers:', e);
+      document.getElementById('customers-tbody').innerHTML =
+        '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load customers.</td></tr>';
+    }
+  }
+
+  /* ════════════════════════════════════
+     Render table
+  ════════════════════════════════════ */
+  function renderTable(customers) {
+    const tbody = document.getElementById('customers-tbody');
+    document.getElementById('customers-count').textContent = customers.length + ' client' + (customers.length !== 1 ? 's' : '') + ' total';
+
+    if (!customers.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">No customers found.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = customers.map(u => `
+      <tr>
+        <td>
+          <div class="customer-cell">
+            <div class="customer-avatar">${escHtml(initials(u.first_name, u.last_name))}</div>
+            <span class="td-name">${escHtml(u.first_name)} ${escHtml(u.last_name)}</span>
+          </div>
+        </td>
+        <td style="color:var(--text-muted);">${escHtml(u.email || '—')}</td>
+        <td style="color:var(--text-muted);">${escHtml(u.phone || '—')}</td>
+        <td><strong>#${u.id}</strong></td>
+        <td>
+          <div class="action-menu-wrap">
+            <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
+            <div class="action-dropdown">
+              <button class="action-dropdown-item" onclick="openEditCustomerModal(${u.id})"><span class="adi-icon">✎</span> Edit Customer</button>
+              <div class="action-dropdown-divider"></div>
+              <button class="action-dropdown-item danger" onclick="deleteCustomer(${u.id})"><span class="adi-icon">✕</span> Delete</button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  /* ════════════════════════════════════
+     Search / filter (client-side)
+  ════════════════════════════════════ */
+  document.querySelector('.search-box input').addEventListener('input', applyFilters);
+  document.querySelectorAll('.filter-select').forEach(s => s.addEventListener('change', applyFilters));
+
+  function applyFilters() {
+    const query = document.querySelector('.search-box input').value.toLowerCase();
+    const sort  = document.querySelectorAll('.filter-select')[1]?.value || '';
+
+    let filtered = allCustomers.filter(u => {
+      const name = ((u.first_name || '') + ' ' + (u.last_name || '')).toLowerCase();
+      return !query || name.includes(query) || (u.phone || '').includes(query) || (u.email || '').toLowerCase().includes(query);
+    });
+
+    if (sort.includes('Name')) {
+      filtered = [...filtered].sort((a, b) =>
+        ((a.first_name || '') + ' ' + (a.last_name || '')).localeCompare((b.first_name || '') + ' ' + (b.last_name || ''))
+      );
+    }
+
+    renderTable(filtered);
+  }
+
+  /* ════════════════════════════════════
+     Open Edit modal
+  ════════════════════════════════════ */
+  function openEditCustomerModal(id) {
+    const u = allCustomers.find(x => x.id === id);
+    if (!u) return;
+    editingCustomerId = id;
+
+    document.getElementById('cm-title').textContent   = `Edit — ${u.first_name} ${u.last_name}`;
+    document.getElementById('cm-sub').textContent     = `Customer #${u.id}`;
+    document.getElementById('cm-d-id').textContent    = u.id;
+    document.getElementById('cm-d-name').textContent  = `${u.first_name} ${u.last_name}`;
+    document.getElementById('cm-d-phone').textContent = u.phone   || '—';
+    document.getElementById('cm-d-email').textContent = u.email || '—';
+
+    document.getElementById('cm-first-name').value = u.first_name || '';
+    document.getElementById('cm-last-name').value  = u.last_name  || '';
+    document.getElementById('cm-phone').value      = u.phone      || '';
+    document.getElementById('cm-email').value      = u.email      || '';
+
+    closeMenu();
+    openModal('modal-customer');
+  }
+
+  /* ════════════════════════════════════
+     Save customer changes
+  ════════════════════════════════════ */
+  async function saveCustomerChanges() {
+    if (!editingCustomerId) return;
+    const payload = {
+      first_name: document.getElementById('cm-first-name').value.trim(),
+      last_name:  document.getElementById('cm-last-name').value.trim(),
+      phone:      document.getElementById('cm-phone').value.trim(),
+      email:      document.getElementById('cm-email').value.trim(),
+    };
+    try {
+      const res = await fetch(`${API}/users?id=${editingCustomerId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) { const e = await res.json(); alert('Error: ' + (e.message || res.status)); return; }
+      closeModal('modal-customer');
+      editingCustomerId = null;
+      await loadCustomers();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  /* ════════════════════════════════════
+     Delete customer
+  ════════════════════════════════════ */
+  async function deleteCustomer(id) {
+    const u = allCustomers.find(x => x.id === id);
+    if (!u) return;
+    if (!confirm(`Delete customer "${u.first_name} ${u.last_name}" (ID #${u.id})? This cannot be undone.`)) return;
+    closeMenu();
+    try {
+      const res = await fetch(`${API}/auth/user?id=${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (!res.ok) { const e = await res.json(); alert('Error: ' + (e.message || res.status)); return; }
+      await loadCustomers();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  /* ════════════════════════════════════
+     Dropdown menus
+  ════════════════════════════════════ */
+  function toggleMenu(btn) {
+    const drop = btn.nextElementSibling;
+    const isOpen = drop.classList.contains('open');
+    closeMenu();
+    if (!isOpen) drop.classList.add('open');
+  }
+  function closeMenu() {
+    document.querySelectorAll('.action-dropdown.open').forEach(d => d.classList.remove('open'));
+  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.action-menu-wrap')) closeMenu();
+  });
+
+  /* ════════════════════════════════════
+     Modals
+  ════════════════════════════════════ */
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+    closeMenu();
+  }
+  function handleOverlayClick(e, id) {
+    if (e.target === document.getElementById(id)) closeModal(id);
+  }
+
+  /* Escape closes modals */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(m => {
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+      closeMenu();
+    }
+  });
+
+  /* ── Boot ── */
+  loadCustomers();
+</script>
 
 </body>
 </html>

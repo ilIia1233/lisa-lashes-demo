@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../db/pgconnection.h"
+#include "json/object.h"
 #include <chrono>
 #include <string>
 #include <utility>
@@ -10,6 +11,18 @@ struct TimeSlot {
   std::string start;
   std::string end;
   bool isFree;
+};
+
+struct Booking {
+  int id = 0;
+  int resource_id = 0;
+  std::string customer_name;
+  std::string customer_phone;
+  std::string customer_email;
+  std::string date;   // YYYY-MM-DD (local Dublin time)
+  std::string start;  // HH:MM
+  std::string end;    // HH:MM
+  std::string status;
 };
 
 class BookingRepository {
@@ -39,6 +52,15 @@ public:
 
   std::vector<TimeSlot> getAvailableTimeSlots(int resource_id,
                                               const std::string &date);
+
+  // Admin: get all bookings
+  std::vector<Booking> getAllBookings();
+
+  // Admin: update a booking by id
+  void updateBooking(int id, json::object obj);
+
+  // Admin: delete a booking by id
+  void deleteBooking(int id);
 
 private:
   PgConnection db;

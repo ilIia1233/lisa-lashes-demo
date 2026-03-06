@@ -98,61 +98,16 @@
         <!-- Left: Calendar -->
         <div class="card">
           <div class="card-header">
-            <div class="section-title">February 2026<span></span></div>
-            <div style="display:flex;gap:6px;">
-              <button class="cal-nav">‹</button>
-              <button class="cal-nav">›</button>
+            <div class="section-title" id="cal-title">Loading…<span></span></div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <button class="cal-nav" onclick="calPrev()">&#8249;</button>
+              <button class="cal-nav" onclick="calNext()">&#8250;</button>
+              <button class="cal-nav cal-nav-today" onclick="goToday()">Today</button>
             </div>
           </div>
           <div class="card-body">
-            <div class="cal-grid">
-              <div class="cal-day-name">Mo</div>
-              <div class="cal-day-name">Tu</div>
-              <div class="cal-day-name">We</div>
-              <div class="cal-day-name">Th</div>
-              <div class="cal-day-name">Fr</div>
-              <div class="cal-day-name">Sa</div>
-              <div class="cal-day-name">Su</div>
-
-              <!-- Feb 2026 starts on Sunday, so Mon col is empty -->
-              <div class="cal-day other-month"></div>
-              <div class="cal-day other-month"></div>
-              <div class="cal-day other-month"></div>
-              <div class="cal-day other-month"></div>
-              <div class="cal-day other-month"></div>
-              <div class="cal-day other-month"></div>
-              <div class="cal-day">1</div>
-
-              <div class="cal-day">2</div>
-              <div class="cal-day has-bookings">3</div>
-              <div class="cal-day has-bookings">4</div>
-              <div class="cal-day">5</div>
-              <div class="cal-day has-bookings">6</div>
-              <div class="cal-day">7</div>
-              <div class="cal-day">8</div>
-
-              <div class="cal-day has-bookings">9</div>
-              <div class="cal-day">10</div>
-              <div class="cal-day has-bookings">11</div>
-              <div class="cal-day">12</div>
-              <div class="cal-day has-bookings">13</div>
-              <div class="cal-day">14</div>
-              <div class="cal-day">15</div>
-
-              <div class="cal-day">16</div>
-              <div class="cal-day">17</div>
-              <div class="cal-day today selected has-bookings">18</div>
-              <div class="cal-day has-bookings">19</div>
-              <div class="cal-day has-bookings">20</div>
-              <div class="cal-day">21</div>
-              <div class="cal-day">22</div>
-
-              <div class="cal-day has-bookings">23</div>
-              <div class="cal-day has-bookings">24</div>
-              <div class="cal-day has-bookings">25</div>
-              <div class="cal-day">26</div>
-              <div class="cal-day has-bookings">27</div>
-              <div class="cal-day">28</div>
+            <div class="cal-grid" id="cal-grid">
+              <!-- rendered by JS -->
             </div>
 
             <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:flex;gap:16px;flex-wrap:wrap;">
@@ -168,139 +123,38 @@
           </div>
         </div>
 
-        <!-- Right: Booking List -->
-        <div class="card">
-          <div class="card-header">
-            <div class="section-title">18 February — 9 Appointments<span></span></div>
-          </div>
-          <div style="overflow-y:auto;max-height:480px;">
-            <div class="booking-card">
-              <div class="booking-card-left">
-                <h4>Sophia Harrington</h4>
-                <p>Classic Lash Set • 90 min</p>
-                <div class="booking-time">10:00 AM</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-                <span class="badge badge-confirmed">Confirmed</span>
-                <div class="action-menu-wrap">
-                  <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                  <div class="action-dropdown">
-                    <button class="action-dropdown-item" onclick="openBookingModal('Sophia Harrington','Classic Lash Set','90 min','10:00 AM','18 Feb 2026','Confirmed')"><span class="adi-icon">👁</span> View Details</button>
-                    <button class="action-dropdown-item" onclick="openBookingModal('Sophia Harrington','Classic Lash Set','90 min','10:00 AM','18 Feb 2026','Confirmed')"><span class="adi-icon">✎</span> Edit Booking</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">✓</span> Mark Confirmed</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📩</span> Send Reminder</button>
-                    <div class="action-dropdown-divider"></div>
-                    <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Cancel Booking</button>
-                  </div>
-                </div>
-              </div>
+        <!-- Right: Two-panel column -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+          <!-- Today card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="section-title" id="today-header">Today<span></span></div>
             </div>
-            <div class="booking-card">
-              <div class="booking-card-left">
-                <h4>Isabelle Laurent</h4>
-                <p>Volume Lash Set • 120 min</p>
-                <div class="booking-time">11:30 AM</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-                <span class="badge badge-confirmed">Confirmed</span>
-                <div class="action-menu-wrap">
-                  <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                  <div class="action-dropdown">
-                    <button class="action-dropdown-item" onclick="openBookingModal('Isabelle Laurent','Volume Lash Set','120 min','11:30 AM','18 Feb 2026','Confirmed')"><span class="adi-icon">👁</span> View Details</button>
-                    <button class="action-dropdown-item" onclick="openBookingModal('Isabelle Laurent','Volume Lash Set','120 min','11:30 AM','18 Feb 2026','Confirmed')"><span class="adi-icon">✎</span> Edit Booking</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">✓</span> Mark Confirmed</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📩</span> Send Reminder</button>
-                    <div class="action-dropdown-divider"></div>
-                    <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Cancel Booking</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="booking-card">
-              <div class="booking-card-left">
-                <h4>Amelia Fontaine</h4>
-                <p>Lash Lift & Tint • 60 min</p>
-                <div class="booking-time">1:00 PM</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-                <span class="badge badge-pending">Pending</span>
-                <div class="action-menu-wrap">
-                  <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                  <div class="action-dropdown">
-                    <button class="action-dropdown-item" onclick="openBookingModal('Amelia Fontaine','Lash Lift &amp; Tint','60 min','1:00 PM','18 Feb 2026','Pending')"><span class="adi-icon">👁</span> View Details</button>
-                    <button class="action-dropdown-item" onclick="openBookingModal('Amelia Fontaine','Lash Lift &amp; Tint','60 min','1:00 PM','18 Feb 2026','Pending')"><span class="adi-icon">✎</span> Edit Booking</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">✓</span> Mark Confirmed</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📩</span> Send Reminder</button>
-                    <div class="action-dropdown-divider"></div>
-                    <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Cancel Booking</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="booking-card">
-              <div class="booking-card-left">
-                <h4>Natalie Chen</h4>
-                <p>Hybrid Lash Set • 105 min</p>
-                <div class="booking-time">2:00 PM</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-                <span class="badge badge-confirmed">Confirmed</span>
-                <div class="action-menu-wrap">
-                  <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                  <div class="action-dropdown">
-                    <button class="action-dropdown-item" onclick="openBookingModal('Natalie Chen','Hybrid Lash Set','105 min','2:00 PM','18 Feb 2026','Confirmed')"><span class="adi-icon">👁</span> View Details</button>
-                    <button class="action-dropdown-item" onclick="openBookingModal('Natalie Chen','Hybrid Lash Set','105 min','2:00 PM','18 Feb 2026','Confirmed')"><span class="adi-icon">✎</span> Edit Booking</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">✓</span> Mark Confirmed</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📩</span> Send Reminder</button>
-                    <div class="action-dropdown-divider"></div>
-                    <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Cancel Booking</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="booking-card">
-              <div class="booking-card-left">
-                <h4>Charlotte Dubois</h4>
-                <p>Mega Volume Set • 150 min</p>
-                <div class="booking-time">3:30 PM</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-                <span class="badge badge-confirmed">Confirmed</span>
-                <div class="action-menu-wrap">
-                  <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                  <div class="action-dropdown">
-                    <button class="action-dropdown-item" onclick="openBookingModal('Charlotte Dubois','Mega Volume Set','150 min','3:30 PM','18 Feb 2026','Confirmed')"><span class="adi-icon">👁</span> View Details</button>
-                    <button class="action-dropdown-item" onclick="openBookingModal('Charlotte Dubois','Mega Volume Set','150 min','3:30 PM','18 Feb 2026','Confirmed')"><span class="adi-icon">✎</span> Edit Booking</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">✓</span> Mark Confirmed</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📩</span> Send Reminder</button>
-                    <div class="action-dropdown-divider"></div>
-                    <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Cancel Booking</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="booking-card">
-              <div class="booking-card-left">
-                <h4>Elena Marchetti</h4>
-                <p>Classic Lash Set • 90 min</p>
-                <div class="booking-time">5:00 PM</div>
-              </div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-                <span class="badge badge-pending">Pending</span>
-                <div class="action-menu-wrap">
-                  <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
-                  <div class="action-dropdown">
-                    <button class="action-dropdown-item" onclick="openBookingModal('Elena Marchetti','Classic Lash Set','90 min','5:00 PM','18 Feb 2026','Pending')"><span class="adi-icon">👁</span> View Details</button>
-                    <button class="action-dropdown-item" onclick="openBookingModal('Elena Marchetti','Classic Lash Set','90 min','5:00 PM','18 Feb 2026','Pending')"><span class="adi-icon">✎</span> Edit Booking</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">✓</span> Mark Confirmed</button>
-                    <button class="action-dropdown-item" onclick="closeMenu()"><span class="adi-icon">📩</span> Send Reminder</button>
-                    <div class="action-dropdown-divider"></div>
-                    <button class="action-dropdown-item danger" onclick="closeMenu()"><span class="adi-icon">✕</span> Cancel Booking</button>
-                  </div>
-                </div>
-              </div>
+            <div id="today-list" style="overflow-y:auto;max-height:260px;padding:0 20px 12px;">
+              <!-- today's bookings -->
             </div>
           </div>
+
+          <!-- Selected Day card (hidden when selection == today) -->
+          <div class="card" id="selected-day-card" style="display:none;">
+            <div class="card-header">
+              <div class="section-title" id="selected-day-header"><span></span></div>
+            </div>
+            <div id="selected-day-list" style="overflow-y:auto;max-height:220px;padding:0 20px 12px;">
+            </div>
+          </div>
+
+          <!-- All Bookings card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="section-title" id="booking-list-header">All Bookings<span></span></div>
+            </div>
+            <div id="bookings-list" style="overflow-y:auto;max-height:320px;padding:0 20px 12px;">
+              <!-- all bookings -->
+            </div>
+          </div>
+
         </div>
 
       </div><!-- /bookings-layout -->
@@ -355,52 +209,46 @@
         <div class="form-grid">
           <div class="form-group">
             <label>Date</label>
-            <input type="date" class="form-input" value="2026-02-18">
+            <input type="date" class="form-input" id="bm-edit-date">
           </div>
           <div class="form-group">
-            <label>Time</label>
-            <input type="time" class="form-input" value="10:00">
+            <label>Start Time</label>
+            <input type="time" class="form-input" id="bm-edit-start">
           </div>
           <div class="form-group">
-            <label>Service</label>
-            <select class="form-select">
-              <option>Classic Lash Set</option>
-              <option>Volume Lash Set</option>
-              <option>Hybrid Lash Set</option>
-              <option>Lash Lift &amp; Tint</option>
-              <option>Mega Volume Set</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Artist</label>
-            <select class="form-select">
-              <option>Lisa Monroe</option>
-              <option>Sophie Reid</option>
-              <option>Anya Kim</option>
-            </select>
+            <label>End Time</label>
+            <input type="time" class="form-input" id="bm-edit-end">
           </div>
           <div class="form-group">
             <label>Status</label>
-            <select class="form-select">
-              <option>Confirmed</option>
-              <option>Pending</option>
-              <option>Cancelled</option>
+            <select class="form-select" id="bm-edit-status">
+              <option value="confirmed">Confirmed</option>
+              <option value="pending">Pending</option>
+              <option value="cancelled">Cancelled</option>
             </select>
           </div>
+          <div class="form-group full">
+            <label>Customer Name</label>
+            <input type="text" class="form-input" id="bm-edit-name">
+          </div>
           <div class="form-group">
-            <label>Promo Code</label>
-            <input type="text" class="form-input" placeholder="Optional">
+            <label>Customer Phone</label>
+            <input type="tel" class="form-input" id="bm-edit-phone">
+          </div>
+          <div class="form-group">
+            <label>Customer Email</label>
+            <input type="email" class="form-input" id="bm-edit-email">
           </div>
           <div class="form-group full">
             <label>Internal Notes</label>
-            <textarea class="form-textarea" placeholder="e.g. allergies, preferences…" style="min-height:72px;"></textarea>
+            <textarea class="form-textarea" id="bm-edit-notes" placeholder="e.g. allergies, preferences…" style="min-height:72px;"></textarea>
           </div>
         </div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-booking')">Close</button>
-      <button class="btn btn-gold" onclick="closeModal('modal-booking')">Save Changes</button>
+      <button class="btn btn-gold" onclick="saveBookingChanges()">Save Changes</button>
     </div>
   </div>
 </div>
@@ -421,57 +269,46 @@
       <div class="form-grid">
         <div class="form-group full">
           <label>Client Name</label>
-          <input type="text" class="form-input" placeholder="Search existing or type new name…">
+          <input type="text" class="form-input" id="nb-name" placeholder="Full name…">
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" class="form-input" placeholder="client@email.com">
+          <input type="email" class="form-input" id="nb-email" placeholder="client@email.com">
         </div>
         <div class="form-group">
           <label>Phone</label>
-          <input type="tel" class="form-input" placeholder="+44 …">
+          <input type="tel" class="form-input" id="nb-phone" placeholder="+353 …">
         </div>
         <div class="form-group">
-          <label>Service</label>
-          <select class="form-select">
-            <option value="">— Select Service —</option>
-            <option>Classic Lash Set • 90 min</option>
-            <option>Volume Lash Set • 120 min</option>
-            <option>Hybrid Lash Set • 105 min</option>
-            <option>Lash Lift &amp; Tint • 60 min</option>
-            <option>Mega Volume Set • 150 min</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Artist</label>
-          <select class="form-select">
-            <option>Lisa Monroe</option>
-            <option>Sophie Reid</option>
-            <option>Anya Kim</option>
+          <label>Resource / Artist</label>
+          <select class="form-select" id="nb-resource">
+            <option value="1">Lisa Monroe — Resource 1</option>
+            <option value="2">Sophie Reid — Resource 2</option>
+            <option value="3">Anya Kim — Resource 3</option>
           </select>
         </div>
         <div class="form-group">
           <label>Date</label>
-          <input type="date" class="form-input" value="2026-02-18">
+          <input type="date" class="form-input" id="nb-date">
         </div>
         <div class="form-group">
-          <label>Time</label>
-          <input type="time" class="form-input" value="10:00">
+          <label>Start Time</label>
+          <input type="time" class="form-input" id="nb-start" value="10:00">
+        </div>
+        <div class="form-group">
+          <label>End Time</label>
+          <input type="time" class="form-input" id="nb-end" value="11:00">
         </div>
         <div class="form-group">
           <label>Status</label>
-          <select class="form-select">
-            <option>Confirmed</option>
-            <option>Pending</option>
+          <select class="form-select" id="nb-status">
+            <option value="confirmed">Confirmed</option>
+            <option value="pending">Pending</option>
           </select>
-        </div>
-        <div class="form-group">
-          <label>Promo Code</label>
-          <input type="text" class="form-input" placeholder="Optional">
         </div>
         <div class="form-group full">
           <label>Notes</label>
-          <textarea class="form-textarea" placeholder="Allergies, preferences, special requests…" style="min-height:72px;"></textarea>
+          <textarea class="form-textarea" id="nb-notes" placeholder="Allergies, preferences, special requests…" style="min-height:72px;"></textarea>
         </div>
       </div>
       <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
@@ -493,13 +330,286 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-new-booking')">Cancel</button>
-      <button class="btn btn-gold" onclick="closeModal('modal-new-booking')">Create Booking</button>
+      <button class="btn btn-gold" onclick="createBooking()">Create Booking</button>
     </div>
   </div>
 </div>
 
 <script>
-  /* ── Dropdown menus ── */
+  const API = 'http://localhost:8000/api';
+  let allBookings      = [];
+  let editingBookingId = null;
+  let selectedDate     = new Date().toISOString().split('T')[0];
+  let calYear          = new Date().getFullYear();
+  let calMonth         = new Date().getMonth(); // 0-indexed
+
+  /* ════════════════════════════════════
+     Helpers
+  ════════════════════════════════════ */
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function capitalize(s) {
+    return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '';
+  }
+  function statusBadge(status) {
+    const map = { confirmed:'badge-confirmed', pending:'badge-pending', cancelled:'badge-cancelled' };
+    const cls = map[status?.toLowerCase()] || 'badge-pending';
+    return `<span class="badge ${cls}">${capitalize(status)}</span>`;
+  }
+  function formatDateLabel(dateStr) {
+    if (!dateStr) return dateStr;
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  }
+
+  /* ════════════════════════════════════
+     Load bookings from API
+  ════════════════════════════════════ */
+  async function loadBookings() {
+    try {
+      const res  = await fetch(`${API}/bookings`, { credentials: 'include', cache: 'no-store' });
+      const data = await res.json();
+      allBookings = data.bookings || [];
+      renderBookingList();
+      renderCalendar();
+    } catch (e) {
+      console.error('Failed to load bookings:', e);
+      document.getElementById('bookings-list').innerHTML =
+        '<div style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load bookings.</div>';
+    }
+  }
+
+  /* ════════════════════════════════════
+     Booking card HTML helper
+  ════════════════════════════════════ */
+  function bookingCardHtml(b) {
+    return `
+      <div class="booking-card">
+        <div class="booking-card-left">
+          <h4>${escHtml(b.customer_name || '—')}</h4>
+          <p>${escHtml(b.date)} · ${escHtml(b.start)}–${escHtml(b.end)}</p>
+          <div class="booking-time">${escHtml(b.start)}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+          ${statusBadge(b.status)}
+          <div class="action-menu-wrap">
+            <button class="action-menu-btn" onclick="toggleMenu(this)">⋯</button>
+            <div class="action-dropdown">
+              <button class="action-dropdown-item" onclick="openBookingEditModal(${b.id})"><span class="adi-icon">✎</span> Edit Booking</button>
+              <button class="action-dropdown-item" onclick="markStatus(${b.id},'confirmed')"><span class="adi-icon">✓</span> Mark Confirmed</button>
+              <button class="action-dropdown-item" onclick="markStatus(${b.id},'pending')"><span class="adi-icon">⏳</span> Mark Pending</button>
+              <div class="action-dropdown-divider"></div>
+              <button class="action-dropdown-item danger" onclick="deleteBooking(${b.id})"><span class="adi-icon">✕</span> Cancel &amp; Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /* ════════════════════════════════════
+     Render booking list
+  ════════════════════════════════════ */
+  function renderBookingList() {
+    const filterStatus = document.querySelectorAll('.filter-select')[1]?.value || 'All Statuses';
+
+    let filtered = allBookings;
+    if (filterStatus !== 'All Statuses') {
+      filtered = filtered.filter(b => b.status?.toLowerCase() === filterStatus.toLowerCase());
+    }
+
+    // ── Today card ──
+    const todayStr      = new Date().toISOString().split('T')[0];
+    const todayBookings = filtered.filter(b => b.date === todayStr);
+
+    document.getElementById('today-header').innerHTML =
+      `Today — ${todayBookings.length} appointment${todayBookings.length !== 1 ? 's' : ''}<span></span>`;
+
+    const todayList = document.getElementById('today-list');
+    if (todayBookings.length > 0) {
+      todayList.innerHTML = todayBookings.map(bookingCardHtml).join('');
+    } else {
+      todayList.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px 0;">No appointments today.</div>';
+    }
+
+    // ── Selected day card ──
+    const selCard = document.getElementById('selected-day-card');
+    if (selectedDate && selectedDate !== todayStr) {
+      const selBookings = filtered.filter(b => b.date === selectedDate);
+      const selDate     = new Date(selectedDate + 'T00:00:00');
+      const selLabel    = selDate.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'long' });
+      document.getElementById('selected-day-header').innerHTML =
+        `${selLabel} — ${selBookings.length} appointment${selBookings.length !== 1 ? 's' : ''}<span></span>`;
+      document.getElementById('selected-day-list').innerHTML = selBookings.length
+        ? selBookings.map(bookingCardHtml).join('')
+        : '<div style="text-align:center;color:var(--text-muted);padding:20px 0;">No appointments.</div>';
+      selCard.style.display = '';
+    } else {
+      selCard.style.display = 'none';
+    }
+
+    // ── All bookings card ──
+    document.getElementById('booking-list-header').innerHTML =
+      `All Bookings — ${filtered.length} appointment${filtered.length !== 1 ? 's' : ''}<span></span>`;
+
+    const list = document.getElementById('bookings-list');
+    if (filtered.length === 0) {
+      list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px 0;">No bookings found.</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(bookingCardHtml).join('');
+  }
+
+  /* ════════════════════════════════════
+     Open Edit modal pre-filled
+  ════════════════════════════════════ */
+  function openBookingEditModal(id) {
+    const b = allBookings.find(x => x.id === id);
+    if (!b) return;
+    editingBookingId = id;
+
+    document.getElementById('bm-client').textContent  = b.customer_name || '—';
+    document.getElementById('bm-sub').textContent     = `${b.date} at ${b.start}`;
+    document.getElementById('bm-d-client').textContent   = b.customer_name  || '—';
+    document.getElementById('bm-d-service').textContent  = `Resource #${b.resource_id}`;
+    document.getElementById('bm-d-duration').textContent = `${b.start} – ${b.end}`;
+    document.getElementById('bm-d-date').textContent  = b.date  || '—';
+    document.getElementById('bm-d-time').textContent  = b.start || '—';
+    document.getElementById('bm-d-status').innerHTML  = statusBadge(b.status);
+
+    document.getElementById('bm-edit-date').value  = b.date  || '';
+    document.getElementById('bm-edit-start').value = b.start || '';
+    document.getElementById('bm-edit-end').value   = b.end   || '';
+    document.getElementById('bm-edit-name').value  = b.customer_name  || '';
+    document.getElementById('bm-edit-phone').value = b.customer_phone || '';
+    document.getElementById('bm-edit-email').value = b.customer_email || '';
+    document.getElementById('bm-edit-notes').value = '';
+
+    const sel = document.getElementById('bm-edit-status');
+    [...sel.options].forEach(o => { o.selected = o.value === b.status?.toLowerCase(); });
+
+    closeMenu();
+    openModal('modal-booking');
+  }
+
+  /* ════════════════════════════════════
+     Save edited booking
+  ════════════════════════════════════ */
+  async function saveBookingChanges() {
+    if (!editingBookingId) return;
+    const payload = {
+      date:           document.getElementById('bm-edit-date').value,
+      start:          document.getElementById('bm-edit-start').value,
+      end:            document.getElementById('bm-edit-end').value,
+      status:         document.getElementById('bm-edit-status').value,
+      customer_name:  document.getElementById('bm-edit-name').value.trim(),
+      customer_phone: document.getElementById('bm-edit-phone').value.trim(),
+      customer_email: document.getElementById('bm-edit-email').value.trim(),
+    };
+    try {
+      const res = await fetch(`${API}/bookings?id=${editingBookingId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) { const e = await res.json(); alert('Error: ' + (e.message || res.status)); return; }
+      closeModal('modal-booking');
+      editingBookingId = null;
+      await loadBookings();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  /* ════════════════════════════════════
+     Quick status change
+  ════════════════════════════════════ */
+  async function markStatus(id, status) {
+    closeMenu();
+    // Optimistic update — change badge immediately
+    const local = allBookings.find(b => b.id === id);
+    if (local) { local.status = status; renderBookingList(); }
+    try {
+      const res = await fetch(`${API}/bookings?id=${id}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      if (!res.ok) { const e = await res.json(); alert('Error: ' + (e.message || res.status)); return; }
+      await loadBookings();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  /* ════════════════════════════════════
+     Delete / cancel booking
+  ════════════════════════════════════ */
+  async function deleteBooking(id) {
+    const b = allBookings.find(x => x.id === id);
+    if (!b) return;
+    if (!confirm(`Delete booking for "${b.customer_name}" on ${b.date}? This cannot be undone.`)) return;
+    closeMenu();
+    try {
+      const res = await fetch(`${API}/bookings?id=${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (!res.ok) { const e = await res.json(); alert('Error: ' + (e.message || res.status)); return; }
+      await loadBookings();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  /* ════════════════════════════════════
+     Create new booking
+  ════════════════════════════════════ */
+  async function createBooking() {
+    const customer_name = document.getElementById('nb-name').value.trim();
+    const date          = document.getElementById('nb-date').value;
+    const start         = document.getElementById('nb-start').value;
+    const end           = document.getElementById('nb-end').value;
+    const resource_id   = parseInt(document.getElementById('nb-resource').value, 10);
+    const status        = document.getElementById('nb-status').value;
+
+    if (!customer_name || !date || !start || !end) {
+      alert('Name, date, start time and end time are required.');
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/bookings`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customer_name, date, start, end, resource_id, status })
+      });
+      if (!res.ok) { const e = await res.json(); alert('Error: ' + (e.message || res.status)); return; }
+      closeModal('modal-new-booking');
+      clearNewBookingForm();
+      await loadBookings();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  function clearNewBookingForm() {
+    ['nb-name','nb-email','nb-phone','nb-notes'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('nb-date').value  = today;
+    document.getElementById('nb-start').value = '10:00';
+    document.getElementById('nb-end').value   = '11:00';
+  }
+
+  /* ════════════════════════════════════
+     Filters
+  ════════════════════════════════════ */
+  document.querySelectorAll('.filter-select').forEach(s => s.addEventListener('change', renderBookingList));
+
+  /* ════════════════════════════════════
+     Dropdown menus
+  ════════════════════════════════════ */
   function toggleMenu(btn) {
     const drop = btn.nextElementSibling;
     const isOpen = drop.classList.contains('open');
@@ -513,7 +623,9 @@
     if (!e.target.closest('.action-menu-wrap')) closeMenu();
   });
 
-  /* ── Modals ── */
+  /* ════════════════════════════════════
+     Modals
+  ════════════════════════════════════ */
   function openModal(id) {
     document.getElementById(id).classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -527,20 +639,68 @@
     if (e.target === document.getElementById(id)) closeModal(id);
   }
 
-  /* ── Open booking detail modal ── */
-  function openBookingModal(client, service, duration, time, date, status) {
-    document.getElementById('bm-client').textContent = client;
-    document.getElementById('bm-sub').textContent = service + ' · ' + date + ' at ' + time;
-    document.getElementById('bm-d-client').textContent = client;
-    document.getElementById('bm-d-service').textContent = service;
-    document.getElementById('bm-d-duration').textContent = duration;
-    document.getElementById('bm-d-date').textContent = date;
-    document.getElementById('bm-d-time').textContent = time;
-    const statusEl = document.getElementById('bm-d-status');
-    const cls = status === 'Confirmed' ? 'badge-confirmed' : status === 'Pending' ? 'badge-pending' : 'badge-cancelled';
-    statusEl.innerHTML = '<span class="badge ' + cls + '">' + status + '</span>';
-    closeMenu();
-    openModal('modal-booking');
+  /* ════════════════════════════════════
+     Calendar
+  ════════════════════════════════════ */
+  const MONTH_NAMES = ['January','February','March','April','May','June',
+                       'July','August','September','October','November','December'];
+
+  function renderCalendar() {
+    document.getElementById('cal-title').textContent = MONTH_NAMES[calMonth] + ' ' + calYear;
+
+    const todayStr  = new Date().toISOString().split('T')[0];
+    const firstDow  = new Date(calYear, calMonth, 1).getDay();     // 0=Sun
+    const offset    = (firstDow + 6) % 7;                          // Mon-first
+    const daysInMon = new Date(calYear, calMonth + 1, 0).getDate();
+
+    const bookedDays = new Set();
+    allBookings.forEach(b => {
+      if (!b.date) return;
+      const [y, m, d] = b.date.split('-').map(Number);
+      if (y === calYear && m === calMonth + 1)
+        bookedDays.add(d);
+    });
+
+    let html = '';
+    ['Mo','Tu','We','Th','Fr','Sa','Su'].forEach(n => { html += `<div class="cal-day-name">${n}</div>`; });
+    for (let i = 0; i < offset; i++)  html += '<div class="cal-day other-month"></div>';
+
+    for (let d = 1; d <= daysInMon; d++) {
+      const dateStr = `${calYear}-${String(calMonth + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const isToday = dateStr === todayStr;
+      const isSel   = dateStr === selectedDate;
+      const hasBook = bookedDays.has(d);
+      const cls     = ['cal-day', isToday ? 'today' : '', isSel ? 'selected' : '', hasBook ? 'has-bookings' : ''].filter(Boolean).join(' ');
+      html += `<div class="${cls}" onclick="selectDay('${dateStr}')" style="cursor:pointer;">${d}</div>`;
+    }
+
+    document.getElementById('cal-grid').innerHTML = html;
+  }
+
+  function selectDay(dateStr) {
+    selectedDate = dateStr;
+    renderCalendar();
+    renderBookingList();
+  }
+
+  function calPrev() {
+    calMonth--;
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+  }
+
+  function calNext() {
+    calMonth++;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    renderCalendar();
+  }
+
+  function goToday() {
+    const now    = new Date();
+    calYear      = now.getFullYear();
+    calMonth     = now.getMonth();
+    selectedDate = now.toISOString().split('T')[0];
+    renderCalendar();
   }
 
   /* ── Wire "New Booking" button ── */
@@ -554,6 +714,16 @@
         document.body.style.overflow = '';
       });
       closeMenu();
+    }
+  });
+
+  /* ── Boot ── */
+  renderCalendar();
+  loadBookings().then(() => {
+    const pendingId = sessionStorage.getItem('openBookingId');
+    if (pendingId) {
+      sessionStorage.removeItem('openBookingId');
+      openBookingEditModal(parseInt(pendingId, 10));
     }
   });
 </script>

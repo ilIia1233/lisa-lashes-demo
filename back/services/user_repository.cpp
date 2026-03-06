@@ -25,7 +25,7 @@ std::optional<int> UserRepository::registerUser(const User &user) {
                        "VALUES ($1, $2, $3, $4, $5) "
                        "RETURNING id",
                        {user.first, user.last, user.phone,
-                        user.address.empty() ? "" : user.address, hash});
+                        user.email.empty() ? "" : user.email, hash});
 
     if (res.GetRows() == 0)
       return std::nullopt;
@@ -53,4 +53,51 @@ std::optional<int> UserRepository::loginUser(const std::string &identifier,
     return std::nullopt;
 
   return std::stoi(res.GetEl(0, 0));
+}
+
+std::vector<UserInfo> UserRepository::getAllUsers() {
+  std::vector<UserInfo> users;
+
+  auto res = db.exec_params("SELECT id, first_name, last_name, phone, address "
+                            "FROM users ORDER BY id ASC",
+                            {});
+
+  for (int i = 0; i < res.GetRows(); i++) {
+    UserInfo u;
+    u.id = std::stoi(res.GetEl(i, 0));
+    u.first_name = res.GetEl(i, 1);
+    u.last_name = res.GetEl(i, 2);
+    u.phone = res.GetEl(i, 3);
+    u.email = res.GetEl(i, 4);
+    users.push_back(u);
+  }
+
+  return users;
+}
+
+void UserRepository::updateUser(int id, json::object obj) {
+  std::string first_name = "";
+  std::string last_name = "";
+  std::string phone = "";
+  std::string email = "";
+
+  if (obj.find("first_name") != obj.end())
+    first_name = static_cast<std::string>(obj["first_name"]);
+
+  if (obj.find("last_name") != obj.end())
+    last_name = static_cast<std::string>(obj["last_name"]);
+
+  if (obj.find("phone") != obj.end())
+    phone = static_cast<std::string>(obj["phone"]);
+
+  if (obj.find("email") != obj.end())
+    email = static_cast<std::string>(obj["email"]);
+
+  db.exec_params("UPDATE users SET "
+                 "first_name = COALESCE(NULLIF($2, ''), first_name), "
+                 "last_name  = COALESCE(NULLIF($3, ''), last_name), "
+                 "phone      = COALESCE(NULLIF($4, ''), phone), "
+                 "address    = COALESCE(NULLIF($5, ''), address) "
+                 "WHERE id = $1",
+                 {std::to_string(id), first_name, last_name, phone, email});
 }

@@ -21,3 +21,11 @@ void GetBookingRoutes(expresso::messages::Request &req,
                       expresso::messages::Response &res);
 void PostBookingRoutes(expresso::messages::Request &req,
                        expresso::messages::Response &res);
+
+// Admin routes
+void GetAllBookingsRoute(expresso::messages::Request &req,
+                         expresso::messages::Response &res);
+void PutBookingRoutes(expresso::messages::Request &req,
+                      expresso::messages::Response &res);
+void DeleteBookingRoutes(expresso::messages::Request &req,
+                         expresso::messages::Response &res);

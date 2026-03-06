@@ -99,3 +99,89 @@ void PostBookingRoutes(expresso::messages::Request &req,
         .end();
   }
 }
+
+// GET /api/bookings — return all bookings (admin)
+void GetAllBookingsRoute(expresso::messages::Request &req,
+                         expresso::messages::Response &res) {
+  try {
+    auto bookings = BookingContext::bookingService->getAllBookings();
+
+    json::object response;
+    response["bookings"].resize(0);
+
+    for (const auto &b : bookings) {
+      json::object item;
+      item["id"] = b.id;
+      item["resource_id"] = b.resource_id;
+      item["customer_name"] = b.customer_name;
+      item["customer_phone"] = b.customer_phone;
+      item["customer_email"] = b.customer_email;
+      item["date"] = b.date;
+      item["start"] = b.start;
+      item["end"] = b.end;
+      item["status"] = b.status;
+
+      response["bookings"].push_back(item);
+    }
+
+    return res.status(expresso::enums::STATUS_CODE::OK).json(response).end();
+
+  } catch (const std::exception &e) {
+    logger::error(e.what());
+    return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
+        .end();
+  }
+}
+
+// PUT /api/bookings?id=<id> — update booking (admin)
+void PutBookingRoutes(expresso::messages::Request &req,
+                      expresso::messages::Response &res) {
+  try {
+
+    std::string idStr = req.queries["id"];
+    if (idStr.empty()) {
+      return res.status(expresso::enums::STATUS_CODE::BAD_REQUEST).end();
+    }
+
+    int id = std::stoi(idStr);
+    json::object body = req.body;
+
+    BookingContext::bookingService->updateBooking(id, body);
+
+    json::object data;
+    data["message"] = "Booking updated";
+
+    return res.status(expresso::enums::STATUS_CODE::OK).json(data).end();
+
+  } catch (const std::exception &e) {
+    logger::error(e.what());
+    return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
+        .end();
+  }
+}
+
+// DELETE /api/bookings?id=<id> — delete booking (admin)
+void DeleteBookingRoutes(expresso::messages::Request &req,
+                         expresso::messages::Response &res) {
+  try {
+
+    std::string idStr = req.queries["id"];
+    if (idStr.empty()) {
+      return res.status(expresso::enums::STATUS_CODE::BAD_REQUEST).end();
+    }
+
+    int id = std::stoi(idStr);
+
+    BookingContext::bookingService->deleteBooking(id);
+
+    json::object data;
+    data["message"] = "Booking deleted";
+
+    return res.status(expresso::enums::STATUS_CODE::OK).json(data).end();
+
+  } catch (const std::exception &e) {
+    logger::error(e.what());
+    return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
+        .end();
+  }
+}

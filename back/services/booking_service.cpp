@@ -149,12 +149,12 @@ BookingRepository::getAvailableTimeSlots(int resource_id,
 
     auto overlap =
         db.exec_params("SELECT 1 FROM bookings "
-                       "WHERE resource_id = $1::int "
+                       "WHERE resource_id = $1 "
                        "AND status = 'confirmed' "
                        "AND tstzrange(start_time, end_time) && "
                        "tstzrange("
-                       "  ($2::date + $3::time) AT TIME ZONE 'Europe/Dublin',"
-                       "  ($2::date + $4::time) AT TIME ZONE 'Europe/Dublin'"
+                       "  (($2::date + $3::time) AT TIME ZONE 'Europe/Dublin'), "
+                       "  (($2::date + $4::time) AT TIME ZONE 'Europe/Dublin') "
                        ")",
                        {std::to_string(resource_id), date, lstart, lend});
 
@@ -162,4 +162,85 @@ BookingRepository::getAvailableTimeSlots(int resource_id,
     slots.push_back({lstart, lend, isFree});
   }
   return slots;
+}
+
+std::vector<Booking> BookingRepository::getAllBookings() {
+  std::vector<Booking> bookings;
+
+  auto res = db.exec_params(
+      "SELECT id, resource_id, customer_name, customer_phone, customer_email, "
+      "to_char(start_time AT TIME ZONE 'Europe/Dublin', 'YYYY-MM-DD'), "
+      "to_char(start_time AT TIME ZONE 'Europe/Dublin', 'HH24:MI'), "
+      "to_char(end_time   AT TIME ZONE 'Europe/Dublin', 'HH24:MI'), "
+      "status "
+      "FROM bookings "
+      "ORDER BY start_time ASC",
+      {});
+
+  for (int i = 0; i < res.GetRows(); i++) {
+    Booking b;
+    b.id = std::stoi(res.GetEl(i, 0));
+    b.resource_id = std::stoi(res.GetEl(i, 1));
+    b.customer_name = res.GetEl(i, 2);
+    b.customer_phone = res.GetEl(i, 3);
+    b.customer_email = res.GetEl(i, 4);
+    b.date = res.GetEl(i, 5);
+    b.start = res.GetEl(i, 6);
+    b.end = res.GetEl(i, 7);
+    b.status = res.GetEl(i, 8);
+    bookings.push_back(b);
+  }
+
+  return bookings;
+}
+
+void BookingRepository::updateBooking(int id, json::object obj) {
+  std::string status = "";
+  std::string customer_name = "";
+  std::string customer_phone = "";
+  std::string customer_email = "";
+  std::string date = "";
+  std::string start = "";
+  std::string end = "";
+
+  if (obj.find("status") != obj.end())
+    status = static_cast<std::string>(obj["status"]);
+
+  if (obj.find("customer_name") != obj.end())
+    customer_name = static_cast<std::string>(obj["customer_name"]);
+
+  if (obj.find("customer_phone") != obj.end())
+    customer_phone = static_cast<std::string>(obj["customer_phone"]);
+
+  if (obj.find("customer_email") != obj.end())
+    customer_email = static_cast<std::string>(obj["customer_email"]);
+
+  if (obj.find("date") != obj.end())
+    date = static_cast<std::string>(obj["date"]);
+
+  if (obj.find("start") != obj.end())
+    start = static_cast<std::string>(obj["start"]);
+
+  if (obj.find("end") != obj.end())
+    end = static_cast<std::string>(obj["end"]);
+
+  db.exec_params("UPDATE bookings SET "
+                 "status = CASE WHEN $2 != '' THEN $2::booking_status ELSE status END, "
+                 "customer_name  = COALESCE(NULLIF($3, ''), customer_name), "
+                 "customer_phone = COALESCE(NULLIF($4, ''), customer_phone), "
+                 "customer_email = COALESCE(NULLIF($5, ''), customer_email), "
+                 "start_time = CASE WHEN $6 != '' AND $7 != '' "
+                 "  THEN (($6::date + $7::time) AT TIME ZONE 'Europe/Dublin') "
+                 "  ELSE start_time END, "
+                 "end_time = CASE WHEN $6 != '' AND $8 != '' "
+                 "  THEN (($6::date + $8::time) AT TIME ZONE 'Europe/Dublin') "
+                 "  ELSE end_time END "
+                 "WHERE id = $1",
+                 {std::to_string(id), status, customer_name, customer_phone,
+                  customer_email, date, start, end});
+}
+
+void BookingRepository::deleteBooking(int id) {
+  db.exec_params("DELETE FROM bookings WHERE id = $1::integer",
+                 {std::to_string(id)});
 }

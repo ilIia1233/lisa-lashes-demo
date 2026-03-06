@@ -36,10 +36,10 @@ void PostRegisterRoute(expresso::messages::Request &req,
     user.last = std::string(body["last_name"]);
     user.phone = std::string(body["phone"]);
     user.password = std::string(body["password"]);
-    std::string address = (body.find("address") != body.end())
-                              ? std::string(body["address"])
+    std::string email = (body.find("email") != body.end())
+                              ? std::string(body["email"])
                               : "";
-    user.address = address;
+    user.email = email;
 
     auto userIdOpt = UserContext::UserService->registerUser(user);
 
@@ -147,6 +147,70 @@ void PostLoginRoute(expresso::messages::Request &req,
     json::object err;
     err["message"] = "Internal server error";
 
+    return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
+        .json(err)
+        .end();
+  }
+}
+
+// GET /api/users — return all users (admin)
+void GetUsersRoute(expresso::messages::Request &req,
+                   expresso::messages::Response &res) {
+  try {
+    auto users = UserContext::UserService->getAllUsers();
+
+    json::object response;
+    response["users"].resize(0);
+
+    for (const auto &u : users) {
+      json::object item;
+      item["id"] = u.id;
+      item["first_name"] = u.first_name;
+      item["last_name"] = u.last_name;
+      item["phone"] = u.phone;
+      item["email"] = u.email;
+
+      response["users"].push_back(item);
+    }
+
+    return res.status(expresso::enums::STATUS_CODE::OK).json(response).end();
+
+  } catch (const std::exception &e) {
+    json::object err;
+    err["message"] = "Internal server error";
+    return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
+        .json(err)
+        .end();
+  }
+}
+
+// PUT /api/users?id=<id> — update user (admin)
+void PutUserRoute(expresso::messages::Request &req,
+                  expresso::messages::Response &res) {
+  try {
+    std::string id_str = req.queries["id"];
+
+    if (id_str.empty()) {
+      json::object err;
+      err["message"] = "Missing user id";
+      return res.status(expresso::enums::STATUS_CODE::BAD_REQUEST)
+          .json(err)
+          .end();
+    }
+
+    int id = std::stoi(id_str);
+    json::object body = req.body;
+
+    UserContext::UserService->updateUser(id, body);
+
+    json::object data;
+    data["message"] = "User updated successfully";
+
+    return res.status(expresso::enums::STATUS_CODE::OK).json(data).end();
+
+  } catch (const std::exception &e) {
+    json::object err;
+    err["message"] = "Internal server error";
     return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
         .json(err)
         .end();

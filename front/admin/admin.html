@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="admin.css">
   <link rel="icon" href="../assets/logo/logo.png" type="image/png">
 </head>
+<style>
+  .stat-loading { opacity: 0.4; font-size: 22px; }
+</style>
 <body>
 
 <div class="admin-wrapper">
@@ -71,7 +74,7 @@
         <h1>Dashboard</h1>
       </div>
       <div class="topbar-right">
-        <span class="topbar-date">Wednesday, 18 February 2026</span>
+        <span class="topbar-date" id="topbar-date"></span>
         <div class="admin-profile">
           <div class="admin-avatar">L</div>
           <div>
@@ -89,27 +92,27 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon">📅</div>
-          <div class="stat-number">284</div>
+          <div class="stat-number stat-loading" id="stat-total">—</div>
           <div class="stat-label">Total Bookings</div>
-          <div class="stat-change">↑ 12% from last month</div>
+          <div class="stat-change" id="stat-total-change">&nbsp;</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">💰</div>
-          <div class="stat-number">£8,420</div>
-          <div class="stat-label">Monthly Revenue</div>
-          <div class="stat-change">↑ 8% from last month</div>
+          <div class="stat-icon">📆</div>
+          <div class="stat-number stat-loading" id="stat-month">—</div>
+          <div class="stat-label">This Month's Bookings</div>
+          <div class="stat-change" id="stat-month-change">&nbsp;</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">✨</div>
-          <div class="stat-number">47</div>
-          <div class="stat-label">New Clients</div>
-          <div class="stat-change">↑ 5% from last month</div>
+          <div class="stat-number stat-loading" id="stat-clients">—</div>
+          <div class="stat-label">Total Clients</div>
+          <div class="stat-change" id="stat-clients-change">&nbsp;</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">🕐</div>
-          <div class="stat-number">9</div>
+          <div class="stat-number stat-loading" id="stat-today">—</div>
           <div class="stat-label">Today's Appointments</div>
-          <div class="stat-change down">↓ 2 from yesterday</div>
+          <div class="stat-change" id="stat-today-change">&nbsp;</div>
         </div>
       </div>
 
@@ -127,92 +130,15 @@
             <thead>
               <tr>
                 <th>Client Name</th>
-                <th>Service</th>
+                <th>Resource</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td class="td-name">Sophia Harrington</td>
-                <td>Classic Lash Set</td>
-                <td>18 Feb 2026</td>
-                <td>10:00 AM</td>
-                <td><span class="badge badge-confirmed">Confirmed</span></td>
-                <td>
-                  <div class="actions">
-                    <button class="btn-icon" title="Edit">✎</button>
-                    <button class="btn-icon delete" title="Delete">✕</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="td-name">Isabelle Laurent</td>
-                <td>Volume Lash Set</td>
-                <td>18 Feb 2026</td>
-                <td>11:30 AM</td>
-                <td><span class="badge badge-confirmed">Confirmed</span></td>
-                <td>
-                  <div class="actions">
-                    <button class="btn-icon" title="Edit">✎</button>
-                    <button class="btn-icon delete" title="Delete">✕</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="td-name">Amelia Fontaine</td>
-                <td>Lash Lift & Tint</td>
-                <td>18 Feb 2026</td>
-                <td>1:00 PM</td>
-                <td><span class="badge badge-pending">Pending</span></td>
-                <td>
-                  <div class="actions">
-                    <button class="btn-icon" title="Edit">✎</button>
-                    <button class="btn-icon delete" title="Delete">✕</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="td-name">Natalie Chen</td>
-                <td>Hybrid Lash Set</td>
-                <td>19 Feb 2026</td>
-                <td>2:30 PM</td>
-                <td><span class="badge badge-confirmed">Confirmed</span></td>
-                <td>
-                  <div class="actions">
-                    <button class="btn-icon" title="Edit">✎</button>
-                    <button class="btn-icon delete" title="Delete">✕</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="td-name">Victoria Blake</td>
-                <td>Classic Lash Set</td>
-                <td>19 Feb 2026</td>
-                <td>4:00 PM</td>
-                <td><span class="badge badge-cancelled">Cancelled</span></td>
-                <td>
-                  <div class="actions">
-                    <button class="btn-icon" title="Edit">✎</button>
-                    <button class="btn-icon delete" title="Delete">✕</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="td-name">Charlotte Dubois</td>
-                <td>Mega Volume Set</td>
-                <td>20 Feb 2026</td>
-                <td>9:30 AM</td>
-                <td><span class="badge badge-pending">Pending</span></td>
-                <td>
-                  <div class="actions">
-                    <button class="btn-icon" title="Edit">✎</button>
-                    <button class="btn-icon delete" title="Delete">✕</button>
-                  </div>
-                </td>
-              </tr>
+            <tbody id="recent-tbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">Loading…</td></tr>
             </tbody>
           </table>
         </div>
@@ -222,5 +148,144 @@
   </div><!-- /main-content -->
 </div><!-- /admin-wrapper -->
 
+<script>
+  const API = 'http://localhost:8000/api';
+  let allBookings = [];
+  let allUsers    = [];
+
+  /* ── Topbar date ── */
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  /* ── Helpers ── */
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function statusBadge(s) {
+    const map = { confirmed:'badge-confirmed', pending:'badge-pending', cancelled:'badge-cancelled' };
+    const cls = map[s?.toLowerCase()] || 'badge-pending';
+    const lbl = s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—';
+    return `<span class="badge ${cls}">${lbl}</span>`;
+  }
+
+  /* ── Stats ── */
+  function renderStats() {
+    const today     = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    const now       = new Date();
+    const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const lastMonthDate = new Date(now.getFullYear(), now.getMonth()-1, 1);
+    const lastMonth = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth()+1).padStart(2,'0')}`;
+
+    const total          = allBookings.length;
+    const thisMonthCount = allBookings.filter(b => b.date?.startsWith(thisMonth)).length;
+    const lastMonthCount = allBookings.filter(b => b.date?.startsWith(lastMonth)).length;
+    const todayCount     = allBookings.filter(b => b.date === today).length;
+    const yestCount      = allBookings.filter(b => b.date === yesterday).length;
+    const clientCount    = allUsers.length;
+
+    // Total bookings
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-total').classList.remove('stat-loading');
+    document.getElementById('stat-total-change').textContent = `${total} appointments in total`;
+
+    // This month vs last month
+    document.getElementById('stat-month').textContent = thisMonthCount;
+    document.getElementById('stat-month').classList.remove('stat-loading');
+    if (lastMonthCount > 0) {
+      const pct = Math.round(((thisMonthCount - lastMonthCount) / lastMonthCount) * 100);
+      const el  = document.getElementById('stat-month-change');
+      el.textContent  = (pct >= 0 ? '↑ ' : '↓ ') + Math.abs(pct) + '% from last month';
+      el.className    = 'stat-change' + (pct < 0 ? ' down' : '');
+    } else {
+      document.getElementById('stat-month-change').textContent = lastMonthCount + ' last month';
+    }
+
+    // Clients
+    document.getElementById('stat-clients').textContent = clientCount;
+    document.getElementById('stat-clients').classList.remove('stat-loading');
+    document.getElementById('stat-clients-change').textContent = `${clientCount} registered client${clientCount !== 1 ? 's' : ''}`;
+
+    // Today vs yesterday
+    document.getElementById('stat-today').textContent = todayCount;
+    document.getElementById('stat-today').classList.remove('stat-loading');
+    const diff   = todayCount - yestCount;
+    const todayEl = document.getElementById('stat-today-change');
+    todayEl.textContent = (diff >= 0 ? '↑ ' : '↓ ') + Math.abs(diff) + ' from yesterday';
+    todayEl.className   = 'stat-change' + (diff < 0 ? ' down' : '');
+  }
+
+  /* ── Recent Bookings table ── */
+  function renderRecent() {
+    const tbody  = document.getElementById('recent-tbody');
+    const recent = [...allBookings]
+      .sort((a, b) => (b.date + b.start).localeCompare(a.date + a.start))
+      .slice(0, 8);
+
+    if (!recent.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">No bookings yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = recent.map(b => {
+      const d = new Date(b.date + 'T00:00:00');
+      const dateStr = d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+      return `
+        <tr>
+          <td class="td-name">${escHtml(b.customer_name || '—')}</td>
+          <td>Resource #${escHtml(String(b.resource_id))}</td>
+          <td>${dateStr}</td>
+          <td>${escHtml(b.start)}</td>
+          <td>${statusBadge(b.status)}</td>
+          <td>
+            <div class="actions">
+              <button class="btn-icon" title="View Booking" onclick="openBooking(${b.id})">✎</button>
+              <button class="btn-icon delete" title="Delete" onclick="deleteBooking(${b.id}, '${escHtml(b.customer_name || '')}')">✕</button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  /* ── Delete ── */
+  async function deleteBooking(id, name) {
+    if (!confirm(`Delete booking for "${name}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`${API}/bookings?id=${id}`, { method: 'DELETE', credentials: 'include' });
+      if (!res.ok) { alert('Delete failed: ' + res.status); return; }
+      allBookings = allBookings.filter(b => b.id !== id);
+      renderStats();
+      renderRecent();
+    } catch (e) { alert('Network error: ' + e.message); }
+  }
+
+  /* ── Navigate to booking modal ── */
+  function openBooking(id) {
+    sessionStorage.setItem('openBookingId', id);
+    window.location.href = 'bookings.html';
+  }
+
+  /* ── Boot ── */
+  async function loadDashboard() {
+    try {
+      const [bRes, uRes] = await Promise.all([
+        fetch(`${API}/bookings`, { credentials: 'include', cache: 'no-store' }),
+        fetch(`${API}/users`,    { credentials: 'include', cache: 'no-store' })
+      ]);
+      allBookings = ((await bRes.json()).bookings) || [];
+      allUsers    = ((await uRes.json()).users)    || [];
+      renderStats();
+      renderRecent();
+    } catch (e) {
+      console.error('Dashboard load error:', e);
+      document.getElementById('recent-tbody').innerHTML =
+        '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">Failed to load data.</td></tr>';
+    }
+  }
+
+  loadDashboard();
+</script>
 </body>
 </html>

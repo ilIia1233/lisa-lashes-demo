@@ -84,6 +84,21 @@ int main(int argc, char **argv) {
   router.get("/availability", GetBookingRoutes);
   router.post("/bookings", PostBookingRoutes);
 
+  // Booking admin routes
+  router.get("/bookings", GetAllBookingsRoute);
+  router.put("/bookings", PutBookingRoutes);
+  router.del("/bookings", DeleteBookingRoutes);
+
+  // Auth routes
+  router.post("/auth/register", PostRegisterRoute);
+  router.post("/auth/login", PostLoginRoute);
+  router.del("/auth/user", DeleteUserRoute);
+
+  // User admin routes
+  router.get("/users", GetUsersRoute);
+  router.put("/users", PutUserRoute);
+  router.del("/users", DeleteUserRoute);
+
   // CORS preflight (OPTIONS) handlers
   auto optHandler = [](expresso::messages::Request &req,
                        expresso::messages::Response &res) {
@@ -99,6 +114,7 @@ int main(int argc, char **argv) {
   router.options("/auth/register", optHandler);
   router.options("/auth/login", optHandler);
   router.options("/auth/user", optHandler);
+  router.options("/users", optHandler);
   app.use("/api", &router);
 
   app.get("/download", [](expresso::messages::Request &req,
@@ -112,9 +128,7 @@ int main(int argc, char **argv) {
   std::unique_ptr<expresso::middleware::CookieParser> cookieParser =
       std::make_unique<expresso::middleware::CookieParser>();
   app.use(std::move(cookieParser));
-  std::unique_ptr<expresso::middleware::AuthMiddleware> authMiddleware =
-      std::make_unique<expresso::middleware::AuthMiddleware>();
-  app.use(std::move(authMiddleware));
+ 
   // Cache middleware, applied across all routes
   std::unique_ptr<expresso::middleware::Cacher> cacher =
       std::make_unique<expresso::middleware::Cacher>(3600, false);
