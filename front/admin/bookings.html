@@ -280,24 +280,49 @@
           <input type="tel" class="form-input" id="nb-phone" placeholder="+353 …">
         </div>
         <div class="form-group">
-          <label>Resource / Artist</label>
-          <select class="form-select" id="nb-resource">
-            <option value="1">Lisa Monroe — Resource 1</option>
-            <option value="2">Sophie Reid — Resource 2</option>
-            <option value="3">Anya Kim — Resource 3</option>
+          <label>Service</label>
+          <select class="form-select" id="nb-service" onchange="onServiceChange(this.value ? parseInt(this.value) : null)">
+            <option value="">Loading…</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Artist</label>
+          <select class="form-select" id="nb-resource" onchange="onArtistOrDateChange()">
+            <option value="">Loading…</option>
           </select>
         </div>
         <div class="form-group">
           <label>Date</label>
-          <input type="date" class="form-input" id="nb-date">
+          <input type="date" class="form-input" id="nb-date" onchange="onArtistOrDateChange()">
         </div>
-        <div class="form-group">
+        <!-- Slot picker (shown when service + artist + date are set) -->
+        <div class="form-group full" id="nb-slots-section" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <label style="margin:0;">Available Slots</label>
+            <button type="button" onclick="toggleManualTime()" id="nb-manual-toggle"
+              style="font-size:12px;color:var(--gold);background:none;border:none;cursor:pointer;text-decoration:underline;">
+              type manually
+            </button>
+          </div>
+          <div id="nb-slots-grid" style="display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);min-height:52px;">
+            <span style="font-size:13px;color:var(--text-muted);">Select service, artist and date first</span>
+          </div>
+          <!-- Hidden inputs that hold the selected values -->
+          <input type="hidden" id="nb-start" value="">
+          <input type="hidden" id="nb-end"   value="">
+        </div>
+        <!-- Manual time inputs (hidden by default, shown via toggle) -->
+        <div class="form-group" id="nb-manual-start-group" style="display:none;">
           <label>Start Time</label>
-          <input type="time" class="form-input" id="nb-start" value="10:00">
+          <input type="time" class="form-input" id="nb-start-manual" value="10:00" onchange="autoCalcEndTimeManual()">
         </div>
-        <div class="form-group">
-          <label>End Time</label>
-          <input type="time" class="form-input" id="nb-end" value="11:00">
+        <div class="form-group" id="nb-manual-end-group" style="display:none;">
+          <label>End Time <span id="nb-end-auto-badge" style="font-size:11px;color:var(--gold);font-weight:600;letter-spacing:.3px;">● auto</span></label>
+          <input type="time" class="form-input" id="nb-end-manual" value="11:00" readonly style="background:var(--bg-secondary);cursor:default;">
+          <label style="display:inline-flex;align-items:center;gap:6px;margin-top:5px;font-size:12px;color:var(--text-muted);cursor:pointer;">
+            <input type="checkbox" id="nb-end-override" onchange="toggleEndOverride(this.checked)" style="margin:0;cursor:pointer;">
+            Override manually
+          </label>
         </div>
         <div class="form-group">
           <label>Status</label>
@@ -338,6 +363,8 @@
 <script>
   const API = 'http://localhost:8000/api';
   let allBookings      = [];
+  let allResources     = [];
+  let allSalonServices = [];
   let editingBookingId = null;
   let selectedDate     = new Date().toISOString().split('T')[0];
   let calYear          = new Date().getFullYear();
@@ -363,6 +390,208 @@
     if (!dateStr) return dateStr;
     const d = new Date(dateStr + 'T00:00:00');
     return d.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  }
+  function resourceLabel(resource_id, service_id) {
+    const r = allResources.find(x => x.id === resource_id);
+    if (!r) return `Resource #${resource_id}`;
+    if (service_id) {
+      const s = allSalonServices.find(x => x.id === service_id);
+      return s ? `${r.name} — ${s.name}` : r.name;
+    }
+    return r.name;
+  }
+  function serviceLabel(service_id) {
+    const s = allSalonServices.find(x => x.id === service_id);
+    return s ? s.name : '';
+  }
+  /* Parse "90 min", "1h 30min", "2hr" etc. → total minutes */
+  function parseDurationMinutes(durationStr) {
+    if (!durationStr) return 60;
+    const hourMin = durationStr.match(/(\d+)\s*h(?:r|our)?s?\s*(?:(\d+)\s*min)?/i);
+    if (hourMin) return parseInt(hourMin[1]) * 60 + (hourMin[2] ? parseInt(hourMin[2]) : 0);
+    const minOnly = durationStr.match(/(\d+)\s*min/i);
+    if (minOnly) return parseInt(minOnly[1]);
+    return 60;
+  }
+
+  /* ── Manual-mode end-time auto-calc (used only when manual toggle is on) ── */
+  function autoCalcEndTimeManual() {
+    if (document.getElementById('nb-end-override').checked) return;
+    const startVal  = document.getElementById('nb-start-manual').value;
+    if (!startVal) return;
+    const serviceId = parseInt(document.getElementById('nb-service').value) || 0;
+    const service   = allSalonServices.find(s => s.id === serviceId);
+    const mins      = service ? parseDurationMinutes(service.duration) : 60;
+    const [h, m]    = startVal.split(':').map(Number);
+    const total     = h * 60 + m + mins;
+    const endH      = Math.floor(total / 60) % 24;
+    const endM      = total % 60;
+    const val = `${String(endH).padStart(2,'0')}:${String(endM).padStart(2,'0')}`;
+    document.getElementById('nb-end-manual').value = val;
+    document.getElementById('nb-start').value = startVal;
+    document.getElementById('nb-end').value   = val;
+  }
+
+  function toggleEndOverride(checked) {
+    const endInput = document.getElementById('nb-end-manual');
+    const badge    = document.getElementById('nb-end-auto-badge');
+    if (checked) {
+      endInput.removeAttribute('readonly');
+      endInput.style.background = '';
+      endInput.style.cursor     = '';
+      badge.style.display       = 'none';
+    } else {
+      endInput.setAttribute('readonly', true);
+      endInput.style.background = 'var(--bg-secondary)';
+      endInput.style.cursor     = 'default';
+      badge.style.display       = '';
+      autoCalcEndTimeManual();
+    }
+  }
+
+  /* ── Slot picker ── */
+  let manualMode   = false;
+  let selectedSlot = null; // "HH:MM"
+
+  function toggleManualTime() {
+    manualMode = !manualMode;
+    document.getElementById('nb-slots-section').style.display     = manualMode ? 'none' : '';
+    document.getElementById('nb-manual-start-group').style.display = manualMode ? '' : 'none';
+    document.getElementById('nb-manual-end-group').style.display   = manualMode ? '' : 'none';
+    document.getElementById('nb-manual-toggle').textContent = manualMode ? 'use slot picker' : 'type manually';
+    if (manualMode) {
+      // sync manual inputs from hidden values
+      const s = document.getElementById('nb-start').value;
+      const e = document.getElementById('nb-end').value;
+      if (s) document.getElementById('nb-start-manual').value = s;
+      if (e) document.getElementById('nb-end-manual').value   = e;
+    }
+  }
+
+  async function loadSlots() {
+    const serviceId  = parseInt(document.getElementById('nb-service').value)  || 0;
+    const resourceId = parseInt(document.getElementById('nb-resource').value) || 0;
+    const date       = document.getElementById('nb-date').value;
+    const grid       = document.getElementById('nb-slots-grid');
+
+    if (!serviceId || !resourceId || !date) {
+      grid.innerHTML = '<span style="font-size:13px;color:var(--text-muted);">Select service, artist and date first</span>';
+      document.getElementById('nb-start').value = '';
+      document.getElementById('nb-end').value   = '';
+      selectedSlot = null;
+      return;
+    }
+
+    const service = allSalonServices.find(s => s.id === serviceId);
+    const duration = service ? parseDurationMinutes(service.duration) : 60;
+
+    grid.innerHTML = '<span style="font-size:13px;color:var(--text-muted);">Loading…</span>';
+    document.getElementById('nb-slots-section').style.display = '';
+
+    try {
+      const res  = await fetch(
+        `${API}/availability?resource_id=${resourceId}&date=${date}&duration=${duration}`,
+        { credentials:'include', cache:'no-store' }
+      );
+      const data = await res.json();
+      const slots = data.slots || [];
+
+      if (!slots.length) {
+        grid.innerHTML = '<span style="font-size:13px;color:var(--text-muted);">Artist not working this day.</span>';
+        return;
+      }
+
+      const freeSlots = slots.filter(s => s.free);
+      if (!freeSlots.length) {
+        grid.innerHTML = '<span style="font-size:13px;color:var(--text-muted);">No available slots — fully booked.</span>';
+        return;
+      }
+
+      grid.innerHTML = slots.map(slot => {
+        if (!slot.free) {
+          return `<button disabled style="padding:7px 13px;font-size:13px;border-radius:6px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-muted);cursor:not-allowed;opacity:.6;">${slot.start}</button>`;
+        }
+        const isSelected = selectedSlot === slot.start;
+        return `<button onclick="selectSlot('${slot.start}','${slot.end}')"
+          id="slot-btn-${slot.start.replace(':','')}"
+          style="padding:7px 13px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;
+            border:1.5px solid ${isSelected ? 'var(--gold)' : 'var(--border)'};
+            background:${isSelected ? 'var(--gold)' : 'transparent'};
+            color:${isSelected ? '#fff' : 'var(--text)'};"
+        >${slot.start}</button>`;
+      }).join('');
+
+    } catch (e) {
+      grid.innerHTML = '<span style="font-size:13px;color:var(--text-muted);">Failed to load slots.</span>';
+      console.error(e);
+    }
+  }
+
+  function selectSlot(start, end) {
+    selectedSlot = start;
+    document.getElementById('nb-start').value = start;
+    document.getElementById('nb-end').value   = end;
+    // Update button styles
+    document.querySelectorAll('#nb-slots-grid button').forEach(btn => {
+      const isThis = btn.textContent.trim() === start;
+      btn.style.background = isThis ? 'var(--gold)' : 'transparent';
+      btn.style.borderColor = isThis ? 'var(--gold)' : 'var(--border)';
+      btn.style.color       = isThis ? '#fff' : 'var(--text)';
+    });
+  }
+
+  function onServiceChange(serviceId) {
+    populateResourceSelects(serviceId);
+    if (!manualMode) loadSlots();
+  }
+
+  function onArtistOrDateChange() {
+    if (!manualMode) loadSlots();
+  }
+
+  function populateResourceSelects(serviceId, selectedId) {
+    let active = allResources.filter(r => r.active === 'true' || r.active === true);
+    if (serviceId) {
+      active = active.filter(r => r.services && r.services.some(s => s.id === serviceId));
+    }
+    const opts = active
+      .map(r => `<option value="${r.id}"${r.id === selectedId ? ' selected' : ''}>${escHtml(r.name)}</option>`)
+      .join('');
+    document.getElementById('nb-resource').innerHTML = opts || '<option value="">No artists for this service</option>';
+  }
+
+  /* ════════════════════════════════════
+     Load resources from API
+  ════════════════════════════════════ */
+  async function loadResources() {
+    try {
+      const res  = await fetch(`${API}/resources`, { credentials: 'include', cache: 'no-store' });
+      const data = await res.json();
+      allResources = data.resources || [];
+      populateResourceSelects(null);
+    } catch (e) {
+      console.error('Failed to load resources:', e);
+    }
+  }
+
+  /* ════════════════════════════════════
+     Load salon services from API
+  ════════════════════════════════════ */
+  async function loadSalonServices() {
+    try {
+      const res  = await fetch(`${API}/salon-services`, { credentials: 'include', cache: 'no-store' });
+      const data = await res.json();
+      allSalonServices = data.services || [];
+      // Populate service select in New Booking modal
+      const opts = allSalonServices
+        .filter(s => s.active === 'true' || s.active === true)
+        .map(s => `<option value="${s.id}">${escHtml(s.name)}${s.duration ? ' (' + escHtml(s.duration) + ')' : ''}</option>`)
+        .join('');
+      document.getElementById('nb-service').innerHTML =
+        '<option value="">— Select service —</option>' + opts;
+    } catch (e) {
+      console.error('Failed to load salon services:', e);
+    }
   }
 
   /* ════════════════════════════════════
@@ -391,7 +620,7 @@
         <div class="booking-card-left">
           <h4>${escHtml(b.customer_name || '—')}</h4>
           <p>${escHtml(b.date)} · ${escHtml(b.start)}–${escHtml(b.end)}</p>
-          <div class="booking-time">${escHtml(b.start)}</div>
+          <div class="booking-time">${escHtml(resourceLabel(b.resource_id, b.service_id))}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
           ${statusBadge(b.status)}
@@ -475,7 +704,7 @@
     document.getElementById('bm-client').textContent  = b.customer_name || '—';
     document.getElementById('bm-sub').textContent     = `${b.date} at ${b.start}`;
     document.getElementById('bm-d-client').textContent   = b.customer_name  || '—';
-    document.getElementById('bm-d-service').textContent  = `Resource #${b.resource_id}`;
+    document.getElementById('bm-d-service').textContent  = resourceLabel(b.resource_id, b.service_id);
     document.getElementById('bm-d-duration').textContent = `${b.start} – ${b.end}`;
     document.getElementById('bm-d-date').textContent  = b.date  || '—';
     document.getElementById('bm-d-time').textContent  = b.start || '—';
@@ -568,13 +797,20 @@
   async function createBooking() {
     const customer_name = document.getElementById('nb-name').value.trim();
     const date          = document.getElementById('nb-date').value;
-    const start         = document.getElementById('nb-start').value;
-    const end           = document.getElementById('nb-end').value;
     const resource_id   = parseInt(document.getElementById('nb-resource').value, 10);
+    const service_id    = parseInt(document.getElementById('nb-service').value, 10) || 0;
     const status        = document.getElementById('nb-status').value;
 
+    // Get start/end from slot picker or manual inputs
+    let start = document.getElementById('nb-start').value;
+    let end   = document.getElementById('nb-end').value;
+    if (manualMode) {
+      start = document.getElementById('nb-start-manual').value;
+      end   = document.getElementById('nb-end-manual').value;
+    }
+
     if (!customer_name || !date || !start || !end) {
-      alert('Name, date, start time and end time are required.');
+      alert('Name, date and a time slot are required.');
       return;
     }
     try {
@@ -582,7 +818,7 @@
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer_name, date, start, end, resource_id, status })
+        body: JSON.stringify({ customer_name, date, start, end, resource_id, service_id, status })
       });
       if (!res.ok) { const e = await res.json(); alert('Error: ' + (e.message || res.status)); return; }
       closeModal('modal-new-booking');
@@ -597,9 +833,21 @@
       if (el) el.value = '';
     });
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('nb-date').value  = today;
-    document.getElementById('nb-start').value = '10:00';
-    document.getElementById('nb-end').value   = '11:00';
+    document.getElementById('nb-date').value    = today;
+    document.getElementById('nb-service').value = '';
+    document.getElementById('nb-start').value   = '';
+    document.getElementById('nb-end').value     = '';
+    selectedSlot = null;
+    manualMode   = false;
+    // reset manual mode UI
+    document.getElementById('nb-slots-section').style.display      = 'none';
+    document.getElementById('nb-manual-start-group').style.display  = 'none';
+    document.getElementById('nb-manual-end-group').style.display    = 'none';
+    document.getElementById('nb-manual-toggle').textContent         = 'type manually';
+    // reset override checkbox
+    const ovr = document.getElementById('nb-end-override');
+    if (ovr) { ovr.checked = false; toggleEndOverride(false); }
+    populateResourceSelects(null);
   }
 
   /* ════════════════════════════════════
@@ -719,7 +967,7 @@
 
   /* ── Boot ── */
   renderCalendar();
-  loadBookings().then(() => {
+  Promise.all([loadResources(), loadSalonServices(), loadBookings()]).then(() => {
     const pendingId = sessionStorage.getItem('openBookingId');
     if (pendingId) {
       sessionStorage.removeItem('openBookingId');

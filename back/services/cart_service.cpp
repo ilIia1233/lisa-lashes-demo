@@ -60,9 +60,8 @@ void CartService::addToCart(int userId, int productId, int quantity) {
   int cartId = getOrCreateCart(userId);
 
   // Check how much is already in the cart so total won't exceed stock
-  auto existRes = db.exec_params(
-      "SELECT quantity FROM cart_items WHERE cart_id = $1 AND product_id = $2",
-      {std::to_string(cartId), std::to_string(productId)});
+  auto existRes = db.exec_params("SELECT quantity FROM cart_items WHERE cart_id = $1 AND product_id = $2",
+                                  {std::to_string(cartId), std::to_string(productId)});
 
   int alreadyInCart = (existRes.GetRows() > 0)
                           ? std::stoi(existRes.GetEl(0, 0))
@@ -75,13 +74,12 @@ void CartService::addToCart(int userId, int productId, int quantity) {
   }
 
   // INSERT or increment quantity if already present (UNIQUE constraint)
-  db.exec_params(
-      "INSERT INTO cart_items (cart_id, product_id, quantity) "
-      "VALUES ($1, $2, $3) "
-      "ON CONFLICT (cart_id, product_id) "
-      "DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity",
-      {std::to_string(cartId), std::to_string(productId),
-       std::to_string(quantity)});
+  db.exec_params("INSERT INTO cart_items (cart_id, product_id, quantity) "
+                 "VALUES ($1, $2, $3) "
+                 "ON CONFLICT (cart_id, product_id) "
+                 "DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity",
+                 {std::to_string(cartId), std::to_string(productId),
+                  std::to_string(quantity)});
 
   db.exec_params("UPDATE carts SET updated_at = NOW() WHERE id = $1",
                  {std::to_string(cartId)});
@@ -117,11 +115,10 @@ void CartService::updateQuantity(int userId, int productId, int quantity) {
   }
   int cartId = cartIdOpt.value();
 
-  auto updateRes = db.exec_params(
-      "UPDATE cart_items SET quantity = $1 "
-      "WHERE cart_id = $2 AND product_id = $3",
-      {std::to_string(quantity), std::to_string(cartId),
-       std::to_string(productId)});
+  auto updateRes = db.exec_params("UPDATE cart_items SET quantity = $1 "
+                                   "WHERE cart_id = $2 AND product_id = $3",
+                                   {std::to_string(quantity), std::to_string(cartId),
+                                    std::to_string(productId)});
 
   if (updateRes.GetAffectedRows() == 0) {
     throw std::runtime_error("Item not found in cart");
@@ -139,9 +136,8 @@ void CartService::removeItem(int userId, int productId) {
   auto cartId = getCartIdIfExists(userId);
   if (!cartId.has_value()) return; // no cart exists — nothing to remove
 
-  db.exec_params(
-      "DELETE FROM cart_items WHERE cart_id = $1 AND product_id = $2",
-      {std::to_string(cartId.value()), std::to_string(productId)});
+  db.exec_params("DELETE FROM cart_items WHERE cart_id = $1 AND product_id = $2",
+                 {std::to_string(cartId.value()), std::to_string(productId)});
 
   db.exec_params("UPDATE carts SET updated_at = NOW() WHERE id = $1",
                  {std::to_string(cartId.value())});
@@ -168,14 +164,13 @@ json::object CartService::getCart(int userId) {
   cart["cart_id"] = cartId;
 
   // Subtotals computed in SQL — no floating-point arithmetic in the service
-  auto res = db.exec_params(
-      "SELECT p.id, p.name, p.price::text, ci.quantity, "
-      "       CAST(p.price * ci.quantity AS NUMERIC(10,2))::text AS subtotal "
-      "FROM cart_items ci "
-      "JOIN products p ON p.id = ci.product_id "
-      "WHERE ci.cart_id = $1 "
-      "ORDER BY p.name",
-      {std::to_string(cartId)});
+  auto res = db.exec_params("SELECT p.id, p.name, p.price::text, ci.quantity, "
+                             "CAST(p.price * ci.quantity AS NUMERIC(10,2))::text AS subtotal "
+                             "FROM cart_items ci "
+                             "JOIN products p ON p.id = ci.product_id "
+                             "WHERE ci.cart_id = $1 "
+                             "ORDER BY p.name",
+                             {std::to_string(cartId)});
 
   for (int i = 0; i < res.GetRows(); i++) {
     json::object item;
@@ -187,12 +182,11 @@ json::object CartService::getCart(int userId) {
     cart["items"].push_back(item);
   }
 
-  auto totalRes = db.exec_params(
-      "SELECT CAST(COALESCE(SUM(p.price * ci.quantity), 0) AS NUMERIC(10,2))::text "
-      "FROM cart_items ci "
-      "JOIN products p ON p.id = ci.product_id "
-      "WHERE ci.cart_id = $1",
-      {std::to_string(cartId)});
+  auto totalRes = db.exec_params("SELECT CAST(COALESCE(SUM(p.price * ci.quantity), 0) AS NUMERIC(10,2))::text "
+                                  "FROM cart_items ci "
+                                  "JOIN products p ON p.id = ci.product_id "
+                                  "WHERE ci.cart_id = $1",
+                                  {std::to_string(cartId)});
 
   cart["total"]      = totalRes.GetEl(0, 0);
   cart["item_count"] = res.GetRows();

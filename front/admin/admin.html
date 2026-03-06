@@ -150,8 +150,10 @@
 
 <script>
   const API = 'http://localhost:8000/api';
-  let allBookings = [];
-  let allUsers    = [];
+  let allBookings      = [];
+  let allUsers         = [];
+  let allResources     = [];
+  let allSalonServices = [];
 
   /* ── Topbar date ── */
   document.getElementById('topbar-date').textContent =
@@ -168,6 +170,15 @@
     const cls = map[s?.toLowerCase()] || 'badge-pending';
     const lbl = s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—';
     return `<span class="badge ${cls}">${lbl}</span>`;
+  }
+  function resourceLabel(resource_id, service_id) {
+    const r = allResources.find(x => x.id === resource_id);
+    if (!r) return `Resource #${resource_id}`;
+    if (service_id) {
+      const s = allSalonServices.find(x => x.id === service_id);
+      return s ? `${r.name} — ${s.name}` : r.name;
+    }
+    return r.name;
   }
 
   /* ── Stats ── */
@@ -235,7 +246,7 @@
       return `
         <tr>
           <td class="td-name">${escHtml(b.customer_name || '—')}</td>
-          <td>Resource #${escHtml(String(b.resource_id))}</td>
+          <td>${escHtml(resourceLabel(b.resource_id, b.service_id))}</td>
           <td>${dateStr}</td>
           <td>${escHtml(b.start)}</td>
           <td>${statusBadge(b.status)}</td>
@@ -270,12 +281,16 @@
   /* ── Boot ── */
   async function loadDashboard() {
     try {
-      const [bRes, uRes] = await Promise.all([
-        fetch(`${API}/bookings`, { credentials: 'include', cache: 'no-store' }),
-        fetch(`${API}/users`,    { credentials: 'include', cache: 'no-store' })
+      const [bRes, uRes, rRes, sRes] = await Promise.all([
+        fetch(`${API}/bookings`,       { credentials: 'include', cache: 'no-store' }),
+        fetch(`${API}/users`,          { credentials: 'include', cache: 'no-store' }),
+        fetch(`${API}/resources`,      { credentials: 'include', cache: 'no-store' }),
+        fetch(`${API}/salon-services`, { credentials: 'include', cache: 'no-store' })
       ]);
-      allBookings = ((await bRes.json()).bookings) || [];
-      allUsers    = ((await uRes.json()).users)    || [];
+      allBookings      = ((await bRes.json()).bookings)  || [];
+      allUsers         = ((await uRes.json()).users)     || [];
+      allResources     = ((await rRes.json()).resources) || [];
+      allSalonServices = ((await sRes.json()).services)  || [];
       renderStats();
       renderRecent();
     } catch (e) {

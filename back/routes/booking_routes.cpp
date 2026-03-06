@@ -14,16 +14,18 @@ void GetBookingRoutes(expresso::messages::Request &req,
 
     std::string date = req.queries["date"];
     std::string resourceIdStr = req.queries["resource_id"];
+    std::string durationStr   = req.queries["duration"];
 
     if (date.empty() || resourceIdStr.empty()) {
       return res.status(expresso::enums::STATUS_CODE::BAD_REQUEST).end();
     }
 
-    int resource_id = std::stoi(resourceIdStr);
+    int resource_id   = std::stoi(resourceIdStr);
+    int slot_minutes  = durationStr.empty() ? 60 : std::stoi(durationStr);
 
     // Call service layer
     auto slots = BookingContext::bookingService->getAvailableTimeSlots(
-        resource_id, date);
+        resource_id, date, slot_minutes);
 
     json::object response;
     response["date"] = date;
@@ -74,6 +76,9 @@ void PostBookingRoutes(expresso::messages::Request &req,
     std::string end = body["end"];
     std::string customer_name = body["customer_name"];
     std::string status = body["status"];
+    int service_id = (body.find("service_id") != body.end())
+                         ? static_cast<int>(body["service_id"])
+                         : 0;
 
     // Check availability
     if (!BookingContext::bookingService->isFree(resource_id, date, start,
@@ -85,7 +90,7 @@ void PostBookingRoutes(expresso::messages::Request &req,
 
     // Create booking
     BookingContext::bookingService->addBooking(resource_id, customer_name, date,
-                                               start, end, status);
+                                               start, end, status, service_id);
 
     json::object data;
     data["message"] = "Booking created";
@@ -111,15 +116,16 @@ void GetAllBookingsRoute(expresso::messages::Request &req,
 
     for (const auto &b : bookings) {
       json::object item;
-      item["id"] = b.id;
-      item["resource_id"] = b.resource_id;
-      item["customer_name"] = b.customer_name;
+      item["id"]             = b.id;
+      item["resource_id"]    = b.resource_id;
+      item["service_id"]     = b.service_id;
+      item["customer_name"]  = b.customer_name;
       item["customer_phone"] = b.customer_phone;
       item["customer_email"] = b.customer_email;
-      item["date"] = b.date;
-      item["start"] = b.start;
-      item["end"] = b.end;
-      item["status"] = b.status;
+      item["date"]           = b.date;
+      item["start"]          = b.start;
+      item["end"]            = b.end;
+      item["status"]         = b.status;
 
       response["bookings"].push_back(item);
     }

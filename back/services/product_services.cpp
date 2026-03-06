@@ -8,10 +8,9 @@ std::vector<Product> ProductRepository::getAllProducts() {
 
   std::vector<Product> products;
 
-  auto result = db.exec_params(
-      "SELECT id, name, description, price::text, stock, category "
-      "FROM products ORDER BY id ASC",
-      {});
+  auto result = db.exec_params("SELECT id, name, description, price::text, stock, category "
+                               "FROM products ORDER BY id ASC",
+                               {});
 
   for (int i = 0; i < result.GetRows(); i++) {
     Product p;
@@ -59,15 +58,14 @@ void ProductRepository::updateProduct(int id, json::object obj) {
   if (obj.find("category") != obj.end())
     category = static_cast<std::string>(obj["category"]);
 
-  db.exec_params(
-      "UPDATE products SET "
-      "name = COALESCE(NULLIF($2, ''), name), "
-      "description = COALESCE(NULLIF($3, ''), description), "
-      "price = CASE WHEN $4 != '' THEN $4::numeric ELSE price END, "
-      "stock = CASE WHEN $5 != '' THEN $5::integer ELSE stock END, "
-      "category = COALESCE(NULLIF($6, ''), category) "
-      "WHERE id = $1::integer",
-      {std::to_string(id), name, description, price, stock, category});
+  db.exec_params("UPDATE products SET "
+                 "name = COALESCE(NULLIF($2, ''), name), "
+                 "description = COALESCE(NULLIF($3, ''), description), "
+                 "price = CASE WHEN $4 != '' THEN $4::numeric ELSE price END, "
+                 "stock = CASE WHEN $5 != '' THEN $5::integer ELSE stock END, "
+                 "category = COALESCE(NULLIF($6, ''), category) "
+                 "WHERE id = $1::integer",
+                 {std::to_string(id), name, description, price, stock, category});
 }
 
 void ProductRepository::deleteProduct(int id) {

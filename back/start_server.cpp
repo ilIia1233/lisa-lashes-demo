@@ -4,8 +4,14 @@
 #include "routes/booking_routes.h"
 #include "routes/cart_routes.h"
 #include "routes/product_routes.h"
+#include "routes/resource_routes.h"
+#include "routes/schedule_routes.h"
+#include "routes/salon_service_routes.h"
 #include "services/booking_service.h"
+#include "services/schedule_service.h"
 #include "services/cart_service.h"
+#include "services/resource_service.h"
+#include "services/salon_service.h"
 #include "services/session_repository.h"
 #include "services/user_repository.h"
 #include "json/object.h"
@@ -74,6 +80,15 @@ int main(int argc, char **argv) {
   ProductRepository productService(conninfo);
   ProductContext::ProductService = &productService;
 
+  ResourceRepository resourceService(conninfo);
+  ResourceContext::resourceService = &resourceService;
+
+  SalonServiceRepository salonServiceRepo(conninfo);
+  SalonServiceContext::salonServiceRepo = &salonServiceRepo;
+
+  ScheduleRepository scheduleRepo(conninfo);
+  ScheduleContext::scheduleRepo = &scheduleRepo;
+
   // Product routes
   router.get("/products", GetProductRoutes);
   router.post("/products", PostProductRoutes);
@@ -99,6 +114,28 @@ int main(int argc, char **argv) {
   router.put("/users", PutUserRoute);
   router.del("/users", DeleteUserRoute);
 
+  // Resource / Artist routes
+  router.get("/resources",        GetResourcesRoute);
+  router.post("/resources",       PostResourceRoute);
+  router.put("/resources",        PutResourceRoute);
+  router.del("/resources",        DeleteResourceRoute);
+
+  // Salon-service catalog routes
+  router.get("/salon-services",   GetSalonServicesRoute);
+  router.post("/salon-services",  PostSalonServiceRoute);
+  router.put("/salon-services",   PutSalonServiceRoute);
+  router.del("/salon-services",   DeleteSalonServiceRoute);
+
+  // Resource-service assignment
+  router.put("/resource-services", PutResourceServicesRoute);
+
+  // Schedule (working hours + overrides)
+  router.get("/schedule",           GetScheduleRoute);
+  router.put("/schedule",           PutScheduleRoute);
+  router.get("/schedule-overrides", GetScheduleOverridesRoute);
+  router.put("/schedule-overrides", PutScheduleOverrideRoute);
+  router.del("/schedule-overrides", DeleteScheduleOverrideRoute);
+
   // CORS preflight (OPTIONS) handlers
   auto optHandler = [](expresso::messages::Request &req,
                        expresso::messages::Response &res) {
@@ -114,7 +151,12 @@ int main(int argc, char **argv) {
   router.options("/auth/register", optHandler);
   router.options("/auth/login", optHandler);
   router.options("/auth/user", optHandler);
-  router.options("/users", optHandler);
+  router.options("/users",            optHandler);
+  router.options("/resources",        optHandler);
+  router.options("/salon-services",   optHandler);
+  router.options("/resource-services", optHandler);
+  router.options("/schedule",           optHandler);
+  router.options("/schedule-overrides", optHandler);
   app.use("/api", &router);
 
   app.get("/download", [](expresso::messages::Request &req,
