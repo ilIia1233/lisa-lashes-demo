@@ -67,6 +67,8 @@ label {
   margin-bottom: 7px;
 }
 
+input[type="name"],
+input[type="surname"],
 input[type="email"],
 input[type="tel"],
 input[type="password"] {
