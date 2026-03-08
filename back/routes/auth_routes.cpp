@@ -9,7 +9,7 @@ createSessionCookie(const std::string &token) {
                        "; Path=/"
                        "; HttpOnly"
                        "; SameSite=Strict"
-                       "; Secure";
+                       "; Max-Age=86400";
 
   return new expresso::messages::Cookie(cookie);
 }
@@ -131,7 +131,8 @@ void PostLoginRoute(expresso::messages::Request &req,
 
     int userId = userIdOpt.value();
 
-    // create session
+    // clean up expired sessions and create a fresh one
+    UserContext::SessionService->deleteExpiredSessions();
     std::string token = UserContext::SessionService->createSession(userId);
 
     res.setCookie(createSessionCookie(token));
@@ -165,7 +166,14 @@ void PostLogoutRoute(expresso::messages::Request &req,
       }
     }
     if (!token.empty()) {
-      UserContext::SessionService->deleteSession(token);
+      // resolve token → user_id, then wipe ALL sessions for that user
+      auto userIdOpt = UserContext::SessionService->getUserIdFromToken(token);
+      if (userIdOpt) {
+        UserContext::SessionService->deleteAllSessionsForUser(*userIdOpt);
+      } else {
+        // token already expired — delete just this hash to be safe
+        UserContext::SessionService->deleteSession(token);
+      }
     }
     // Expire the cookie immediately
     auto *clear = new expresso::messages::Cookie(

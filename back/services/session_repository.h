@@ -16,4 +16,6 @@ public:
   std::optional<int> getUserIdFromToken(const std::string &token);
 
   void deleteSession(const std::string &token);
+  void deleteAllSessionsForUser(int user_id);
+  void deleteExpiredSessions();
 };

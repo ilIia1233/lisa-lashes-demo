@@ -37,6 +37,14 @@ SessionRepository::getUserIdFromToken(const std::string &token) {
 
 void SessionRepository::deleteSession(const std::string &token) {
   std::string hash = sha256(token);
-
   db.exec_params("DELETE FROM sessions WHERE token_hash=$1", {hash});
+}
+
+void SessionRepository::deleteAllSessionsForUser(int user_id) {
+  db.exec_params("DELETE FROM sessions WHERE user_id=$1",
+                 {std::to_string(user_id)});
+}
+
+void SessionRepository::deleteExpiredSessions() {
+  db.exec("DELETE FROM sessions WHERE expires_at <= NOW()");
 }

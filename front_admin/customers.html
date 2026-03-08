@@ -47,7 +47,11 @@
       </a>
     </nav>
     <div class="sidebar-footer">
-      <a href="../index.html" class="nav-item logout">
+      <a href="/front/index.html" class="nav-item" style="color:var(--text-muted);">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Back to Website</span>
+      </a>
+      <a href="#" class="nav-item logout" onclick="doAdminLogout(event)">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         <span>Logout</span>
       </a>
@@ -59,11 +63,11 @@
     <div class="topbar">
       <div class="topbar-title"><h1>Customers</h1></div>
       <div class="topbar-right">
-        <span class="topbar-date">Wednesday, 18 February 2026</span>
+        <span class="topbar-date" id="topbar-date"></span>
         <div class="admin-profile">
-          <div class="admin-avatar">L</div>
+          <div class="admin-avatar" id="admin-avatar">?</div>
           <div>
-            <div class="admin-name">Lisa Monroe</div>
+            <div class="admin-name" id="admin-name">Loading…</div>
             <div class="admin-role">Administrator</div>
           </div>
         </div>
@@ -177,9 +181,27 @@
 </div>
 
 <script>
-  const API = 'http://localhost:8000/api';
+  const API       = 'http://localhost:8000/api';
+  const ADMIN_API = 'http://localhost:8000/api/admin';
   let allCustomers    = [];
   let editingCustomerId = null;
+
+  /* ── Dynamic date ── */
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  /* ── Session guard ── */
+  async function checkAdmin() {
+    try {
+      const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
+      if (!res.ok) { window.location.href = '/front/login.html'; return false; }
+      const user = await res.json();
+      if (!user.is_admin) { window.location.href = '/front/account.html'; return false; }
+      document.getElementById('admin-name').textContent   = user.first_name + ' ' + user.last_name;
+      document.getElementById('admin-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+      return true;
+    } catch(e) { window.location.href = '/front/login.html'; return false; }
+  }
 
   /* ════════════════════════════════════
      Helpers
@@ -198,7 +220,7 @@
   ════════════════════════════════════ */
   async function loadCustomers() {
     try {
-      const res  = await fetch(`${API}/users`, { credentials: 'include' });
+      const res  = await fetch(`${ADMIN_API}/users`, { credentials: 'include' });
       const data = await res.json();
       allCustomers = data.users || [];
       renderTable(allCustomers);
@@ -306,7 +328,7 @@
       email:      document.getElementById('cm-email').value.trim(),
     };
     try {
-      const res = await fetch(`${API}/users?id=${editingCustomerId}`, {
+      const res = await fetch(`${ADMIN_API}/users?id=${editingCustomerId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -328,7 +350,7 @@
     if (!confirm(`Delete customer "${u.first_name} ${u.last_name}" (ID #${u.id})? This cannot be undone.`)) return;
     closeMenu();
     try {
-      const res = await fetch(`${API}/auth/user?id=${id}`, {
+      const res = await fetch(`${ADMIN_API}/users?id=${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -380,8 +402,14 @@
     }
   });
 
+  async function doAdminLogout(e) {
+    e.preventDefault();
+    try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch(e) {}
+    window.location.href = '/front/index.html';
+  }
+
   /* ── Boot ── */
-  loadCustomers();
+  checkAdmin().then(ok => { if (ok) loadCustomers(); });
 </script>
 
 </body>
