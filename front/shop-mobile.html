@@ -19,7 +19,16 @@
 </script>
 
 </head>
-
+<!-- Header section -->
+ <div id="header-mobile"></div>
+ <script>
+    fetch('header-mobile.html')
+    .then(res => res.text())
+      .then(data => {
+        document.getElementById('header-mobile').innerHTML = data;
+      });
+    </script>
+<!-- End of header section -->
 <body>
 
 <div class="page">

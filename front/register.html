@@ -4,10 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Register – Lisa's Lashes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="login.css" />
-  <link rel="icon" href="assets/logo/logo.png" type="image/png">
 </head>
 <body>
 
@@ -17,144 +14,44 @@
       <h1>Create Account</h1>
       <p class="subtitle">Join us today. Fill in your details below.</p>
 
-      <div id="form-msg" class="form-msg"></div>
-
-      <!-- First & Last Name -->
-      <div class="form-row">
+      <form action="#" method="POST">
         <div class="form-group">
-          <label for="first-name">First Name</label>
-          <input type="text" id="first-name" name="first_name"
-                 placeholder="Anna" autocomplete="given-name" />
+          <label for="name">Name</label>
+          <input type="name" id="name" name="name" autocomplete="name" required />
         </div>
+        
         <div class="form-group">
-          <label for="last-name">Last Name</label>
-          <input type="text" id="last-name" name="last_name"
-                 placeholder="Smith" autocomplete="family-name" />
+          <label for="surname">Surname</label>
+          <input type="surname" id="surname" name="surname" autocomplete="surname" required />
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="email">Email address <span style="text-transform:none;font-size:.75rem;color:#aaa;">(optional)</span></label>
-        <input type="email" id="email" name="email"
-               placeholder="anna@mail.com" autocomplete="email" />
-      </div>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="anna@mail.com" autocomplete="email" required />
+        </div>
 
-      <div class="form-group">
-        <label for="phone">Phone number</label>
-        <input type="tel" id="phone" name="phone"
-               placeholder="+353 87 123 4567" autocomplete="tel" />
-      </div>
+        <div class="form-group">
+          <label for="phone">Phone number</label>
+          <input type="tel" id="phone" name="phone" placeholder="+353 87 123 4567" autocomplete="tel" required />
+        </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password"
-               placeholder="Min. 6 characters" autocomplete="new-password" />
-      </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="new-password" required />
+        </div>
 
-      <div class="form-group">
-        <label for="confirm-password">Confirm password</label>
-        <input type="password" id="confirm-password" name="confirm_password"
-               placeholder="••••••••" autocomplete="new-password" />
-      </div>
+        <div class="form-group">
+          <label for="confirm-password">Confirm password</label>
+          <input type="password" id="confirm-password" name="confirm_password" placeholder="••••••••" autocomplete="new-password" required />
+        </div>
 
-      <button type="button" class="btn-primary" id="reg-btn" onclick="doRegister()">Create Account</button>
+        <button type="submit" class="btn-primary">Create Account</button>
+      </form>
 
-      <p class="signup">Already have an account? <a href="login.html">Sign in</a></p>
+<p class="signup">Already have an account? <a href="#">Sign in</a></p>
 
     </div>
   </div>
-
-<script>
-  const API = 'http://localhost:8000/api';
-
-  // If already logged in, go to account
-  (async function() {
-    try {
-      const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
-      if (res.ok) window.location.href = 'account.html';
-    } catch(e) {}
-  })();
-
-  // Enter key on last field
-  document.getElementById('confirm-password').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') doRegister();
-  });
-
-  async function doRegister() {
-    const first    = document.getElementById('first-name').value.trim();
-    const last     = document.getElementById('last-name').value.trim();
-    const email    = document.getElementById('email').value.trim();
-    const phone    = document.getElementById('phone').value.trim();
-    const password = document.getElementById('password').value;
-    const confirm  = document.getElementById('confirm-password').value;
-    const btn      = document.getElementById('reg-btn');
-    hideMsg();
-
-    if (!first || !last || !phone || !password) {
-      showMsg('Please fill in all required fields.', false); return;
-    }
-    if (password.length < 6) {
-      showMsg('Password must be at least 6 characters.', false); return;
-    }
-    if (password !== confirm) {
-      showMsg('Passwords do not match.', false); return;
-    }
-
-    btn.disabled = true; btn.textContent = 'Creating account…';
-    try {
-      const res  = await fetch(API + '/auth/register', {
-        method: 'POST', credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ first_name: first, last_name: last, phone, email, password })
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        // Auto-login after successful registration
-        const loginRes = await fetch(API + '/auth/login', {
-          method: 'POST', credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ identifier: phone, password })
-        });
-        if (loginRes.ok) {
-          redirectAfterAuth();
-        } else {
-          // Registration OK but auto-login failed — send to login page
-          const loginUrl = 'login.html' + window.location.search;
-          window.location.href = loginUrl + (window.location.search ? '&reg=1' : '?reg=1');
-        }
-      } else {
-        showMsg(data.message || 'Registration failed. Phone may already be in use.', false);
-      }
-    } catch(e) {
-      showMsg('Network error. Please try again.', false);
-    } finally {
-      btn.disabled = false; btn.textContent = 'Create Account';
-    }
-  }
-
-  function redirectAfterAuth() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('return') === 'booking') {
-      window.location.href = 'index.html';
-    } else {
-      window.location.href = 'account.html';
-    }
-  }
-
-  function showMsg(msg, isSuccess) {
-    const el = document.getElementById('form-msg');
-    el.textContent = msg;
-    el.className   = 'form-msg ' + (isSuccess ? 'success' : 'error');
-    el.style.display = 'block';
-  }
-
-  function hideMsg() {
-    const el = document.getElementById('form-msg');
-    el.style.display = 'none';
-    el.className = 'form-msg';
-  }
-</script>
 
 </body>
 </html>

@@ -3,11 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign In – Lisa's Lashes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+  <title>Login – Lisa's Lashes</title>
   <link rel="stylesheet" href="login.css" />
-  <link rel="icon" href="assets/logo/logo.png" type="image/png">
 </head>
 <body>
 
@@ -17,109 +14,31 @@
       <h1>Sign In</h1>
       <p class="subtitle">Welcome back. Please enter your details.</p>
 
-      <div id="form-msg" class="form-msg"></div>
+      <form action="#" method="POST">
+        <div class="form-group">
+          <label for="email">Email address or Phone number</label>
+          <input type="email" id="email" name="email" placeholder="anna@mail.com or +3531234567" autocomplete="email" required />
+        </div>
 
-      <div class="form-group">
-        <label for="identifier">Email address or Phone number</label>
-        <input type="text" id="identifier" name="identifier"
-               placeholder="anna@mail.com or +3531234567"
-               autocomplete="username" />
-      </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+        </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password"
-               placeholder="••••••••"
-               autocomplete="current-password" />
-      </div>
+        <div class="options">
+          <label class="remember">
+            <input type="checkbox" name="remember" /> Remember me
+          </label>
+          <a href="#" class="forgot">Forgot password?</a>
+        </div>
 
-      <div class="options">
-        <label class="remember">
-          <input type="checkbox" id="remember" /> Remember me
-        </label>
-        <a href="#" class="forgot">Forgot password?</a>
-      </div>
+        <button type="submit" class="btn-primary">Sign In</button>
+      </form>
 
-      <button type="button" class="btn-primary" id="login-btn" onclick="doLogin()">Sign In</button>
-
-      <p class="signup">Don't have an account? <a id="register-link" href="register.html">Create one</a></p>
+      <p class="signup">Don't have an account? <a href="register.html">Create one</a></p>
 
     </div>
   </div>
-
-<script>
-  const API = 'http://localhost:8000/api';
-
-  // Forward ?return param to register link
-  (function() {
-    const qs = window.location.search;
-    if (qs) document.getElementById('register-link').href = 'register.html' + qs;
-  })();
-
-  // If already logged in, redirect to account
-  (async function() {
-    try {
-      const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
-      if (res.ok) redirectAfterAuth();
-    } catch(e) {}
-  })();
-
-  // Enter key support
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') doLogin();
-  });
-
-  async function doLogin() {
-    const identifier = document.getElementById('identifier').value.trim();
-    const password   = document.getElementById('password').value;
-    const msgEl      = document.getElementById('form-msg');
-    const btn        = document.getElementById('login-btn');
-    hideMsg();
-
-    if (!identifier || !password) { showMsg('Please fill in all fields.', false); return; }
-
-    btn.disabled = true; btn.textContent = 'Signing in…';
-    try {
-      const res  = await fetch(API + '/auth/login', {
-        method: 'POST', credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier, password })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        redirectAfterAuth();
-      } else {
-        showMsg(data.message || 'Invalid credentials.', false);
-      }
-    } catch(e) {
-      showMsg('Network error. Please try again.', false);
-    } finally {
-      btn.disabled = false; btn.textContent = 'Sign In';
-    }
-  }
-
-  function redirectAfterAuth() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('return') === 'booking') {
-      window.location.href = 'index.html';
-    } else {
-      window.location.href = 'account.html';
-    }
-  }
-
-  function showMsg(msg, isSuccess) {
-    const el = document.getElementById('form-msg');
-    el.textContent = msg;
-    el.className   = 'form-msg ' + (isSuccess ? 'success' : 'error');
-    el.style.display = 'block';
-  }
-
-  function hideMsg() {
-    const el = document.getElementById('form-msg');
-    el.style.display = 'none';
-    el.className = 'form-msg';
-  }
-</script>
 
 </body>
 </html>
