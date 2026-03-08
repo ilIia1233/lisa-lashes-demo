@@ -33,12 +33,13 @@
         document.getElementById('header-new').innerHTML = data;
       });
     </script>
+<script src="js/header-dropdown.js"></script>
 <!-- End of header section -->
 <main>
 <img class="promo" src="assets/images/promo.png" alt="Promotional Banner">
 
 <section class="welcome">
-  <a href="booking.html"><button class="book-btn">BOOK NOW</button></a>
+  <button class="book-btn" onclick="document.getElementById('booking-section').scrollIntoView({behavior:'smooth'})">BOOK NOW</button>
   
   <h2 class="welcome-title">Welcome to Lisa's Lashes</h2>
   
@@ -363,7 +364,7 @@
 <!-- end of horizontal slider section --> 
 
 <!-- Book our Services Section -->
-<div class ="calendar">
+<div id="booking-section" class ="calendar">
 <section class="book-section">
   <div class="book-title">Book our Services</div>
   <div class="book-content">
@@ -371,24 +372,18 @@
     <div class="book-form">
 
       <label>Service</label>
-      <select>
-        <option>Select Service</option>
-        <option>Classic Lashes</option>
-        <option>Volume Lashes</option>
-        <option>Mega Volume</option>
+      <select id="serviceSelect">
+        <option value="">Loading services…</option>
       </select>
-      <label>Employee</label>
-      <select>
-        <option>Any</option>
-        <option>Lisa</option>
-        <option>Natasha</option>
-        <option>Katia</option>
+      <label>Artist</label>
+      <select id="resourceSelect">
+        <option value="">Select a service first</option>
       </select>
       <label>Available Times</label>
       <div class="time-slots" id="timeSlots">
         <p class="no-slots">Select a date to see available times.</p>
       </div>
-      <button class="book-now-btn">Book Now</button>
+      <button class="book-now-btn" id="bookNowBtn">Book Now</button>
     </div>
 
     <!-- Center: Calendar -->
@@ -453,7 +448,40 @@
   </div>
 </section>
 
-<script src="js/calendar.js?v=5"></script>
+<!-- ── Login Required Modal ── -->
+<div id="loginRequiredModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:36px 32px;max-width:380px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.18);position:relative;text-align:center;">
+    <button onclick="closeLoginRequiredModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#888;">✕</button>
+    <div style="font-size:36px;margin-bottom:12px;">🔒</div>
+    <h3 style="margin:0 0 8px;font-size:20px;font-family:'Allura',cursive;color:#2c2c2c;">Sign in to Book</h3>
+    <p style="margin:0 0 24px;font-size:14px;color:#888;line-height:1.5;">You've picked a great time slot!<br>Please log in or create an account to confirm your booking.</p>
+    <div style="display:flex;gap:10px;">
+      <a href="login.html?return=booking" style="flex:1;padding:12px;border:1.5px solid #c9a84c;border-radius:8px;background:#fff;color:#c9a84c;font-size:14px;font-weight:600;text-decoration:none;display:block;">Log In</a>
+      <a href="register.html?return=booking" style="flex:1;padding:12px;border:none;border-radius:8px;background:#c9a84c;color:#fff;font-size:14px;font-weight:600;text-decoration:none;display:block;">Register</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Booking Confirmation Modal ── -->
+<div id="bookingModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:36px 32px;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.18);position:relative;">
+    <button onclick="closeBookingModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#888;">✕</button>
+    <h3 style="margin:0 0 6px;font-size:20px;font-family:'Allura',cursive;color:#2c2c2c;">Confirm Booking</h3>
+    <p style="margin:0 0 20px;font-size:13px;color:#888;">Please review your appointment details.</p>
+
+    <div id="bm-summary" style="background:#fafafa;border:1px solid #e8e0d0;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.8;margin-bottom:22px;"></div>
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeBookingModal()" style="flex:1;padding:11px;border:1.5px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-size:14px;">Cancel</button>
+      <button onclick="confirmBooking()" id="confirmBtn" style="flex:1;padding:11px;border:none;border-radius:8px;background:#c9a84c;color:#fff;cursor:pointer;font-size:14px;font-weight:600;">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast notification ── -->
+<div id="bookingToast" style="display:none;position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#2c2c2c;color:#fff;padding:13px 24px;border-radius:10px;font-size:14px;z-index:9100;box-shadow:0 4px 18px rgba(0,0,0,.25);white-space:nowrap;"></div>
+
+<script src="js/calendar.js?v=6"></script>
 </div>
 </main>
 <div class="section-divider"></div>
