@@ -57,12 +57,16 @@
       <a href="checkout.html"><span class="icon"><svg width="45" height="45" viewBox="0 0 59 57" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M2 2H12L18.7 35.475C18.9286 36.626 19.5548 37.6599 20.4689 38.3957C21.383 39.1316 22.5267 39.5225 23.7 39.5H48C49.1733 39.5225 50.317 39.1316 51.2311 38.3957C52.1452 37.6599 52.7714 36.626 53 35.475L57 14.5H14.5M24.5 52C24.5 53.3807 23.3807 54.5 22 54.5C20.6193 54.5 19.5 53.3807 19.5 52C19.5 50.6193 20.6193 49.5 22 49.5C23.3807 49.5 24.5 50.6193 24.5 52ZM52 52C52 53.3807 50.8807 54.5 49.5 54.5C48.1193 54.5 47 53.3807 47 52C47 50.6193 48.1193 49.5 49.5 49.5C50.8807 49.5 52 50.6193 52 52Z" stroke="black" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </span></a>
-      <a href="account.html"><span class="icon"><svg width="45" height="45" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M41.75 46.75V41.75C41.75 39.0978 40.6964 36.5543 38.8211 34.6789C36.9457 32.8036 34.4022 31.75 31.75 31.75H11.75C9.09783 31.75 6.5543 32.8036 4.67893 34.6789C2.80357 36.5543 1.75 39.0978 1.75 41.75V46.75M31.75 11.75C31.75 17.2728 27.2728 21.75 21.75 21.75C16.2272 21.75 11.75 17.2728 11.75 11.75C11.75 6.22715 16.2272 1.75 21.75 1.75C27.2728 1.75 31.75 6.22715 31.75 11.75Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></a>
-</span>
-    </div>
-  </div>
+
+      <!-- User dropdown -->
+      <div id="hdr-user-wrap" style="position:relative;display:inline-block;">
+        <span class="icon" id="hdr-user-btn" style="cursor:pointer;" onclick="hdrToggleDropdown()">
+          <svg width="45" height="45" viewBox="0 0 44 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M41.75 46.75V41.75C41.75 39.0978 40.6964 36.5543 38.8211 34.6789C36.9457 32.8036 34.4022 31.75 31.75 31.75H11.75C9.09783 31.75 6.5543 32.8036 4.67893 34.6789C2.80357 36.5543 1.75 39.0978 1.75 41.75V46.75M31.75 11.75C31.75 17.2728 27.2728 21.75 21.75 21.75C16.2272 21.75 11.75 17.2728 11.75 11.75C11.75 6.22715 16.2272 1.75 21.75 1.75C27.2728 1.75 31.75 6.22715 31.75 11.75Z" stroke="black" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <div id="hdr-dropdown" style="display:none;position:absolute;right:0;top:54px;z-index:9999;background:#fff;border:1px solid #e8e0d0;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.13);min-width:210px;padding:8px 0;font-family:'DM Sans',sans-serif;"></div>
+      </div>
 
   <nav class="nav">
     <a href ="catologue.html">Catalogue</a><span>|</span>
@@ -73,9 +77,84 @@
 </header>
 
 <main>
-<div class="page">
 
-  <!-- SIDEBAR -->
+<!-- ── Page Loading ─────────────────────────────────────── -->
+<div id="page-loading" class="auth-loading">
+  <div class="auth-spinner"></div>
+</div>
+
+<!-- ── AUTH SECTION (shown when not logged in) ───────────── -->
+<div id="auth-section" class="auth-wrap" style="display:none;">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <img src="assets/logo/logo.png" alt="Lisa's Lashes" style="height:72px;">
+      <div class="auth-brand">Lisa's Lashes</div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-btn-login"    onclick="switchTab('login')">Log In</button>
+      <button class="auth-tab"        id="tab-btn-register" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="tab-login" class="tab-panel">
+      <div class="form-group">
+        <label>Phone or Email</label>
+        <input type="text" class="form-input" id="login-identifier"
+               placeholder="+353 87 … or email@…"
+               onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-input" id="login-password"
+               placeholder="••••••••"
+               onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+      <div id="login-error" class="form-msg" style="display:none;"></div>
+      <button class="form-btn" id="login-btn" onclick="doLogin()">Log In</button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="tab-register" class="tab-panel" style="display:none;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name <span class="req">*</span></label>
+          <input type="text" class="form-input" id="reg-first" placeholder="Anna">
+        </div>
+        <div class="form-group">
+          <label>Last Name <span class="req">*</span></label>
+          <input type="text" class="form-input" id="reg-last" placeholder="Smith">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Phone <span class="req">*</span></label>
+        <input type="tel" class="form-input" id="reg-phone" placeholder="+353 87 123 4567">
+      </div>
+      <div class="form-group">
+        <label>Email <span class="opt">(optional)</span></label>
+        <input type="email" class="form-input" id="reg-email" placeholder="anna@email.com">
+      </div>
+      <div class="form-group">
+        <label>Password <span class="req">*</span></label>
+        <input type="password" class="form-input" id="reg-password" placeholder="Min. 6 characters">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password <span class="req">*</span></label>
+        <input type="password" class="form-input" id="reg-confirm"
+               placeholder="••••••••"
+               onkeydown="if(event.key==='Enter') doRegister()">
+      </div>
+      <div id="reg-error" class="form-msg" style="display:none;"></div>
+      <button class="form-btn" id="reg-btn" onclick="doRegister()">Create Account</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── PROFILE SECTION (shown when logged in) ────────────── -->
+<div id="profile-section" class="page" style="display:none;">
+
   <aside class="sidebar">
     <h3>My Account</h3>
     <div class="menu">
@@ -84,45 +163,30 @@
       <a href="in-progress.html">Orders</a>
       <a href="in-progress.html">Courses</a>
       <a href="in-progress.html">Settings</a>
-      <a href="index.html">Logout</a>
+      <a id="admin-link" href="/admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">&#9881; Admin Panel</a>
+      <a href="#" class="logout-link" onclick="doLogout(event)">Logout</a>
     </div>
   </aside>
 
-  <!-- CONTENT -->
   <section class="content">
-    <h2>Welcome back, Anna</h2>
+    <h2 id="welcome-msg">Welcome back</h2>
 
     <div class="card">
-      <h4>Profile information</h4>
-      <div class="info">
-        Name: Anna Smith<br>
-        Email: anna@email.com<br>
-        Phone: +353 87 123 4567
-      </div>
+      <h4>Profile Information</h4>
+      <div class="info" id="profile-info">Loading…</div>
       <button class="button">Edit profile</button>
     </div>
 
     <div class="card">
-      <h4>Upcoming booking</h4>
+      <h4>Quick Actions</h4>
       <div class="info">
-        Date: 18 August 2025<br>
-        Service: Lash Extensions<br>
-        Master: Lisa
+        <a href="index.html" style="color:#caa46a;text-decoration:none;font-weight:500;">&#128197; Book a new appointment &rarr;</a>
       </div>
-      <span class="status">Confirmed</span>
-    </div>
-
-    <div class="card">
-      <h4>Recent order</h4>
-      <div class="info">
-        Order #1042<br>
-        Total: €34.89
-      </div>
-      <span class="status">Completed</span>
     </div>
 
   </section>
 </div>
+
 </main>
 <footer class="footer">
   <div class="footer-grid">
@@ -190,6 +254,204 @@
 
 
 
+<script>
+const API = 'http://localhost:8000/api';
+let currentUser = null;
+
+/* ── Header dropdown (reuses currentUser set by checkSession) ── */
+function hdrToggleDropdown() {
+  const dd = document.getElementById('hdr-dropdown');
+  if (!dd) return;
+  if (dd.style.display === 'block') { dd.style.display = 'none'; return; }
+  hdrRenderDropdown();
+  dd.style.display = 'block';
+}
+
+function hdrRenderDropdown() {
+  const dd = document.getElementById('hdr-dropdown');
+  if (!dd) return;
+  if (currentUser) {
+    dd.innerHTML =
+      '<div style="padding:12px 18px 8px;border-bottom:1px solid #f0ebe0;">' +
+        '<div style="font-weight:600;font-size:14px;color:#2c2c2c;">' + hdrEsc(currentUser.first_name + ' ' + currentUser.last_name) + '</div>' +
+        '<div style="font-size:12px;color:#aaa;margin-top:2px;">' + hdrEsc(currentUser.phone || currentUser.email || '') + '</div>' +
+      '</div>' +
+      '<a href="account.html" style="display:block;padding:10px 18px;font-size:14px;color:#2c2c2c;text-decoration:none;">👤 My Account</a>' +
+      (currentUser.is_admin ? '<a href="/admin/admin.html" style="display:block;padding:10px 18px;font-size:14px;color:#c9a84c;text-decoration:none;">⚙️ Admin Panel</a>' : '') +
+      '<div style="border-top:1px solid #f0ebe0;margin:4px 0;"></div>' +
+      '<div onclick="hdrLogout()" style="display:block;padding:10px 18px;font-size:14px;color:#c0392b;cursor:pointer;">🚪 Log Out</div>';
+  } else {
+    dd.innerHTML =
+      '<div style="padding:12px 18px 8px;border-bottom:1px solid #f0ebe0;font-size:13px;color:#888;">Not signed in</div>' +
+      '<a href="login.html" style="display:block;padding:10px 18px;font-size:14px;color:#2c2c2c;text-decoration:none;">🔑 Log In</a>' +
+      '<a href="register.html" style="display:block;padding:10px 18px;font-size:14px;color:#2c2c2c;text-decoration:none;">✨ Register</a>';
+  }
+}
+
+async function hdrLogout() {
+  try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); } catch(e) {}
+  window.location.href = 'index.html';
+}
+
+function hdrEsc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+document.addEventListener('click', function(e) {
+  const wrap = document.getElementById('hdr-user-wrap');
+  const dd   = document.getElementById('hdr-dropdown');
+  if (wrap && dd && !wrap.contains(e.target)) dd.style.display = 'none';
+});
+
+/* ── Boot ── */
+document.addEventListener('DOMContentLoaded', async function() {
+  if (window.location.hash === '#register') switchTab('register');
+  await checkSession();
+});
+
+async function checkSession() {
+  try {
+    const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
+    if (res.ok) { currentUser = await res.json(); showProfile(); }
+    else         { showAuth(); }
+  } catch(e)   { showAuth(); }
+}
+
+function showAuth() {
+  document.getElementById('page-loading').style.display    = 'none';
+  document.getElementById('auth-section').style.display    = 'flex';
+  document.getElementById('profile-section').style.display = 'none';
+  hdrRenderDropdown();
+}
+
+function showProfile() {
+  document.getElementById('page-loading').style.display    = 'none';
+  document.getElementById('auth-section').style.display    = 'none';
+  document.getElementById('profile-section').style.display = 'grid';
+  document.getElementById('welcome-msg').textContent =
+    'Welcome back, ' + currentUser.first_name;
+  document.getElementById('profile-info').innerHTML =
+    '<strong>Name:</strong> '  + escHtml(currentUser.first_name + ' ' + currentUser.last_name) + '<br>' +
+    '<strong>Phone:</strong> ' + escHtml(currentUser.phone  || '—') + '<br>' +
+    '<strong>Email:</strong> ' + escHtml(currentUser.email  || '—') + '<br>' +
+    '<strong>Role:</strong> '  + (currentUser.is_admin ? '&#9881; Administrator' : 'Customer');
+  if (currentUser.is_admin) {
+    document.getElementById('admin-link').style.display = 'block';
+  }
+}
+
+/* ── Tabs ── */
+function switchTab(tab) {
+  document.getElementById('tab-login').style.display    = tab === 'login'    ? 'block' : 'none';
+  document.getElementById('tab-register').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('tab-btn-login').classList.toggle('active',    tab === 'login');
+  document.getElementById('tab-btn-register').classList.toggle('active', tab === 'register');
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('reg-error').style.display   = 'none';
+}
+
+/* ── Login ── */
+async function doLogin() {
+  const identifier = document.getElementById('login-identifier').value.trim();
+  const password   = document.getElementById('login-password').value;
+  const errEl      = document.getElementById('login-error');
+  const btn        = document.getElementById('login-btn');
+  errEl.style.display = 'none';
+
+  if (!identifier || !password) { showMsg(errEl, 'Please fill in all fields.', false); return; }
+
+  btn.disabled = true; btn.textContent = 'Logging in…';
+  try {
+    const res  = await fetch(API + '/auth/login', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password })
+    });
+    const data = await res.json();
+    if (res.ok) { redirectAfterAuth(); }
+    else        { showMsg(errEl, data.message || 'Invalid credentials.', false); }
+  } catch(e) { showMsg(errEl, 'Network error. Please try again.', false); }
+  finally    { btn.disabled = false; btn.textContent = 'Log In'; }
+}
+
+/* ── Register ── */
+async function doRegister() {
+  const first    = document.getElementById('reg-first').value.trim();
+  const last     = document.getElementById('reg-last').value.trim();
+  const phone    = document.getElementById('reg-phone').value.trim();
+  const email    = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const confirm  = document.getElementById('reg-confirm').value;
+  const errEl    = document.getElementById('reg-error');
+  const btn      = document.getElementById('reg-btn');
+  errEl.style.display = 'none';
+
+  if (!first || !last || !phone || !password) {
+    showMsg(errEl, 'Please fill in all required fields.', false); return;
+  }
+  if (password.length < 6) {
+    showMsg(errEl, 'Password must be at least 6 characters.', false); return;
+  }
+  if (password !== confirm) {
+    showMsg(errEl, 'Passwords do not match.', false); return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  try {
+    const res  = await fetch(API + '/auth/register', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ first_name: first, last_name: last, phone, email, password })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      // Auto-login with the new account
+      const loginRes = await fetch(API + '/auth/login', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: phone, password })
+      });
+      if (loginRes.ok) {
+        redirectAfterAuth();
+      } else {
+        switchTab('login');
+        document.getElementById('login-identifier').value = phone;
+        showMsg(document.getElementById('login-error'), '✓ Account created! Please log in.', true);
+      }
+    } else {
+      showMsg(errEl, data.message || 'Registration failed. Phone may already be in use.', false);
+    }
+  } catch(e) { showMsg(errEl, 'Network error. Please try again.', false); }
+  finally    { btn.disabled = false; btn.textContent = 'Create Account'; }
+}
+
+/* ── Logout ── */
+async function doLogout(e) {
+  if (e) e.preventDefault();
+  try { await fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' }); }
+  catch(err) {}
+  window.location.reload();
+}
+
+/* ── Helpers ── */
+function redirectAfterAuth() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('return') === 'booking') { window.location.href = 'index.html'; }
+  else                                    { window.location.reload(); }
+}
+
+function showMsg(el, msg, isSuccess) {
+  el.textContent = msg;
+  el.style.color      = isSuccess ? '#2e7d32' : '#c0392b';
+  el.style.background = isSuccess ? '#f0fff4'  : '#fff5f5';
+  el.style.border     = '1px solid ' + (isSuccess ? '#b7dfc2' : '#f5c6c6');
+  el.style.display    = 'block';
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
 </body>
 </html>
 
