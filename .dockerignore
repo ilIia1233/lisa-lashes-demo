@@ -1,0 +1,38 @@
+# Build artifacts
+build/
+out/
+bin/
+.cache/
+
+# CMake generated
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+*.ninja
+
+# Object / binary files
+*.o
+*.obj
+*.a
+*.so
+*.so.*
+
+# Secrets — never bake into image
+secrets/
+
+# Docker files themselves (not needed in build context)
+docker/
+
+# Editor / OS junk
+.vscode/
+.idea/
+*.log
+logs/
+tmp/
+Thumbs.db
+.DS_Store
+
+# Git
+.git/
+.gitignore
