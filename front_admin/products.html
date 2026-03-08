@@ -780,11 +780,12 @@
 
     try {
       const res = await fetch(`${ADMIN_API}/products`, {
+        method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, price, stock: parseInt(stock), description: desc, category: cat })
       });
-      if (!res.ok) { const e = await res.json(); alert('Error: ' + e.message); return; }
+      if (!res.ok) { const e = await res.json().catch(()=>({})); alert('Error: ' + (e.message || res.status)); return; }
       closeModal('modal-add-product');
       clearAddForm();
       await loadProducts();
@@ -837,7 +838,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, price, stock: parseInt(stock), description: desc, category: cat })
       });
-      if (!res.ok) { const e = await res.json(); alert('Error: ' + e.message); return; }
+      if (!res.ok) { const e = await res.json().catch(()=>({})); alert('Error: ' + (e.message || res.status)); return; }
       closeModal('modal-product');
       editingId = null;
       await loadProducts();
@@ -859,7 +860,7 @@
         method: 'DELETE',
         credentials: 'include'
       });
-      if (!res.ok) { const e = await res.json(); alert('Error: ' + e.message); return; }
+      if (!res.ok) { const e = await res.json().catch(()=>({})); alert('Error: ' + (e.message || res.status)); return; }
       await loadProducts();
     } catch (e) {
       alert('Network error: ' + e.message);
