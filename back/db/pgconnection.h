@@ -1,6 +1,7 @@
 #pragma once
 #include "postgres.h"
 #include <libpq-fe.h>
+#include <mutex>
 #include <string>
 #include <vector>
 

@@ -40,9 +40,84 @@
 <!-- End of header section -->
 
 <main>
-<div class="page">
 
-  <!-- SIDEBAR -->
+<!-- ── Page Loading ─────────────────────────────────────── -->
+<div id="page-loading" class="auth-loading">
+  <div class="auth-spinner"></div>
+</div>
+
+<!-- ── AUTH SECTION (shown when not logged in) ───────────── -->
+<div id="auth-section" class="auth-wrap" style="display:none;">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <img src="assets/logo/logo.png" alt="Lisa's Lashes" style="height:72px;">
+      <div class="auth-brand">Lisa's Lashes</div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-btn-login"    onclick="switchTab('login')">Log In</button>
+      <button class="auth-tab"        id="tab-btn-register" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="tab-login" class="tab-panel">
+      <div class="form-group">
+        <label>Phone or Email</label>
+        <input type="text" class="form-input" id="login-identifier"
+               placeholder="+353 87 … or email@…"
+               onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-input" id="login-password"
+               placeholder="••••••••"
+               onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+      <div id="login-error" class="form-msg" style="display:none;"></div>
+      <button class="form-btn" id="login-btn" onclick="doLogin()">Log In</button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="tab-register" class="tab-panel" style="display:none;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name <span class="req">*</span></label>
+          <input type="text" class="form-input" id="reg-first" placeholder="Anna">
+        </div>
+        <div class="form-group">
+          <label>Last Name <span class="req">*</span></label>
+          <input type="text" class="form-input" id="reg-last" placeholder="Smith">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Phone <span class="req">*</span></label>
+        <input type="tel" class="form-input" id="reg-phone" placeholder="+353 87 123 4567">
+      </div>
+      <div class="form-group">
+        <label>Email <span class="opt">(optional)</span></label>
+        <input type="email" class="form-input" id="reg-email" placeholder="anna@email.com">
+      </div>
+      <div class="form-group">
+        <label>Password <span class="req">*</span></label>
+        <input type="password" class="form-input" id="reg-password" placeholder="Min. 6 characters">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password <span class="req">*</span></label>
+        <input type="password" class="form-input" id="reg-confirm"
+               placeholder="••••••••"
+               onkeydown="if(event.key==='Enter') doRegister()">
+      </div>
+      <div id="reg-error" class="form-msg" style="display:none;"></div>
+      <button class="form-btn" id="reg-btn" onclick="doRegister()">Create Account</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── PROFILE SECTION (shown when logged in) ────────────── -->
+<div id="profile-section" class="page" style="display:none;">
+
   <aside class="sidebar">
     <h3>My Account</h3>
     <div class="menu">
@@ -51,45 +126,30 @@
       <a href="in-progress.html">Orders</a>
       <a href="in-progress.html">Courses</a>
       <a href="in-progress.html">Settings</a>
-      <a href="index.html">Logout</a>
+      <a id="admin-link" href="/admin/admin.html" style="display:none;color:#c9a84c;font-weight:600;">&#9881; Admin Panel</a>
+      <a href="#" class="logout-link" onclick="doLogout(event)">Logout</a>
     </div>
   </aside>
 
-  <!-- CONTENT -->
   <section class="content">
-    <h2>Welcome back, Anna</h2>
+    <h2 id="welcome-msg">Welcome back</h2>
 
     <div class="card">
-      <h4>Profile information</h4>
-      <div class="info">
-        Name: Anna Smith<br>
-        Email: anna@email.com<br>
-        Phone: +353 87 123 4567
-      </div>
+      <h4>Profile Information</h4>
+      <div class="info" id="profile-info">Loading…</div>
       <button class="button">Edit profile</button>
     </div>
 
     <div class="card">
-      <h4>Upcoming booking</h4>
+      <h4>Quick Actions</h4>
       <div class="info">
-        Date: 18 August 2025<br>
-        Service: Lash Extensions<br>
-        Master: Lisa
+        <a href="index.html" style="color:#caa46a;text-decoration:none;font-weight:500;">&#128197; Book a new appointment &rarr;</a>
       </div>
-      <span class="status">Confirmed</span>
-    </div>
-
-    <div class="card">
-      <h4>Recent order</h4>
-      <div class="info">
-        Order #1042<br>
-        Total: €34.89
-      </div>
-      <span class="status">Completed</span>
     </div>
 
   </section>
 </div>
+
 </main>
 <!-- Footer section -->
   <div id="footer-new"><

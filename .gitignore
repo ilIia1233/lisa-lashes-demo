@@ -64,7 +64,9 @@ ehthumbs.db
 # -------------------------------------------------
 # Environment / secrets (IMPORTANT)
 # -------------------------------------------------
+env
 .env
 .env.*
+!.env.example
 secrets/
 config/local/

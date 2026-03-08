@@ -1,25 +1,38 @@
-FROM alpine:3.20.2 AS builder
+# ── Stage 1: Build ─────────────────────────────────────────────────────────────
+FROM alpine:3.20 AS builder
 
-RUN apk update && apk add --no-cache g++ make cmake
+RUN apk update && apk add --no-cache \
+    g++ make cmake \
+    postgresql-dev \
+    argon2-dev
 
 WORKDIR /app
 
-COPY example /app/example
-COPY include /app/include
-COPY lib /app/lib
-COPY src /app/src
+COPY include      /app/include
+COPY lib          /app/lib
+COPY src          /app/src
+COPY back         /app/back
 COPY CMakeLists.txt /app/CMakeLists.txt
 
-RUN mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXE_LINKER_FLAGS="-static" .. && make
+RUN mkdir build && \
+    cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release .. && \
+    make -j$(nproc)
 
-RUN chmod +x /app/build/server
+# ── Stage 2: Runtime ───────────────────────────────────────────────────────────
+FROM alpine:3.20
 
-FROM scratch
+RUN apk update && apk add --no-cache \
+    libpq \
+    argon2
 
-WORKDIR /app/build
+WORKDIR /app
 
 COPY --from=builder /app/build/server /app/build/server
+COPY front /app/front
 
-COPY assets /app/assets
+EXPOSE 8000
+
+WORKDIR /app/build
 
 ENTRYPOINT ["/app/build/server"]

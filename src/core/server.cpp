@@ -16,6 +16,10 @@ expresso::core::Server::Server(size_t maxConnections, size_t maxThreads)
     logger::error("Socket not created!", "expresso::core::Server::Server()");
   }
 
+  // Allow immediate reuse of the port after a crash / restart
+  int opt = 1;
+  setsockopt(this->socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
   this->address.sin_family = AF_INET;
   this->address.sin_addr.s_addr = INADDR_ANY;
   this->setupMiddlewares();
@@ -193,12 +197,7 @@ expresso::core::Server::makeRequest(std::string& request) noexcept(false) {
       } else if (key == "x-requested-with" && value == "XMLHttpRequest") {
         req.xhr = true;
       } else if (key == "origin") {
-        if (value.size() > 7 && value.substr(0, 7) == "http://") {
-          value = value.substr(7, value.size());
-        } else if (value.size() > 8 && value.substr(0, 8) == "https://") {
-          value = value.substr(8, value.size());
-        }
-        req.headers[key] = value.substr(0, value.find(":", 0));
+        req.headers[key] = value;
         continue;
       }
 
