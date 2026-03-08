@@ -1,17 +1,20 @@
 // Include necessary header sendFiles
+#include "expresso/core/router.h"
 #include "expresso/enums/status_code.h"
+#include "expresso/middleware/admin_auth.h"
+#include "expresso/middleware/auth_protected.h"
 #include "routes/auth_routes.h"
 #include "routes/booking_routes.h"
 #include "routes/cart_routes.h"
 #include "routes/product_routes.h"
 #include "routes/resource_routes.h"
-#include "routes/schedule_routes.h"
 #include "routes/salon_service_routes.h"
+#include "routes/schedule_routes.h"
 #include "services/booking_service.h"
-#include "services/schedule_service.h"
 #include "services/cart_service.h"
 #include "services/resource_service.h"
 #include "services/salon_service.h"
+#include "services/schedule_service.h"
 #include "services/session_repository.h"
 #include "services/user_repository.h"
 #include "json/object.h"
@@ -38,13 +41,17 @@ int main(int argc, char **argv) {
   // CORS middleware, applied across all routes
   std::unique_ptr<expresso::middleware::Cors> cors =
       std::make_unique<expresso::middleware::Cors>();
-  cors->allowOrigin("*");
-  cors->allowCredentials(true);
+  cors->allowOrigin("http://localhost:8000");
   cors->allowMethod("PUT");
   cors->allowMethod("DELETE");
   app.use(std::move(cors));
 
   expresso::core::Router router;
+  expresso::core::Router ProtectedRouter;
+  expresso::core::Router AdminRouter;
+  AdminRouter.use(std::make_unique<expresso::middleware::AdminMiddleware>());
+  ProtectedRouter.use(
+      std::make_unique<expresso::middleware::ProtectedMiddleware>());
 
   std::string host = brewtils::env::get("DB_HOST", "0");
   std::string dbport = brewtils::env::get("DB_PORT", "0");
@@ -88,53 +95,52 @@ int main(int argc, char **argv) {
 
   ScheduleRepository scheduleRepo(conninfo);
   ScheduleContext::scheduleRepo = &scheduleRepo;
-
-  // Product routes
+  //
+  // Public Routes
+  //
   router.get("/products", GetProductRoutes);
-  router.post("/products", PostProductRoutes);
+  ProtectedRouter.post("/products", PostProductRoutes);
   router.put("/products", PutProductRoutes);
   router.del("/products", DeleteProductRoutes);
 
   // Booking routes
   router.get("/availability", GetBookingRoutes);
-  router.post("/bookings", PostBookingRoutes);
-
-  // Booking admin routes
-  router.get("/bookings", GetAllBookingsRoute);
-  router.put("/bookings", PutBookingRoutes);
-  router.del("/bookings", DeleteBookingRoutes);
+  ProtectedRouter.post("/bookings", PostBookingRoutes);
 
   // Auth routes
   router.post("/auth/register", PostRegisterRoute);
   router.post("/auth/login", PostLoginRoute);
   router.del("/auth/user", DeleteUserRoute);
 
-  // User admin routes
-  router.get("/users", GetUsersRoute);
-  router.put("/users", PutUserRoute);
-  router.del("/users", DeleteUserRoute);
+  //
+  // ADMIN ROUTES
+  //
 
-  // Resource / Artist routes
-  router.get("/resources",        GetResourcesRoute);
-  router.post("/resources",       PostResourceRoute);
-  router.put("/resources",        PutResourceRoute);
-  router.del("/resources",        DeleteResourceRoute);
+  AdminRouter.get("/bookings", GetAllBookingsRoute);
+  AdminRouter.put("/bookings", PutBookingRoutes);
+  AdminRouter.del("/bookings", DeleteBookingRoutes);
 
-  // Salon-service catalog routes
-  router.get("/salon-services",   GetSalonServicesRoute);
-  router.post("/salon-services",  PostSalonServiceRoute);
-  router.put("/salon-services",   PutSalonServiceRoute);
-  router.del("/salon-services",   DeleteSalonServiceRoute);
+  AdminRouter.get("/users", GetUsersRoute);
+  AdminRouter.put("/users", PutUserRoute);
+  AdminRouter.del("/users", DeleteUserRoute);
 
-  // Resource-service assignment
-  router.put("/resource-services", PutResourceServicesRoute);
+  AdminRouter.get("/resources", GetResourcesRoute);
+  AdminRouter.post("/resources", PostResourceRoute);
+  AdminRouter.put("/resources", PutResourceRoute);
+  AdminRouter.del("/resources", DeleteResourceRoute);
 
-  // Schedule (working hours + overrides)
-  router.get("/schedule",           GetScheduleRoute);
-  router.put("/schedule",           PutScheduleRoute);
-  router.get("/schedule-overrides", GetScheduleOverridesRoute);
-  router.put("/schedule-overrides", PutScheduleOverrideRoute);
-  router.del("/schedule-overrides", DeleteScheduleOverrideRoute);
+  AdminRouter.get("/salon-services", GetSalonServicesRoute);
+  AdminRouter.post("/salon-services", PostSalonServiceRoute);
+  AdminRouter.put("/salon-services", PutSalonServiceRoute);
+  AdminRouter.del("/salon-services", DeleteSalonServiceRoute);
+
+  AdminRouter.put("/resource-services", PutResourceServicesRoute);
+
+  AdminRouter.get("/schedule", GetScheduleRoute);
+  AdminRouter.put("/schedule", PutScheduleRoute);
+  AdminRouter.get("/schedule-overrides", GetScheduleOverridesRoute);
+  AdminRouter.put("/schedule-overrides", PutScheduleOverrideRoute);
+  AdminRouter.del("/schedule-overrides", DeleteScheduleOverrideRoute);
 
   // CORS preflight (OPTIONS) handlers
   auto optHandler = [](expresso::messages::Request &req,
@@ -142,22 +148,11 @@ int main(int argc, char **argv) {
     res.set("access-control-allow-methods", "GET, POST, PUT, DELETE, OPTIONS");
     res.status(expresso::enums::STATUS_CODE::NO_CONTEXT).end();
   };
-  router.options("/products", optHandler);
-  router.options("/bookings", optHandler);
-  router.options("/availability", optHandler);
-  router.options("/cart", optHandler);
-  router.options("/cart/items", optHandler);
-  router.options("/cart/checkout", optHandler);
-  router.options("/auth/register", optHandler);
-  router.options("/auth/login", optHandler);
-  router.options("/auth/user", optHandler);
-  router.options("/users",            optHandler);
-  router.options("/resources",        optHandler);
-  router.options("/salon-services",   optHandler);
-  router.options("/resource-services", optHandler);
-  router.options("/schedule",           optHandler);
-  router.options("/schedule-overrides", optHandler);
+  router.options("/*", optHandler);
+  AdminRouter.options("/*", optHandler);
+
   app.use("/api", &router);
+  app.use("/api/admin", &AdminRouter);
 
   app.get("/download", [](expresso::messages::Request &req,
                           expresso::messages::Response &res) {
@@ -170,11 +165,15 @@ int main(int argc, char **argv) {
   std::unique_ptr<expresso::middleware::CookieParser> cookieParser =
       std::make_unique<expresso::middleware::CookieParser>();
   app.use(std::move(cookieParser));
- 
+
   // Cache middleware, applied across all routes
   std::unique_ptr<expresso::middleware::Cacher> cacher =
       std::make_unique<expresso::middleware::Cacher>(3600, false);
   app.use(std::move(cacher));
+
+  AdminRouter.use(
+      std::make_unique<expresso::middleware::StaticServe>("../front_admin"));
+  app.use("/admin", &AdminRouter);
 
   // Static serve middleware
   std::unique_ptr<expresso::middleware::StaticServe> staticServe =

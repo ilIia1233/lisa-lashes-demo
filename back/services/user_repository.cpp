@@ -75,6 +75,13 @@ std::vector<UserInfo> UserRepository::getAllUsers() {
   return users;
 }
 
+bool UserRepository::isAdmin(int userId) {
+  auto res = db.exec_params("SELECT is_admin FROM users WHERE id=$1",
+                            {std::to_string(userId)});
+
+  return res.GetRows() && res.GetEl(0, 0) == "t";
+}
+
 void UserRepository::updateUser(int id, json::object obj) {
   std::string first_name = "";
   std::string last_name = "";

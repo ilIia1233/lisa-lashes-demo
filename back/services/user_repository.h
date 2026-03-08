@@ -39,7 +39,7 @@ public:
                                const std::string &password);
 
   bool removeUser(int id);
-
+  bool isAdmin(int id);
   // Admin: list all users
   std::vector<UserInfo> getAllUsers();
 
