@@ -19,6 +19,7 @@ PgConnection::~PgConnection() {
 }
 
 PgResult PgConnection::exec(const std::string &query) {
+  std::lock_guard<std::mutex> lock(mtx_);
   PGresult *res = PQexec(conn_, query.c_str());
   PgResult result(res);
 
@@ -31,6 +32,7 @@ PgResult PgConnection::exec(const std::string &query) {
 
 PgResult PgConnection::exec_params(const std::string &query,
                                    const std::vector<std::string> &params) {
+  std::lock_guard<std::mutex> lock(mtx_);
   std::vector<const char *> values;
   values.reserve(params.size());
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "postgres.h"
 #include <libpq-fe.h>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -23,4 +24,5 @@ public:
 
 private:
   PGconn *conn_;
+  std::mutex mtx_;
 };
