@@ -29,9 +29,7 @@ SessionRepository::getUserIdFromToken(const std::string &token) {
   auto result = db.exec_params("SELECT user_id FROM sessions "
                                "WHERE token_hash=$1 AND expires_at>NOW()",
                                {hash});
-  // need to write check for te case when result is empty
-  //
-  if (!result.CheckStatus()) {
+  if (!result.CheckStatus() || result.GetRows() == 0) {
     return std::nullopt;
   }
   return std::stoi(result.GetEl(0, 0));
