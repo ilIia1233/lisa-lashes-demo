@@ -679,7 +679,8 @@
 </div>
 
 <script>
-  const API = 'http://localhost:8000/api';
+  const API       = 'http://localhost:8000/api';
+  const ADMIN_API  = 'http://localhost:8000/api/admin';
   let allProducts = [];
   let editingId   = null;
 
@@ -778,8 +779,7 @@
     }
 
     try {
-      const res = await fetch(`${API}/products`, {
-        method: 'POST',
+      const res = await fetch(`${ADMIN_API}/products`, {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, price, stock: parseInt(stock), description: desc, category: cat })
@@ -831,7 +831,7 @@
     }
 
     try {
-      const res = await fetch(`${API}/products?id=${editingId}`, {
+      const res = await fetch(`${ADMIN_API}/products?id=${editingId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -855,7 +855,7 @@
     if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
     closeMenu();
     try {
-      const res = await fetch(`${API}/products?id=${id}`, {
+      const res = await fetch(`${ADMIN_API}/products?id=${id}`, {
         method: 'DELETE',
         credentials: 'include'
       });

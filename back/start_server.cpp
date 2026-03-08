@@ -112,9 +112,9 @@ int main(int argc, char **argv) {
   //
 
   router.get("/products", GetProductRoutes);
-  ProtectedRouter.post("/products", PostProductRoutes);
-  router.put("/products", PutProductRoutes);
-  router.del("/products", DeleteProductRoutes);
+  AdminRouter.post("/products", PostProductRoutes);
+  AdminRouter.put("/products", PutProductRoutes);
+  AdminRouter.del("/products", DeleteProductRoutes);
 
   // Booking routes
   router.get("/availability", GetBookingRoutes);
@@ -182,7 +182,10 @@ int main(int argc, char **argv) {
       std::make_unique<expresso::middleware::StaticServe>("../front_admin"));
   app.use("/admin", &AdminStaticRouter);
 
-  // Public frontend
+  // Public frontend — accessible at both /front/* and /* (root)
+  FrontRouter.use(
+      std::make_unique<expresso::middleware::StaticServe>("../front"));
+  app.use("/front", &FrontRouter);
   app.use(std::make_unique<expresso::middleware::StaticServe>("../front"));
 
   // Starting the server

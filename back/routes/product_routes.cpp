@@ -41,9 +41,10 @@ void PostProductRoutes(expresso::messages::Request &req,
 
     if (body.find("name") == body.end() || body.find("price") == body.end() ||
         body.find("stock") == body.end()) {
-
+      json::object err;
+      err["message"] = "Missing required fields: name, price, stock";
       return res.status(expresso::enums::STATUS_CODE::BAD_REQUEST)
-          .json(body)
+          .json(err)
           .end();
     }
 
@@ -69,8 +70,10 @@ void PostProductRoutes(expresso::messages::Request &req,
 
   } catch (const std::exception &e) {
     logger::error(e.what());
+    json::object err;
+    err["message"] = "Internal server error";
     return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
-        .end();
+        .json(err).end();
   }
 }
 
