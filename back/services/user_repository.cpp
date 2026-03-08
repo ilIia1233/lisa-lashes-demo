@@ -58,7 +58,7 @@ std::optional<int> UserRepository::loginUser(const std::string &identifier,
 std::vector<UserInfo> UserRepository::getAllUsers() {
   std::vector<UserInfo> users;
 
-  auto res = db.exec_params("SELECT id, first_name, last_name, phone, address "
+  auto res = db.exec_params("SELECT id, first_name, last_name, phone, address, is_admin "
                             "FROM users ORDER BY id ASC",
                             {});
 
@@ -69,6 +69,7 @@ std::vector<UserInfo> UserRepository::getAllUsers() {
     u.last_name = res.GetEl(i, 2);
     u.phone = res.GetEl(i, 3);
     u.email = res.GetEl(i, 4);
+    u.is_admin = res.GetEl(i, 5) == "t";
     users.push_back(u);
   }
 

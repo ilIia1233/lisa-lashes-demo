@@ -27,6 +27,7 @@ struct UserInfo {
   std::string last_name;
   std::string phone;
   std::string email;
+  bool is_admin = false;
 };
 
 class UserRepository {
