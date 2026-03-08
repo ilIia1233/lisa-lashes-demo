@@ -1,18 +1,18 @@
 #pragma once
 
-#include "../db/pgconnection.h"
+#include "../db/pg_pool.h"
 #include <string>
 #include <vector>
 
 struct WorkingDay {
-  int weekday;     // 0 = Sun, 1 = Mon … 6 = Sat
+  int weekday; // 0 = Sun, 1 = Mon … 6 = Sat
   bool working;
   std::string start; // "HH:MM"
   std::string end;   // "HH:MM"
 };
 
 struct ScheduleOverride {
-  std::string date;  // "YYYY-MM-DD"
+  std::string date; // "YYYY-MM-DD"
   bool working;
   std::string start;
   std::string end;
@@ -21,7 +21,7 @@ struct ScheduleOverride {
 
 class ScheduleRepository {
 public:
-  ScheduleRepository(const std::string &conninfo);
+  ScheduleRepository(PgPool &pool);
 
   // Returns all 7 days; non-working days have working=false
   std::vector<WorkingDay> getWeeklySchedule(int resource_id);
@@ -47,7 +47,7 @@ public:
   getEffectiveHours(int resource_id, const std::string &date, int weekday);
 
 private:
-  PgConnection db;
+  PgPool &pool_;
 };
 
 struct ScheduleContext {

@@ -1,15 +1,15 @@
 #pragma once
-#include "../db/pgconnection.h"
+#include "../db/pg_pool.h"
 #include "postgres.h"
 #include <optional>
 #include <string>
 
 class SessionRepository {
 private:
-  PgConnection db;
+  PgPool &pool_;
 
 public:
-  SessionRepository(const std::string &conninfo);
+  SessionRepository(PgPool &pool);
 
   std::string createSession(int user_id);
 

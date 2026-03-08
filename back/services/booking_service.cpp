@@ -18,8 +18,7 @@ int getWeekdayFromDate(const std::string &date) {
   return tm.tm_wday; // 0=Sunday
 }
 
-BookingRepository::BookingRepository(const std::string &conninfo)
-    : db(conninfo) {}
+BookingRepository::BookingRepository(PgPool &pool) : pool_(pool) {}
 
 bool BookingRepository::isValidDateTime(const std::string &date,
                                         const std::string &start,
@@ -31,11 +30,11 @@ bool BookingRepository::isValidDateTime(const std::string &date,
     return 0;
   }
   const char *paramValues[1] = {date.c_str()};
-
-  auto res = db.exec_params("SELECT "
-                            "($1 || ' ' || $2)::timestamp < "
-                            "($1 || ' ' || $3)::timestamp",
-                            {date, start, end});
+  PgConnGuard conn(pool_);
+  auto res = conn->exec_params("SELECT "
+                               "($1 || ' ' || $2)::timestamp < "
+                               "($1 || ' ' || $3)::timestamp",
+                               {date, start, end});
 
   if (res.GetEl(0, 0) != "t") {
     return 0;
@@ -50,17 +49,18 @@ bool BookingRepository::isFree(int resource_id, const std::string date,
   if (!isValidDateTime(date, start, end)) {
     throw std::invalid_argument("Invalid datetime format");
   }
+  PgConnGuard conn(pool_);
 
   auto res =
-      db.exec_params("SELECT 1 FROM bookings "
-                     "WHERE resource_id = $1 "
-                     "AND status = 'confirmed' "
-                     "AND tstzrange(start_time, end_time) && "
-                     "tstzrange("
-                     "(($2::date + $3::time) AT TIME ZONE 'Europe/Dublin'), "
-                     "(($2::date + $4::time) AT TIME ZONE 'Europe/Dublin') "
-                     ")",
-                     {std::to_string(resource_id), date, start, end});
+      conn->exec_params("SELECT 1 FROM bookings "
+                        "WHERE resource_id = $1 "
+                        "AND status = 'confirmed' "
+                        "AND tstzrange(start_time, end_time) && "
+                        "tstzrange("
+                        "(($2::date + $3::time) AT TIME ZONE 'Europe/Dublin'), "
+                        "(($2::date + $4::time) AT TIME ZONE 'Europe/Dublin') "
+                        ")",
+                        {std::to_string(resource_id), date, start, end});
   return res.GetRows() == 0;
 }
 
@@ -69,36 +69,38 @@ void BookingRepository::addBooking(int resource_id,
                                    const std::string &date,
                                    const std::string &start,
                                    const std::string &end,
-                                   const std::string &status,
-                                   int service_id) {
+                                   const std::string &status, int service_id) {
   if (!isValidDateTime(date, start, end)) {
     throw std::invalid_argument("Invalid datetime format");
   }
 
   std::string temp = " ";
   std::string svc_str = service_id > 0 ? std::to_string(service_id) : "";
+  PgConnGuard conn(pool_);
 
-  db.exec_params("INSERT INTO bookings "
-                 "(resource_id, customer_name, customer_phone, customer_email, "
-                 "start_time, end_time, status, service_id) "
-                 "VALUES ("
-                 "$1, $2, $3, $4, "
-                 "(($5::date + $6::time) AT TIME ZONE 'Europe/Dublin'), "
-                 "(($5::date + $7::time) AT TIME ZONE 'Europe/Dublin'), "
-                 "$8, "
-                 "NULLIF($9, '')::integer"
-                 ")",
-                 {std::to_string(resource_id), customer_name, temp, temp,
-                  date, start, end, status, svc_str});
+  conn->exec_params(
+      "INSERT INTO bookings "
+      "(resource_id, customer_name, customer_phone, customer_email, "
+      "start_time, end_time, status, service_id) "
+      "VALUES ("
+      "$1, $2, $3, $4, "
+      "(($5::date + $6::time) AT TIME ZONE 'Europe/Dublin'), "
+      "(($5::date + $7::time) AT TIME ZONE 'Europe/Dublin'), "
+      "$8, "
+      "NULLIF($9, '')::integer"
+      ")",
+      {std::to_string(resource_id), customer_name, temp, temp, date, start, end,
+       status, svc_str});
 }
 std::pair<std::string, std::string>
 BookingRepository::getWorkingHours(int resource_id, int weekday) {
+  PgConnGuard conn(pool_);
 
   auto res =
-      db.exec_params("SELECT start_time, end_time "
-                     "FROM working_hours "
-                     "WHERE resource_id = $1 AND weekday = $2",
-                     {std::to_string(resource_id), std::to_string(weekday)});
+      conn->exec_params("SELECT start_time, end_time "
+                        "FROM working_hours "
+                        "WHERE resource_id = $1 AND weekday = $2",
+                        {std::to_string(resource_id), std::to_string(weekday)});
 
   if (res.GetRows() == 0)
     throw std::runtime_error("No working hours for that day");
@@ -109,12 +111,14 @@ BookingRepository::getWorkingHours(int resource_id, int weekday) {
 std::pair<bool, std::pair<std::string, std::string>>
 BookingRepository::getEffectiveHours(int resource_id, const std::string &date,
                                      int weekday) {
+  PgConnGuard conn(pool_);
   // 1. Check specific-date override
-  auto ores = db.exec_params("SELECT working, "
-                              "COALESCE(to_char(start_time,'HH24:MI'),''), "
-                              "COALESCE(to_char(end_time,'HH24:MI'),'') "
-                              "FROM schedule_overrides WHERE resource_id=$1 AND date=$2::date",
-                              {std::to_string(resource_id), date});
+  auto ores = conn->exec_params(
+      "SELECT working, "
+      "COALESCE(to_char(start_time,'HH24:MI'),''), "
+      "COALESCE(to_char(end_time,'HH24:MI'),'') "
+      "FROM schedule_overrides WHERE resource_id=$1 AND date=$2::date",
+      {std::to_string(resource_id), date});
 
   if (ores.GetRows() > 0) {
     bool w = ores.GetEl(0, 0) == "t";
@@ -122,9 +126,10 @@ BookingRepository::getEffectiveHours(int resource_id, const std::string &date,
   }
 
   // 2. Fall back to weekly schedule
-  auto wres = db.exec_params("SELECT to_char(start_time,'HH24:MI'), to_char(end_time,'HH24:MI') "
-                              "FROM working_hours WHERE resource_id=$1 AND weekday=$2",
-                              {std::to_string(resource_id), std::to_string(weekday)});
+  auto wres = conn->exec_params(
+      "SELECT to_char(start_time,'HH24:MI'), to_char(end_time,'HH24:MI') "
+      "FROM working_hours WHERE resource_id=$1 AND weekday=$2",
+      {std::to_string(resource_id), std::to_string(weekday)});
 
   if (wres.GetRows() == 0)
     return {false, {"09:00", "18:00"}};
@@ -136,14 +141,14 @@ std::vector<TimeSlot>
 BookingRepository::getBookingsForDay(int resource_id, const std::string &date) {
   // date = YYYY-MM-DD
   std::vector<TimeSlot> slots;
-
-  auto res = db.exec_params("SELECT start_time, end_time "
-                            "FROM bookings "
-                            "WHERE resource_id = $1 "
-                            "AND status = 'confirmed' "
-                            "AND start_time::date = $2::date "
-                            "ORDER BY start_time",
-                            {std::to_string(resource_id), date});
+  PgConnGuard conn(pool_);
+  auto res = conn->exec_params("SELECT start_time, end_time "
+                               "FROM bookings "
+                               "WHERE resource_id = $1 "
+                               "AND status = 'confirmed' "
+                               "AND start_time::date = $2::date "
+                               "ORDER BY start_time",
+                               {std::to_string(resource_id), date});
 
   for (int i = 0; i < res.GetRows(); ++i) {
     slots.push_back({res.GetEl(i, 0), res.GetEl(i, 1)});
@@ -152,21 +157,21 @@ BookingRepository::getBookingsForDay(int resource_id, const std::string &date) {
   return slots;
 }
 
-std::vector<TimeSlot>
-BookingRepository::getAvailableTimeSlots(int resource_id,
-                                         const std::string &date,
-                                         int slot_minutes) {
+std::vector<TimeSlot> BookingRepository::getAvailableTimeSlots(
+    int resource_id, const std::string &date, int slot_minutes) {
   int weekday = getWeekdayFromDate(date);
 
   auto [working, hours] = getEffectiveHours(resource_id, date, weekday);
-  if (!working) return {};
+  if (!working)
+    return {};
 
   const std::string &wStart = hours.first;
-  const std::string &wEnd   = hours.second;
+  const std::string &wEnd = hours.second;
 
   // Parse HH:MM → total minutes
   auto toMins = [](const std::string &t) -> int {
-    if (t.size() < 5) return 0;
+    if (t.size() < 5)
+      return 0;
     return std::stoi(t.substr(0, 2)) * 60 + std::stoi(t.substr(3, 2));
   };
   auto toHHMM = [](int m) -> std::string {
@@ -176,20 +181,21 @@ BookingRepository::getAvailableTimeSlots(int resource_id,
   };
 
   int startMins = toMins(wStart);
-  int endMins   = toMins(wEnd);
-
+  int endMins = toMins(wEnd);
+  PgConnGuard conn(pool_);
   // Fetch all confirmed bookings for this day in one query
-  auto bookedRes = db.exec_params("SELECT to_char(start_time AT TIME ZONE 'Europe/Dublin', 'HH24:MI'), "
-                                   "to_char(end_time AT TIME ZONE 'Europe/Dublin', 'HH24:MI') "
-                                   "FROM bookings "
-                                   "WHERE resource_id = $1 AND status = 'confirmed' "
-                                   "AND (start_time AT TIME ZONE 'Europe/Dublin')::date = $2::date",
-                                   {std::to_string(resource_id), date});
+  auto bookedRes = conn->exec_params(
+      "SELECT to_char(start_time AT TIME ZONE 'Europe/Dublin', 'HH24:MI'), "
+      "to_char(end_time AT TIME ZONE 'Europe/Dublin', 'HH24:MI') "
+      "FROM bookings "
+      "WHERE resource_id = $1 AND status = 'confirmed' "
+      "AND (start_time AT TIME ZONE 'Europe/Dublin')::date = $2::date",
+      {std::to_string(resource_id), date});
 
   std::vector<std::pair<int, int>> booked;
   for (int i = 0; i < bookedRes.GetRows(); i++) {
-    booked.push_back({toMins(bookedRes.GetEl(i, 0)),
-                      toMins(bookedRes.GetEl(i, 1))});
+    booked.push_back(
+        {toMins(bookedRes.GetEl(i, 0)), toMins(bookedRes.GetEl(i, 1))});
   }
 
   const int step = 30;
@@ -199,7 +205,10 @@ BookingRepository::getAvailableTimeSlots(int resource_id,
     int e = s + slot_minutes;
     bool isFree = true;
     for (const auto &b : booked) {
-      if (!(e <= b.first || s >= b.second)) { isFree = false; break; }
+      if (!(e <= b.first || s >= b.second)) {
+        isFree = false;
+        break;
+      }
     }
     slots.push_back({toHHMM(s), toHHMM(e), isFree});
   }
@@ -208,29 +217,30 @@ BookingRepository::getAvailableTimeSlots(int resource_id,
 
 std::vector<Booking> BookingRepository::getAllBookings() {
   std::vector<Booking> bookings;
-
-  auto res = db.exec_params("SELECT id, resource_id, customer_name, customer_phone, customer_email, "
-                             "to_char(start_time AT TIME ZONE 'Europe/Dublin', 'YYYY-MM-DD'), "
-                             "to_char(start_time AT TIME ZONE 'Europe/Dublin', 'HH24:MI'), "
-                             "to_char(end_time   AT TIME ZONE 'Europe/Dublin', 'HH24:MI'), "
-                             "status, "
-                             "COALESCE(service_id, 0) "
-                             "FROM bookings "
-                             "ORDER BY start_time ASC",
-                             {});
+  PgConnGuard conn(pool_);
+  auto res = conn->exec_params(
+      "SELECT id, resource_id, customer_name, customer_phone, customer_email, "
+      "to_char(start_time AT TIME ZONE 'Europe/Dublin', 'YYYY-MM-DD'), "
+      "to_char(start_time AT TIME ZONE 'Europe/Dublin', 'HH24:MI'), "
+      "to_char(end_time   AT TIME ZONE 'Europe/Dublin', 'HH24:MI'), "
+      "status, "
+      "COALESCE(service_id, 0) "
+      "FROM bookings "
+      "ORDER BY start_time ASC",
+      {});
 
   for (int i = 0; i < res.GetRows(); i++) {
     Booking b;
-    b.id             = std::stoi(res.GetEl(i, 0));
-    b.resource_id    = std::stoi(res.GetEl(i, 1));
-    b.customer_name  = res.GetEl(i, 2);
+    b.id = std::stoi(res.GetEl(i, 0));
+    b.resource_id = std::stoi(res.GetEl(i, 1));
+    b.customer_name = res.GetEl(i, 2);
     b.customer_phone = res.GetEl(i, 3);
     b.customer_email = res.GetEl(i, 4);
-    b.date           = res.GetEl(i, 5);
-    b.start          = res.GetEl(i, 6);
-    b.end            = res.GetEl(i, 7);
-    b.status         = res.GetEl(i, 8);
-    b.service_id     = std::stoi(res.GetEl(i, 9));
+    b.date = res.GetEl(i, 5);
+    b.start = res.GetEl(i, 6);
+    b.end = res.GetEl(i, 7);
+    b.status = res.GetEl(i, 8);
+    b.service_id = std::stoi(res.GetEl(i, 9));
     bookings.push_back(b);
   }
 
@@ -266,24 +276,26 @@ void BookingRepository::updateBooking(int id, json::object obj) {
 
   if (obj.find("end") != obj.end())
     end = static_cast<std::string>(obj["end"]);
-
-  db.exec_params("UPDATE bookings SET "
-                 "status = CASE WHEN $2 != '' THEN $2::booking_status ELSE status END, "
-                 "customer_name  = COALESCE(NULLIF($3, ''), customer_name), "
-                 "customer_phone = COALESCE(NULLIF($4, ''), customer_phone), "
-                 "customer_email = COALESCE(NULLIF($5, ''), customer_email), "
-                 "start_time = CASE WHEN $6 != '' AND $7 != '' "
-                 "THEN (($6::date + $7::time) AT TIME ZONE 'Europe/Dublin') "
-                 "ELSE start_time END, "
-                 "end_time = CASE WHEN $6 != '' AND $8 != '' "
-                 "THEN (($6::date + $8::time) AT TIME ZONE 'Europe/Dublin') "
-                 "ELSE end_time END "
-                 "WHERE id = $1",
-                 {std::to_string(id), status, customer_name, customer_phone,
-                  customer_email, date, start, end});
+  PgConnGuard conn(pool_);
+  conn->exec_params(
+      "UPDATE bookings SET "
+      "status = CASE WHEN $2 != '' THEN $2::booking_status ELSE status END, "
+      "customer_name  = COALESCE(NULLIF($3, ''), customer_name), "
+      "customer_phone = COALESCE(NULLIF($4, ''), customer_phone), "
+      "customer_email = COALESCE(NULLIF($5, ''), customer_email), "
+      "start_time = CASE WHEN $6 != '' AND $7 != '' "
+      "THEN (($6::date + $7::time) AT TIME ZONE 'Europe/Dublin') "
+      "ELSE start_time END, "
+      "end_time = CASE WHEN $6 != '' AND $8 != '' "
+      "THEN (($6::date + $8::time) AT TIME ZONE 'Europe/Dublin') "
+      "ELSE end_time END "
+      "WHERE id = $1",
+      {std::to_string(id), status, customer_name, customer_phone,
+       customer_email, date, start, end});
 }
 
 void BookingRepository::deleteBooking(int id) {
-  db.exec_params("DELETE FROM bookings WHERE id = $1::integer",
-                 {std::to_string(id)});
+  PgConnGuard conn(pool_);
+  conn->exec_params("DELETE FROM bookings WHERE id = $1::integer",
+                    {std::to_string(id)});
 }

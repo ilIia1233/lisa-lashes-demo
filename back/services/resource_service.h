@@ -1,29 +1,29 @@
 #pragma once
 
-#include "../db/pgconnection.h"
+#include "../db/pg_pool.h"
 #include <json/object.h>
 #include <string>
 #include <vector>
 
 // Embedded service info returned with each resource
 struct ResourceService {
-  int         id = 0;
+  int id = 0;
   std::string name;
 };
 
 struct Resource {
-  int         id = 0;
+  int id = 0;
   std::string name;
-  bool        active = true;
+  bool active = true;
   std::vector<ResourceService> services;
 };
 
 class ResourceRepository {
 private:
-  PgConnection db;
+  PgPool &pool_;
 
 public:
-  ResourceRepository(const std::string &conninfo);
+  ResourceRepository(PgPool &pool);
 
   std::vector<Resource> getAllResources();
 

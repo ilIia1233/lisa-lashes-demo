@@ -1,16 +1,16 @@
 #include "product_services.h"
 #include "json/object.h"
 
-ProductRepository::ProductRepository(const std::string &conninfo)
-    : db(conninfo) {}
+ProductRepository::ProductRepository(PgPool &pool) : pool_(pool) {}
 
 std::vector<Product> ProductRepository::getAllProducts() {
 
   std::vector<Product> products;
-
-  auto result = db.exec_params("SELECT id, name, description, price::text, stock, category "
-                               "FROM products ORDER BY id ASC",
-                               {});
+  PgConnGuard conn(pool_);
+  auto result = conn->exec_params(
+      "SELECT id, name, description, price::text, stock, category "
+      "FROM products ORDER BY id ASC",
+      {});
 
   for (int i = 0; i < result.GetRows(); i++) {
     Product p;
@@ -28,12 +28,12 @@ std::vector<Product> ProductRepository::getAllProducts() {
 }
 
 void ProductRepository::addProduct(const Product &product) {
-
-  db.exec_params("INSERT INTO products "
-                 "(name, description, price, stock, category) "
-                 "VALUES ($1, $2, $3::numeric, $4::integer, $5)",
-                 {product.name, product.description, product.price,
-                  std::to_string(product.stock), product.category});
+  PgConnGuard conn(pool_);
+  conn->exec_params("INSERT INTO products "
+                    "(name, description, price, stock, category) "
+                    "VALUES ($1, $2, $3::numeric, $4::integer, $5)",
+                    {product.name, product.description, product.price,
+                     std::to_string(product.stock), product.category});
 }
 
 void ProductRepository::updateProduct(int id, json::object obj) {
@@ -42,7 +42,7 @@ void ProductRepository::updateProduct(int id, json::object obj) {
   std::string price = "";
   std::string stock = "";
   std::string category = "";
-
+  PgConnGuard conn(pool_);
   if (obj.find("name") != obj.end())
     name = static_cast<std::string>(obj["name"]);
 
@@ -58,17 +58,19 @@ void ProductRepository::updateProduct(int id, json::object obj) {
   if (obj.find("category") != obj.end())
     category = static_cast<std::string>(obj["category"]);
 
-  db.exec_params("UPDATE products SET "
-                 "name = COALESCE(NULLIF($2, ''), name), "
-                 "description = COALESCE(NULLIF($3, ''), description), "
-                 "price = CASE WHEN $4 != '' THEN $4::numeric ELSE price END, "
-                 "stock = CASE WHEN $5 != '' THEN $5::integer ELSE stock END, "
-                 "category = COALESCE(NULLIF($6, ''), category) "
-                 "WHERE id = $1::integer",
-                 {std::to_string(id), name, description, price, stock, category});
+  conn->exec_params(
+      "UPDATE products SET "
+      "name = COALESCE(NULLIF($2, ''), name), "
+      "description = COALESCE(NULLIF($3, ''), description), "
+      "price = CASE WHEN $4 != '' THEN $4::numeric ELSE price END, "
+      "stock = CASE WHEN $5 != '' THEN $5::integer ELSE stock END, "
+      "category = COALESCE(NULLIF($6, ''), category) "
+      "WHERE id = $1::integer",
+      {std::to_string(id), name, description, price, stock, category});
 }
 
 void ProductRepository::deleteProduct(int id) {
-  db.exec_params("DELETE FROM products WHERE id = $1::integer",
-                 {std::to_string(id)});
+  PgConnGuard conn(pool_);
+  conn->exec_params("DELETE FROM products WHERE id = $1::integer",
+                    {std::to_string(id)});
 }

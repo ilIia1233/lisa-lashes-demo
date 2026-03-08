@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../db/pgconnection.h"
+#include "../db/pg_pool.h"
 #include "json/object.h"
 #include <expresso/core/server.h>
 #include <expresso/middleware/cacher.h>
@@ -32,7 +32,7 @@ struct UserInfo {
 
 class UserRepository {
 public:
-  UserRepository(const std::string &conninfo);
+  UserRepository(PgPool &pool);
 
   std::optional<int> registerUser(const User &user);
 
@@ -48,5 +48,5 @@ public:
   void updateUser(int id, json::object obj);
 
 private:
-  PgConnection db;
+  PgPool &pool_;
 };

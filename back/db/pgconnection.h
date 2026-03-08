@@ -24,5 +24,4 @@ public:
 
 private:
   PGconn *conn_;
-  std::mutex mtx_;
 };

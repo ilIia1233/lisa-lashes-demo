@@ -1,4 +1,5 @@
 // Include necessary header sendFiles
+#include "db/pg_pool.h"
 #include "expresso/core/router.h"
 #include "expresso/enums/status_code.h"
 #include "expresso/middleware/admin_auth.h"
@@ -53,9 +54,12 @@ int main(int argc, char **argv) {
 
   expresso::core::Router router;
   expresso::core::Router ProtectedRouter;
-  expresso::core::Router AdminRouter;    // API routes — protected by AdminMiddleware
-  expresso::core::Router AdminStaticRouter; // Static serve — NO middleware (browser does auth)
+  expresso::core::Router
+      AdminRouter; // API routes — protected by AdminMiddleware
+  expresso::core::Router
+      AdminStaticRouter; // Static serve — NO middleware (browser does auth)
   expresso::core::Router FrontRouter;
+
   AdminRouter.use(std::make_unique<expresso::middleware::AdminMiddleware>());
   ProtectedRouter.use(
       std::make_unique<expresso::middleware::ProtectedMiddleware>());
@@ -79,32 +83,34 @@ int main(int argc, char **argv) {
                          " "
                          "password=" +
                          password;
-
-  BookingRepository bookingService(conninfo);
+  PgPool dbPool(conninfo, std::thread::hardware_concurrency());
+  BookingRepository bookingService(dbPool);
   BookingContext::bookingService = &bookingService;
 
-  UserRepository UserService(conninfo);
-  SessionRepository SessionService(conninfo);
+  UserRepository UserService(dbPool);
+  SessionRepository SessionService(dbPool);
   UserContext::UserService = &UserService;
   UserContext::SessionService = &SessionService;
 
-  CartService cartService(conninfo);
+  CartService cartService(dbPool);
   CartContext::cartService = &cartService;
 
-  ProductRepository productService(conninfo);
+  ProductRepository productService(dbPool);
   ProductContext::ProductService = &productService;
 
-  ResourceRepository resourceService(conninfo);
-  ResourceContext::resourceService = &resourceService;
+  ResourceRepository resourceServices(dbPool);
+  ResourceContext::resourceService = &resourceServices;
 
-  SalonServiceRepository salonServiceRepo(conninfo);
+  SalonServiceRepository salonServiceRepo(dbPool);
   SalonServiceContext::salonServiceRepo = &salonServiceRepo;
 
-  ScheduleRepository scheduleRepo(conninfo);
+  ScheduleRepository scheduleRepo(dbPool);
   ScheduleContext::scheduleRepo = &scheduleRepo;
+
   //
   // Public Routes
   //
+
   router.get("/products", GetProductRoutes);
   ProtectedRouter.post("/products", PostProductRoutes);
   router.put("/products", PutProductRoutes);
@@ -112,7 +118,7 @@ int main(int argc, char **argv) {
 
   // Booking routes
   router.get("/availability", GetBookingRoutes);
-  router.post("/bookings", PostBookingRoutes);  // session checked inline
+  router.post("/bookings", PostBookingRoutes); // session checked inline
 
   // Auth routes
   router.post("/auth/register", PostRegisterRoute);
@@ -167,27 +173,17 @@ int main(int argc, char **argv) {
   router.use("/admin", &AdminRouter);
   app.use("/api", &router);
 
-  app.get("/download", [](expresso::messages::Request &req,
-                          expresso::messages::Response &res) {
-    // You can put folders too, it will zip all the files in the folder
-    std::set<std::string> files = {"../front/"};
-    res.sendFiles(files, "front.zip");
-  });
-
   // Cache middleware
   std::unique_ptr<expresso::middleware::Cacher> cacher =
       std::make_unique<expresso::middleware::Cacher>(3600, false);
   app.use(std::move(cacher));
 
-  // /admin/*  — static files served WITHOUT auth (browser JS handles the redirect)
   AdminStaticRouter.use(
       std::make_unique<expresso::middleware::StaticServe>("../front_admin"));
   app.use("/admin", &AdminStaticRouter);
 
-  // /front/*  — static files for the main site
-  FrontRouter.use(
-      std::make_unique<expresso::middleware::StaticServe>("../front"));
-  app.use("/front", &FrontRouter);
+  // Public frontend
+  app.use(std::make_unique<expresso::middleware::StaticServe>("../front"));
 
   // Starting the server
   app.listen(port, [&]() {

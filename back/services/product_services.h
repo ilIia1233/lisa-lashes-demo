@@ -1,6 +1,6 @@
 #pragma twice
 
-#include "../db/pgconnection.h"
+#include "../db/pg_pool.h"
 #include <json/object.h>
 #include <string>
 #include <vector>
@@ -16,10 +16,10 @@ struct Product {
 
 class ProductRepository {
 private:
-  PgConnection db;
+  PgPool &pool_;
 
 public:
-  ProductRepository(const std::string &conninfo);
+  ProductRepository(PgPool &pool);
 
   std::vector<Product> getAllProducts();
 

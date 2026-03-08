@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../db/pgconnection.h"
+#include "../db/pg_pool.h"
 #include <json/object.h>
 #include <optional>
 #include <string>
 
 class CartService {
 public:
-  CartService(const std::string &conninfo);
+  CartService(PgPool &pool);
   // Returns cart_id for this user; creates a new cart if one doesn't exist
   int getOrCreateCart(int userId);
 
@@ -37,5 +37,5 @@ public:
   json::object checkout(int userId);
 
 private:
-  PgConnection db;
+  PgPool &pool_;
 };

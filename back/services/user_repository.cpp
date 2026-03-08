@@ -3,12 +3,12 @@
 #include <logger/log.h>
 #include <string>
 
-UserRepository::UserRepository(const std::string &conninfo) : db(conninfo) {}
+UserRepository::UserRepository(PgPool &pool) : pool_(pool) {}
 
 bool UserRepository::removeUser(int id) {
-
+  PgConnGuard conn(pool_);
   try {
-    db.exec_params("DELETE FROM users WHERE id = $1", {std::to_string(id)});
+    conn->exec_params("DELETE FROM users WHERE id = $1", {std::to_string(id)});
     return true;
   } catch (...) {
     return false;
@@ -16,16 +16,17 @@ bool UserRepository::removeUser(int id) {
 }
 
 std::optional<int> UserRepository::registerUser(const User &user) {
+  PgConnGuard conn(pool_);
   try {
     std::string hash = crypto::hash_password(user.password);
 
-    auto res =
-        db.exec_params("INSERT INTO users "
-                       "(first_name, last_name, phone, address, password_hash) "
-                       "VALUES ($1, $2, $3, $4, $5) "
-                       "RETURNING id",
-                       {user.first, user.last, user.phone,
-                        user.email.empty() ? "" : user.email, hash});
+    auto res = conn->exec_params(
+        "INSERT INTO users "
+        "(first_name, last_name, phone, address, password_hash) "
+        "VALUES ($1, $2, $3, $4, $5) "
+        "RETURNING id",
+        {user.first, user.last, user.phone,
+         user.email.empty() ? "" : user.email, hash});
 
     if (res.GetRows() == 0)
       return std::nullopt;
@@ -41,9 +42,10 @@ std::optional<int> UserRepository::registerUser(const User &user) {
 
 std::optional<int> UserRepository::loginUser(const std::string &identifier,
                                              const std::string &password) {
-  auto res = db.exec_params("SELECT id, password_hash FROM users "
-                            "WHERE phone = $1 OR address = $1",
-                            {identifier});
+  PgConnGuard conn(pool_);
+  auto res = conn->exec_params("SELECT id, password_hash FROM users "
+                               "WHERE phone = $1 OR address = $1",
+                               {identifier});
 
   if (res.GetRows() == 0)
     return std::nullopt;
@@ -57,10 +59,11 @@ std::optional<int> UserRepository::loginUser(const std::string &identifier,
 
 std::vector<UserInfo> UserRepository::getAllUsers() {
   std::vector<UserInfo> users;
-
-  auto res = db.exec_params("SELECT id, first_name, last_name, phone, address, is_admin "
-                            "FROM users ORDER BY id ASC",
-                            {});
+  PgConnGuard conn(pool_);
+  auto res = conn->exec_params(
+      "SELECT id, first_name, last_name, phone, address, is_admin "
+      "FROM users ORDER BY id ASC",
+      {});
 
   for (int i = 0; i < res.GetRows(); i++) {
     UserInfo u;
@@ -77,8 +80,9 @@ std::vector<UserInfo> UserRepository::getAllUsers() {
 }
 
 bool UserRepository::isAdmin(int userId) {
-  auto res = db.exec_params("SELECT is_admin FROM users WHERE id=$1",
-                            {std::to_string(userId)});
+  PgConnGuard conn(pool_);
+  auto res = conn->exec_params("SELECT is_admin FROM users WHERE id=$1",
+                               {std::to_string(userId)});
 
   return res.GetRows() && res.GetEl(0, 0) == "t";
 }
@@ -88,7 +92,7 @@ void UserRepository::updateUser(int id, json::object obj) {
   std::string last_name = "";
   std::string phone = "";
   std::string email = "";
-
+  PgConnGuard conn(pool_);
   if (obj.find("first_name") != obj.end())
     first_name = static_cast<std::string>(obj["first_name"]);
 
@@ -101,11 +105,11 @@ void UserRepository::updateUser(int id, json::object obj) {
   if (obj.find("email") != obj.end())
     email = static_cast<std::string>(obj["email"]);
 
-  db.exec_params("UPDATE users SET "
-                 "first_name = COALESCE(NULLIF($2, ''), first_name), "
-                 "last_name  = COALESCE(NULLIF($3, ''), last_name), "
-                 "phone      = COALESCE(NULLIF($4, ''), phone), "
-                 "address    = COALESCE(NULLIF($5, ''), address) "
-                 "WHERE id = $1",
-                 {std::to_string(id), first_name, last_name, phone, email});
+  conn->exec_params("UPDATE users SET "
+                    "first_name = COALESCE(NULLIF($2, ''), first_name), "
+                    "last_name  = COALESCE(NULLIF($3, ''), last_name), "
+                    "phone      = COALESCE(NULLIF($4, ''), phone), "
+                    "address    = COALESCE(NULLIF($5, ''), address) "
+                    "WHERE id = $1",
+                    {std::to_string(id), first_name, last_name, phone, email});
 }
