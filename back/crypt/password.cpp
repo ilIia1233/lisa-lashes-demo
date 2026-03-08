@@ -3,6 +3,7 @@
 #include <logger/log.h>
 #include <stdexcept>
 #include <vector>
+#include <sys/random.h>
 
 namespace crypto {
 
@@ -15,7 +16,7 @@ static constexpr uint32_t salt_len = 16;
 std::string hash_password(const std::string &password) {
 
   std::vector<uint8_t> salt(salt_len);
-  arc4random_buf(salt.data(), salt_len);
+  getrandom(salt.data(), salt_len, 0);
 
   size_t encoded_len =
       argon2_encodedlen(t_cost, m_cost, parallelism, salt_len, hash_len,

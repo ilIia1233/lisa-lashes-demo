@@ -320,10 +320,7 @@ async function checkSession() {
 }
 
 function showAuth() {
-  document.getElementById('page-loading').style.display    = 'none';
-  document.getElementById('auth-section').style.display    = 'flex';
-  document.getElementById('profile-section').style.display = 'none';
-  hdrRenderDropdown();
+  window.location.replace('login.html?return=account');
 }
 
 function showProfile() {
