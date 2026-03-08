@@ -1,5 +1,6 @@
 // booking_routes.cpp
 #include "booking_routes.h"
+#include "auth_routes.h"
 #include "expresso/messages/request.h"
 #include "expresso/messages/response.h"
 #include "logger/log.h"
@@ -56,6 +57,24 @@ void PostBookingRoutes(expresso::messages::Request &req,
   // POST /api/bookings
   // ============================
   try {
+    // ── Session check ──────────────────────────────────────
+    std::string token;
+    for (auto *cookie : req.cookies) {
+      if (cookie->name == "session") { token = cookie->value; break; }
+    }
+    if (token.empty()) {
+      json::object err;
+      err["message"] = "Not authenticated";
+      return res.status(expresso::enums::STATUS_CODE::UNAUTHORIZED).json(err).end();
+    }
+    auto userIdOpt = UserContext::SessionService->getUserIdFromToken(token);
+    if (!userIdOpt) {
+      json::object err;
+      err["message"] = "Invalid or expired session";
+      return res.status(expresso::enums::STATUS_CODE::UNAUTHORIZED).json(err).end();
+    }
+    // ───────────────────────────────────────────────────────
+
     // Parse JSON body
     json::object body = req.body;
 
