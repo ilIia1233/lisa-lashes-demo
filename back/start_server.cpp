@@ -46,9 +46,16 @@ int main(int argc, char **argv) {
   cors->allowMethod("DELETE");
   app.use(std::move(cors));
 
+  // Cookie Parser must be registered BEFORE any route that reads cookies
+  std::unique_ptr<expresso::middleware::CookieParser> cookieParser =
+      std::make_unique<expresso::middleware::CookieParser>();
+  app.use(std::move(cookieParser));
+
   expresso::core::Router router;
   expresso::core::Router ProtectedRouter;
-  expresso::core::Router AdminRouter;
+  expresso::core::Router AdminRouter;    // API routes — protected by AdminMiddleware
+  expresso::core::Router AdminStaticRouter; // Static serve — NO middleware (browser does auth)
+  expresso::core::Router FrontRouter;
   AdminRouter.use(std::make_unique<expresso::middleware::AdminMiddleware>());
   ProtectedRouter.use(
       std::make_unique<expresso::middleware::ProtectedMiddleware>());
@@ -105,12 +112,18 @@ int main(int argc, char **argv) {
 
   // Booking routes
   router.get("/availability", GetBookingRoutes);
-  ProtectedRouter.post("/bookings", PostBookingRoutes);
+  router.post("/bookings", PostBookingRoutes);  // session checked inline
 
   // Auth routes
   router.post("/auth/register", PostRegisterRoute);
   router.post("/auth/login", PostLoginRoute);
   router.del("/auth/user", DeleteUserRoute);
+  router.get("/auth/me", GetMeRoute);
+  router.post("/auth/logout", PostLogoutRoute);
+
+  // Public read-only resource and service lists (for the booking form)
+  router.get("/resources", GetResourcesRoute);
+  router.get("/salon-services", GetSalonServicesRoute);
 
   //
   // ADMIN ROUTES
@@ -151,8 +164,8 @@ int main(int argc, char **argv) {
   router.options("/*", optHandler);
   AdminRouter.options("/*", optHandler);
 
+  router.use("/admin", &AdminRouter);
   app.use("/api", &router);
-  app.use("/api/admin", &AdminRouter);
 
   app.get("/download", [](expresso::messages::Request &req,
                           expresso::messages::Response &res) {
@@ -161,24 +174,20 @@ int main(int argc, char **argv) {
     res.sendFiles(files, "front.zip");
   });
 
-  // Cookie Parser, applied across all routes
-  std::unique_ptr<expresso::middleware::CookieParser> cookieParser =
-      std::make_unique<expresso::middleware::CookieParser>();
-  app.use(std::move(cookieParser));
-
-  // Cache middleware, applied across all routes
+  // Cache middleware
   std::unique_ptr<expresso::middleware::Cacher> cacher =
       std::make_unique<expresso::middleware::Cacher>(3600, false);
   app.use(std::move(cacher));
 
-  AdminRouter.use(
+  // /admin/*  — static files served WITHOUT auth (browser JS handles the redirect)
+  AdminStaticRouter.use(
       std::make_unique<expresso::middleware::StaticServe>("../front_admin"));
-  app.use("/admin", &AdminRouter);
+  app.use("/admin", &AdminStaticRouter);
 
-  // Static serve middleware
-  std::unique_ptr<expresso::middleware::StaticServe> staticServe =
-      std::make_unique<expresso::middleware::StaticServe>("../front");
-  app.use(std::move(staticServe));
+  // /front/*  — static files for the main site
+  FrontRouter.use(
+      std::make_unique<expresso::middleware::StaticServe>("../front"));
+  app.use("/front", &FrontRouter);
 
   // Starting the server
   app.listen(port, [&]() {
