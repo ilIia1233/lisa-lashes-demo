@@ -22,6 +22,14 @@ void PostLoginRoute(expresso::messages::Request &req,
 void DeleteUserRoute(expresso::messages::Request &req,
                      expresso::messages::Response &res);
 
+// Logout route
+void PostLogoutRoute(expresso::messages::Request &req,
+                     expresso::messages::Response &res);
+
+// Current-user (session) route
+void GetMeRoute(expresso::messages::Request &req,
+                expresso::messages::Response &res);
+
 // Admin routes
 void GetUsersRoute(expresso::messages::Request &req,
                    expresso::messages::Response &res);

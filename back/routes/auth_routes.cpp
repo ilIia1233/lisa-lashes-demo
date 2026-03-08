@@ -153,6 +153,96 @@ void PostLoginRoute(expresso::messages::Request &req,
   }
 }
 
+// POST /api/auth/logout — invalidate session and clear cookie
+void PostLogoutRoute(expresso::messages::Request &req,
+                     expresso::messages::Response &res) {
+  try {
+    std::string token;
+    for (auto *cookie : req.cookies) {
+      if (cookie->name == "session") {
+        token = cookie->value;
+        break;
+      }
+    }
+    if (!token.empty()) {
+      UserContext::SessionService->deleteSession(token);
+    }
+    // Expire the cookie immediately
+    auto *clear = new expresso::messages::Cookie(
+        "session=; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=0");
+    res.setCookie(clear);
+    json::object data;
+    data["message"] = "Logged out";
+    return res.status(expresso::enums::STATUS_CODE::OK).json(data).end();
+  } catch (const std::exception &e) {
+    logger::error(e.what());
+    json::object err;
+    err["message"] = "Internal server error";
+    return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
+        .json(err)
+        .end();
+  }
+}
+
+// GET /api/auth/me — return current user from session cookie
+void GetMeRoute(expresso::messages::Request &req,
+                expresso::messages::Response &res) {
+  try {
+    std::string token;
+    for (auto *cookie : req.cookies) {
+      if (cookie->name == "session") {
+        token = cookie->value;
+        break;
+      }
+    }
+
+    if (token.empty()) {
+      json::object err;
+      err["message"] = "Not authenticated";
+      return res.status(expresso::enums::STATUS_CODE::UNAUTHORIZED)
+          .json(err)
+          .end();
+    }
+
+    auto userIdOpt = UserContext::SessionService->getUserIdFromToken(token);
+    if (!userIdOpt) {
+      json::object err;
+      err["message"] = "Invalid or expired session";
+      return res.status(expresso::enums::STATUS_CODE::UNAUTHORIZED)
+          .json(err)
+          .end();
+    }
+
+    int userId = *userIdOpt;
+    auto users = UserContext::UserService->getAllUsers();
+
+    for (const auto &u : users) {
+      if (u.id == userId) {
+        json::object data;
+        data["id"]         = u.id;
+        data["first_name"] = u.first_name;
+        data["last_name"]  = u.last_name;
+        data["phone"]      = u.phone;
+        data["email"]      = u.email;
+        data["is_admin"]   = u.is_admin;
+        return res.status(expresso::enums::STATUS_CODE::OK).json(data).end();
+      }
+    }
+
+    json::object err;
+    err["message"] = "User not found";
+    return res.status(expresso::enums::STATUS_CODE::NOT_FOUND).json(err).end();
+
+  } catch (const std::exception &e) {
+    logger::error(e.what());
+    json::object err;
+    err["message"] = "Internal server error";
+    return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
+        .json(err)
+        .end();
+  }
+}
+
 // GET /api/users — return all users (admin)
 void GetUsersRoute(expresso::messages::Request &req,
                    expresso::messages::Response &res) {
