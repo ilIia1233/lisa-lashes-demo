@@ -1,14 +1,12 @@
 // cart_routes.cpp
 #include "cart_routes.h"
+#include "../start_server.h"
 #include "expresso/messages/request.h"
 #include "expresso/messages/response.h"
 #include <expresso/messages/cookie.h>
 #include <logger/log.h>
 #include <optional>
 #include <string>
-
-CartService *CartContext::cartService = nullptr;
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: extract user_id from the HttpOnly session cookie set at login
 // ─────────────────────────────────────────────────────────────────────────────
@@ -17,7 +15,10 @@ static std::optional<int>
 getUserIdFromCookie(expresso::messages::Request &req) {
   for (expresso::messages::Cookie *c : req.cookies) {
     if (c->name == "user_id" && !c->value.empty()) {
-      try { return std::stoi(c->value); } catch (...) {}
+      try {
+        return std::stoi(c->value);
+      } catch (...) {
+      }
     }
   }
   return std::nullopt;
@@ -40,7 +41,7 @@ void GetCartRoute(expresso::messages::Request &req,
           .end();
     }
     int userId = userIdOpt.value();
-    json::object cart = CartContext::cartService->getCart(userId);
+    json::object cart = ctx->cartService.getCart(userId);
 
     return res.status(expresso::enums::STATUS_CODE::OK).json(cart).end();
 
@@ -75,7 +76,7 @@ void PostCartItemRoute(expresso::messages::Request &req,
     json::object body = req.body;
 
     if (body.find("product_id") == body.end() ||
-        body.find("quantity")   == body.end()) {
+        body.find("quantity") == body.end()) {
       json::object err;
       err["message"] = "Missing required fields: product_id, quantity";
       return res.status(expresso::enums::STATUS_CODE::BAD_REQUEST)
@@ -83,11 +84,11 @@ void PostCartItemRoute(expresso::messages::Request &req,
           .end();
     }
 
-    int userId    = userIdOpt.value();
+    int userId = userIdOpt.value();
     int productId = body["product_id"];
-    int quantity  = body["quantity"];
+    int quantity = body["quantity"];
 
-    CartContext::cartService->addToCart(userId, productId, quantity);
+    ctx->cartService.addToCart(userId, productId, quantity);
 
     json::object data;
     data["message"] = "Item added to cart";
@@ -136,7 +137,7 @@ void PutCartItemRoute(expresso::messages::Request &req,
     json::object body = req.body;
 
     if (body.find("product_id") == body.end() ||
-        body.find("quantity")   == body.end()) {
+        body.find("quantity") == body.end()) {
       json::object err;
       err["message"] = "Missing required fields: product_id, quantity";
       return res.status(expresso::enums::STATUS_CODE::BAD_REQUEST)
@@ -144,11 +145,11 @@ void PutCartItemRoute(expresso::messages::Request &req,
           .end();
     }
 
-    int userId    = userIdOpt.value();
+    int userId = userIdOpt.value();
     int productId = body["product_id"];
-    int quantity  = body["quantity"];
+    int quantity = body["quantity"];
 
-    CartContext::cartService->updateQuantity(userId, productId, quantity);
+    ctx->cartService.updateQuantity(userId, productId, quantity);
 
     json::object data;
     data["message"] = "Cart item updated";
@@ -202,10 +203,10 @@ void DeleteCartItemRoute(expresso::messages::Request &req,
           .end();
     }
 
-    int userId    = userIdOpt.value();
+    int userId = userIdOpt.value();
     int productId = std::stoi(productIdStr);
 
-    CartContext::cartService->removeItem(userId, productId);
+    ctx->cartService.removeItem(userId, productId);
 
     json::object data;
     data["message"] = "Item removed from cart";
@@ -240,7 +241,7 @@ void PostCheckoutRoute(expresso::messages::Request &req,
     }
 
     int userId = userIdOpt.value();
-    json::object result = CartContext::cartService->checkout(userId);
+    json::object result = ctx->cartService.checkout(userId);
 
     return res.status(expresso::enums::STATUS_CODE::CREATED).json(result).end();
 

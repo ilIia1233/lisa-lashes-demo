@@ -1,8 +1,6 @@
 #include "schedule_service.h"
 #include "logger/log.h"
 
-ScheduleRepository *ScheduleContext::scheduleRepo = nullptr;
-
 ScheduleRepository::ScheduleRepository(PgPool &pool) : pool_(pool) {}
 
 /* ─── Weekly schedule ──────────────────────────────────────────── */

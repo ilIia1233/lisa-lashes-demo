@@ -1,5 +1,6 @@
 // auth_routes.cpp
 #include "auth_routes.h"
+#include "../start_server.h"
 #include "expresso/messages/cookie.h"
 #include <string>
 
@@ -36,12 +37,11 @@ void PostRegisterRoute(expresso::messages::Request &req,
     user.last = std::string(body["last_name"]);
     user.phone = std::string(body["phone"]);
     user.password = std::string(body["password"]);
-    std::string email = (body.find("email") != body.end())
-                              ? std::string(body["email"])
-                              : "";
+    std::string email =
+        (body.find("email") != body.end()) ? std::string(body["email"]) : "";
     user.email = email;
 
-    auto userIdOpt = UserContext::UserService->registerUser(user);
+    auto userIdOpt = ctx->userRepo.registerUser(user);
 
     if (!userIdOpt) {
       json::object err;
@@ -78,7 +78,7 @@ void DeleteUserRoute(expresso::messages::Request &req,
 
     int id = std::stoi(id_str);
 
-    bool ok = UserContext::UserService->removeUser(id);
+    bool ok = ctx->userRepo.removeUser(id);
 
     if (!ok) {
       json::object err;
@@ -118,7 +118,7 @@ void PostLoginRoute(expresso::messages::Request &req,
     std::string identifier = std::string(body["identifier"]);
     std::string password = std::string(body["password"]);
 
-    auto userIdOpt = UserContext::UserService->loginUser(identifier, password);
+    auto userIdOpt = ctx->userRepo.loginUser(identifier, password);
 
     if (!userIdOpt.has_value()) {
       json::object err;
@@ -132,8 +132,8 @@ void PostLoginRoute(expresso::messages::Request &req,
     int userId = userIdOpt.value();
 
     // clean up expired sessions and create a fresh one
-    UserContext::SessionService->deleteExpiredSessions();
-    std::string token = UserContext::SessionService->createSession(userId);
+    ctx->sessionRepo.deleteExpiredSessions();
+    std::string token = ctx->sessionRepo.createSession(userId);
 
     res.setCookie(createSessionCookie(token));
     json::object data;
@@ -167,12 +167,12 @@ void PostLogoutRoute(expresso::messages::Request &req,
     }
     if (!token.empty()) {
       // resolve token → user_id, then wipe ALL sessions for that user
-      auto userIdOpt = UserContext::SessionService->getUserIdFromToken(token);
+      auto userIdOpt = ctx->sessionRepo.getUserIdFromToken(token);
       if (userIdOpt) {
-        UserContext::SessionService->deleteAllSessionsForUser(*userIdOpt);
+        ctx->sessionRepo.deleteAllSessionsForUser(*userIdOpt);
       } else {
         // token already expired — delete just this hash to be safe
-        UserContext::SessionService->deleteSession(token);
+        ctx->sessionRepo.deleteSession(token);
       }
     }
     // Expire the cookie immediately
@@ -212,7 +212,7 @@ void GetMeRoute(expresso::messages::Request &req,
           .end();
     }
 
-    auto userIdOpt = UserContext::SessionService->getUserIdFromToken(token);
+    auto userIdOpt = ctx->sessionRepo.getUserIdFromToken(token);
     if (!userIdOpt) {
       json::object err;
       err["message"] = "Invalid or expired session";
@@ -222,17 +222,17 @@ void GetMeRoute(expresso::messages::Request &req,
     }
 
     int userId = *userIdOpt;
-    auto users = UserContext::UserService->getAllUsers();
+    auto users = ctx->userRepo.getAllUsers();
 
     for (const auto &u : users) {
       if (u.id == userId) {
         json::object data;
-        data["id"]         = u.id;
+        data["id"] = u.id;
         data["first_name"] = u.first_name;
-        data["last_name"]  = u.last_name;
-        data["phone"]      = u.phone;
-        data["email"]      = u.email;
-        data["is_admin"]   = u.is_admin;
+        data["last_name"] = u.last_name;
+        data["phone"] = u.phone;
+        data["email"] = u.email;
+        data["is_admin"] = u.is_admin;
         return res.status(expresso::enums::STATUS_CODE::OK).json(data).end();
       }
     }
@@ -255,7 +255,7 @@ void GetMeRoute(expresso::messages::Request &req,
 void GetUsersRoute(expresso::messages::Request &req,
                    expresso::messages::Response &res) {
   try {
-    auto users = UserContext::UserService->getAllUsers();
+    auto users = ctx->userRepo.getAllUsers();
 
     json::object response;
     response["users"].resize(0);
@@ -299,7 +299,7 @@ void PutUserRoute(expresso::messages::Request &req,
     int id = std::stoi(id_str);
     json::object body = req.body;
 
-    UserContext::UserService->updateUser(id, body);
+    ctx->userRepo.updateUser(id, body);
 
     json::object data;
     data["message"] = "User updated successfully";

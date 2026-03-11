@@ -33,7 +33,3 @@ public:
 
   void deleteResource(int id);
 };
-
-struct ResourceContext {
-  static ResourceRepository *resourceService;
-};

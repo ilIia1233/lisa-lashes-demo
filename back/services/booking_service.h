@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../db/pg_pool.h"
 #include "json/object.h"
 #include <chrono>

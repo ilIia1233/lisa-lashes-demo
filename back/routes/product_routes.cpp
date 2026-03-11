@@ -1,5 +1,6 @@
 #include "product_routes.h"
 #include "../db/pgconnection.h"
+#include "../start_server.h"
 #include <brewtils/env.h>
 #include <stdexcept>
 
@@ -7,7 +8,7 @@ void GetProductRoutes(expresso::messages::Request &req,
                       expresso::messages::Response &res) {
   try {
 
-    auto products = ProductContext::ProductService->getAllProducts();
+    auto products = ctx->productRepo.getAllProducts();
 
     json::object response;
     response["products"].resize(0);
@@ -61,7 +62,7 @@ void PostProductRoutes(expresso::messages::Request &req,
     product.category = body.find("category") != body.end()
                            ? static_cast<std::string>(body["category"])
                            : "Uncategorized";
-    ProductContext::ProductService->addProduct(product);
+    ctx->productRepo.addProduct(product);
 
     json::object data;
     data["message"] = "Product created";
@@ -73,7 +74,8 @@ void PostProductRoutes(expresso::messages::Request &req,
     json::object err;
     err["message"] = "Internal server error";
     return res.status(expresso::enums::STATUS_CODE::INTERNAL_SERVER_ERROR)
-        .json(err).end();
+        .json(err)
+        .end();
   }
 }
 
@@ -89,7 +91,7 @@ void PutProductRoutes(expresso::messages::Request &req,
     int id = std::stoi(idStr);
     json::object body = req.body;
 
-    ProductContext::ProductService->updateProduct(id, body);
+    ctx->productRepo.updateProduct(id, body);
 
     json::object data;
     data["message"] = "Product updated";
@@ -114,7 +116,7 @@ void DeleteProductRoutes(expresso::messages::Request &req,
 
     int id = std::stoi(idStr);
 
-    ProductContext::ProductService->deleteProduct(id);
+    ctx->productRepo.deleteProduct(id);
 
     json::object data;
     data["message"] = "Product deleted";

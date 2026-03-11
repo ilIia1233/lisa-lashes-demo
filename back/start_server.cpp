@@ -1,37 +1,8 @@
 // Include necessary header sendFiles
-#include "db/pg_pool.h"
-#include "expresso/core/router.h"
-#include "expresso/enums/status_code.h"
-#include "expresso/middleware/admin_auth.h"
-#include "expresso/middleware/auth_protected.h"
-#include "routes/auth_routes.h"
-#include "routes/booking_routes.h"
-#include "routes/cart_routes.h"
-#include "routes/product_routes.h"
-#include "routes/resource_routes.h"
-#include "routes/salon_service_routes.h"
-#include "routes/schedule_routes.h"
-#include "services/booking_service.h"
-#include "services/cart_service.h"
-#include "services/resource_service.h"
-#include "services/salon_service.h"
-#include "services/schedule_service.h"
-#include "services/session_repository.h"
-#include "services/user_repository.h"
-#include "json/object.h"
-#include <brewtils/env.h>
-#include <expresso/core/server.h>
-#include <expresso/middleware/auth.h>
-#include <expresso/middleware/cacher.h>
-#include <expresso/middleware/cookie_parser.h>
-#include <expresso/middleware/cors.h>
-#include <expresso/middleware/static_serve.h>
+#include "start_server.h"
+#include "logger/log.h"
 
-BookingRepository *BookingContext::bookingService = nullptr;
-UserRepository *UserContext::UserService = nullptr;
-SessionRepository *UserContext::SessionService = nullptr;
-ProductRepository *ProductContext::ProductService = nullptr;
-
+std::unique_ptr<AppContext> ctx;
 int main(int argc, char **argv) {
 
   brewtils::env::init("../secrets/.env");
@@ -45,6 +16,7 @@ int main(int argc, char **argv) {
   cors->allowOrigin("http://localhost:8000");
   cors->allowMethod("PUT");
   cors->allowMethod("DELETE");
+
   app.use(std::move(cors));
 
   // Cookie Parser must be registered BEFORE any route that reads cookies
@@ -83,29 +55,13 @@ int main(int argc, char **argv) {
                          " "
                          "password=" +
                          password;
+
   PgPool dbPool(conninfo, std::thread::hardware_concurrency());
-  BookingRepository bookingService(dbPool);
-  BookingContext::bookingService = &bookingService;
+  ctx = std::make_unique<AppContext>(dbPool);
 
-  UserRepository UserService(dbPool);
-  SessionRepository SessionService(dbPool);
-  UserContext::UserService = &UserService;
-  UserContext::SessionService = &SessionService;
-
-  CartService cartService(dbPool);
-  CartContext::cartService = &cartService;
-
-  ProductRepository productService(dbPool);
-  ProductContext::ProductService = &productService;
-
-  ResourceRepository resourceServices(dbPool);
-  ResourceContext::resourceService = &resourceServices;
-
-  SalonServiceRepository salonServiceRepo(dbPool);
-  SalonServiceContext::salonServiceRepo = &salonServiceRepo;
-
-  ScheduleRepository scheduleRepo(dbPool);
-  ScheduleContext::scheduleRepo = &scheduleRepo;
+  if (!ctx) {
+    logger::error("Context not initialized");
+  }
 
   //
   // Public Routes

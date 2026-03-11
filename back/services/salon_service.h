@@ -33,7 +33,3 @@ public:
   void setServicesForResource(int resource_id,
                               const std::vector<int> &service_ids);
 };
-
-struct SalonServiceContext {
-  static SalonServiceRepository *salonServiceRepo;
-};

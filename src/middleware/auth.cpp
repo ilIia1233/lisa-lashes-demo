@@ -1,3 +1,4 @@
+#include "../../back/start_server.h"
 #include <expresso/middleware/auth.h>
 #include <string>
 
@@ -20,7 +21,7 @@ bool expresso::middleware::AuthMiddleware::use(
     return false;
   }
 
-  auto userIdOpt = UserContext::SessionService->getUserIdFromToken(token);
+  auto userIdOpt = ctx->sessionRepo.getUserIdFromToken(token);
 
   if (!userIdOpt) {
     json::object err;

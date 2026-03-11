@@ -1,10 +1,5 @@
 #include "booking_service.h"
-#include "logger/log.h"
-#include <expresso/core/server.h>
-#include <expresso/middleware/cacher.h>
-#include <expresso/middleware/cookie_parser.h>
-#include <expresso/middleware/cors.h>
-#include <expresso/middleware/static_serve.h>
+#include "../start_server.h"
 #include <regex>
 #include <stdexcept>
 #include <string>

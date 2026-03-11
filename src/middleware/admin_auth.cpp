@@ -1,3 +1,4 @@
+#include "../../back/start_server.h"
 #include "expresso/enums/status_code.h"
 #include <expresso/middleware/admin_auth.h>
 namespace expresso {
@@ -9,7 +10,7 @@ bool AdminMiddleware::use(expresso::messages::Request &req,
   if (!AuthMiddleware::use(req, res))
     return false;
 
-  bool isAdmin = UserContext::UserService->isAdmin(*req.userId);
+  bool isAdmin = ctx->userRepo.isAdmin(*req.userId);
 
   if (!isAdmin) {
     res.status(expresso::enums::STATUS_CODE::FORBIDDEN).end();

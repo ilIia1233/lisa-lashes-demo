@@ -1,3 +1,4 @@
+#include "../../back/start_server.h"
 #include <expresso/middleware/auth_protected.h>
 #include <string>
 
@@ -18,7 +19,7 @@ bool expresso::middleware::ProtectedMiddleware::use(
     return false;
   }
 
-  auto userIdOpt = UserContext::SessionService->getUserIdFromToken(token);
+  auto userIdOpt = ctx->sessionRepo.getUserIdFromToken(token);
 
   if (!userIdOpt) {
     res.set("location", "/login");

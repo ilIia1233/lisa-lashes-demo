@@ -3,8 +3,6 @@
 #include <stdexcept>
 #include <string>
 
-SalonServiceRepository *SalonServiceContext::salonServiceRepo = nullptr;
-
 SalonServiceRepository::SalonServiceRepository(PgPool &pool) : pool_(pool) {}
 
 std::vector<SalonService> SalonServiceRepository::getAllServices() {

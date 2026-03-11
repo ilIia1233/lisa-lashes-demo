@@ -8,13 +8,6 @@
 #include <brewtils/env.h>
 #include <expresso/core/server.h>
 
-class UserRepository;
-class UserContext {
-public:
-  static UserRepository *UserService;
-  static SessionRepository *SessionService;
-};
-
 void PostRegisterRoute(expresso::messages::Request &req,
                        expresso::messages::Response &res);
 void PostLoginRoute(expresso::messages::Request &req,

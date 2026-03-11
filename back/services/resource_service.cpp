@@ -3,8 +3,6 @@
 #include <stdexcept>
 #include <string>
 
-ResourceRepository *ResourceContext::resourceService = nullptr;
-
 ResourceRepository::ResourceRepository(PgPool &pool) : pool_(pool) {}
 
 std::vector<Resource> ResourceRepository::getAllResources() {

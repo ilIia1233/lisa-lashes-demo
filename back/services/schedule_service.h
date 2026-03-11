@@ -49,7 +49,3 @@ public:
 private:
   PgPool &pool_;
 };
-
-struct ScheduleContext {
-  static ScheduleRepository *scheduleRepo;
-};
