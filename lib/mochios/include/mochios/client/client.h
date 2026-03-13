@@ -7,11 +7,18 @@
 #include <brewtils/sys.h>
 #include <logger/log.h>
 
+#include <arpa/inet.h>
 #include <mochios/client/options.h>
 #include <mochios/interceptors/interceptor.h>
 #include <mochios/interceptors/request/cookie.h>
 #include <mochios/interceptors/request/user_agent.h>
 #include <mochios/interceptors/response/json.h>
+#include <netinet/in.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 namespace mochios {
 
