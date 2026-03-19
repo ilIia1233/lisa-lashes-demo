@@ -72,20 +72,27 @@ int main(int argc, char **argv) {
   AdminRouter.put("/products", PutProductRoutes);
   AdminRouter.del("/products", DeleteProductRoutes);
 
-  // Booking routes
-  router.get("/availability", GetBookingRoutes);
-  router.post("/bookings", PostBookingRoutes); // session checked inline
+    // Booking routes
+    router.get("/availability", GetBookingRoutes);
+    router.post("/bookings", PostBookingRoutes); // session checked inline
 
-  // Auth routes
-  router.post("/auth/register", PostRegisterRoute);
-  router.post("/auth/login", PostLoginRoute);
-  router.del("/auth/user", DeleteUserRoute);
-  router.get("/auth/me", GetMeRoute);
-  router.post("/auth/logout", PostLogoutRoute);
+    // Cart routes
+    router.get("/cart", GetCartRoute);
+    router.post("/cart/items", PostCartItemRoute);
+    router.put("/cart/items", PutCartItemRoute);
+    router.del("/cart/items", DeleteCartItemRoute);
+    router.post("/cart/checkout", PostCheckoutRoute);
 
-  // Public read-only resource and service lists (for the booking form)
-  router.get("/resources", GetResourcesRoute);
-  router.get("/salon-services", GetSalonServicesRoute);
+    // Auth routes
+    router.post("/auth/register", PostRegisterRoute);
+    router.post("/auth/login", PostLoginRoute);
+    router.del("/auth/user", DeleteUserRoute);
+    router.get("/auth/me", GetMeRoute);
+    router.post("/auth/logout", PostLogoutRoute);
+
+    // Public read-only resource and service lists (for the booking form)
+    router.get("/resources", GetResourcesRoute);
+    router.get("/salon-services", GetSalonServicesRoute);
 
   //
   // ADMIN ROUTES
