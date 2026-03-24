@@ -24,12 +24,15 @@ FROM alpine:3.20
 
 RUN apk update && apk add --no-cache \
     libpq \
-    argon2
+    argon2-dev \
+    libstdc++ \
+    libgcc
 
 WORKDIR /app
 
 COPY --from=builder /app/build/server /app/build/server
 COPY front /app/front
+COPY front_admin /app/front_admin
 
 EXPOSE 8000
 

@@ -33,8 +33,7 @@ SessionRepository *UserContext::SessionService = nullptr;
 ProductRepository *ProductContext::ProductService = nullptr;
 
 int main(int argc, char **argv) {
-
-  brewtils::env::init("../secrets/.env");
+  brewtils::env::init(".env");
   int port = std::stoi(brewtils::env::get("PORT", "8000"));
 
   expresso::core::Server app = expresso::core::Server();
@@ -69,6 +68,7 @@ int main(int argc, char **argv) {
   std::string dbname = brewtils::env::get("DB_NAME", "0");
   std::string user = brewtils::env::get("DB_USER", "0");
   std::string password = brewtils::env::get("DB_PASSWORD", "0");
+  std::string static_root = brewtils::env::get("STATIC_ROOT", "./");
 
   std::string conninfo = "host=" + host +
                          " "
@@ -178,15 +178,16 @@ int main(int argc, char **argv) {
       std::make_unique<expresso::middleware::Cacher>(3600, false);
   app.use(std::move(cacher));
 
-  AdminStaticRouter.use(
-      std::make_unique<expresso::middleware::StaticServe>("../front_admin"));
+  AdminStaticRouter.use(std::make_unique<expresso::middleware::StaticServe>(
+      static_root + "/front_admin"));
   app.use("/admin", &AdminStaticRouter);
 
   // Public frontend — accessible at both /front/* and /* (root)
-  FrontRouter.use(
-      std::make_unique<expresso::middleware::StaticServe>("../front"));
+  FrontRouter.use(std::make_unique<expresso::middleware::StaticServe>(
+      static_root + "/front"));
   app.use("/front", &FrontRouter);
-  app.use(std::make_unique<expresso::middleware::StaticServe>("../front"));
+  app.use(std::make_unique<expresso::middleware::StaticServe>(static_root +
+                                                              "front"));
 
   // Starting the server
   app.listen(port, [&]() {

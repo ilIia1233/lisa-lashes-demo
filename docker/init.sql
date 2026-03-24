@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     phone         TEXT UNIQUE NOT NULL,
     address       TEXT,
     password_hash TEXT NOT NULL
+    is_admin      BOOLEAN DEFAULT FALSE
 );
 
 -- 2. sessions
